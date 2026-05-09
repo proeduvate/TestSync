@@ -4,22 +4,20 @@
 
 /* ============ Cards ============ */
 .card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-2xl);
     padding: var(--space-6);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: var(--glass-shadow);
+    box-shadow: var(--shadow-card);
     transition: all var(--transition-normal);
     animation: fadeInUp var(--transition-normal) ease-out;
 }
 
 .card:hover {
     background: var(--bg-card-hover);
-    border-color: var(--glass-border-light);
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-glow);
+    border-color: var(--border-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -80,24 +78,22 @@
 }
 
 .stats-card .stats-icon.primary {
-    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    background: var(--primary-500);
     color: white;
-    box-shadow: var(--shadow-glow);
 }
 
 .stats-card .stats-icon.secondary {
-    background: linear-gradient(135deg, var(--secondary-600), var(--secondary-500));
+    background: var(--slate-700);
     color: white;
-    box-shadow: var(--shadow-glow-teal);
 }
 
 .stats-card .stats-icon.accent {
-    background: linear-gradient(135deg, var(--accent-600), var(--accent-500));
+    background: var(--primary-600);
     color: white;
 }
 
 .stats-card .stats-icon.success {
-    background: linear-gradient(135deg, var(--success-600), var(--success-500));
+    background: var(--success-500);
     color: white;
 }
 
@@ -155,19 +151,19 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+    background: var(--primary-600);
     color: white;
-    box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.23);
+    background: var(--primary-500);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn-primary:active:not(:disabled) {
-    transform: translateY(1px);
+    transform: translateY(0);
 }
 
 .btn-secondary {
@@ -177,27 +173,27 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: var(--slate-600);
+    background: var(--bg-card-hover);
     border-color: var(--border-secondary);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--success-600), var(--success-500));
+    background: var(--success-600);
     color: white;
 }
 
 .btn-success:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--success-500), var(--success-400));
+    background: var(--success-500);
     transform: translateY(-1px);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, var(--error-600), var(--error-500));
+    background: var(--error-600);
     color: white;
 }
 
 .btn-danger:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--error-500), var(--error-400));
+    background: var(--error-500);
     transform: translateY(-1px);
 }
 
@@ -249,14 +245,12 @@
 .form-input {
     width: 100%;
     padding: 14px 16px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--glass-border);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: var(--radius-lg);
     font-size: var(--font-size-base);
     color: var(--text-primary);
     transition: all var(--transition-fast);
-    backdrop-filter: var(--glass-blur-sm);
-    -webkit-backdrop-filter: var(--glass-blur-sm);
 }
 
 /* Light mode: tinted bg + strong border so inputs pop off white card */
@@ -266,8 +260,8 @@
 }
 
 .form-input:hover {
-    border-color: var(--glass-border-light);
-    background: var(--bg-secondary);
+    border-color: var(--input-border-hover);
+    background: var(--input-bg-focus);
 }
 
 [data-theme="light"] .form-input:hover {
@@ -279,7 +273,7 @@
     outline: none;
     border-color: var(--primary-400);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-    background: var(--bg-card);
+    background: var(--input-bg-focus);
 }
 
 [data-theme="light"] .form-input:focus {
@@ -363,32 +357,32 @@
 }
 
 .badge-primary {
-    background: rgba(99, 102, 241, 0.2);
+    background: rgba(99, 102, 241, 0.15);
     color: var(--primary-400);
 }
 
 .badge-secondary {
-    background: rgba(20, 184, 166, 0.2);
-    color: var(--secondary-400);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
 }
 
 .badge-success {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(16, 185, 129, 0.15);
     color: var(--success-500);
 }
 
 .badge-warning {
-    background: rgba(245, 158, 11, 0.2);
+    background: rgba(245, 158, 11, 0.15);
     color: var(--warning-500);
 }
 
 .badge-danger {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.15);
     color: var(--error-500);
 }
 
 .badge-info {
-    background: rgba(59, 130, 246, 0.2);
+    background: rgba(59, 130, 246, 0.15);
     color: var(--accent-400);
 }
 
@@ -408,25 +402,26 @@
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(20, 184, 166, 0.1));
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: var(--primary-400);
 }
 
 .ai-badge.verified {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.15));
-    border-color: var(--success-500);
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
     color: var(--success-500);
 }
 
 .ai-badge.low-quality {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
-    border-color: var(--warning-500);
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.2);
     color: var(--warning-500);
 }
 
 .ai-badge.rejected {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(248, 113, 113, 0.15));
-    border-color: var(--error-500);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
     color: var(--error-500);
 }
 
@@ -695,7 +690,7 @@
 .skeleton {
     background: linear-gradient(90deg,
             var(--bg-tertiary) 0%,
-            var(--slate-600) 50%,
+            var(--bg-secondary) 50%,
             var(--bg-tertiary) 100%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
@@ -728,7 +723,7 @@
     height: 40px;
     border-radius: var(--radius-full);
     overflow: hidden;
-    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
+    background: var(--primary-600);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -786,7 +781,7 @@
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-600), var(--secondary-500));
+    background: var(--primary-500);
     border-radius: var(--radius-full);
     transition: width var(--transition-slow);
 }

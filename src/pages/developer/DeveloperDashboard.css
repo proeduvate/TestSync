@@ -110,8 +110,9 @@
 }
 
 .feedback-card:hover {
-    border-color: var(--border-secondary);
+    border-color: rgba(99, 102, 241, 0.3);
     background: var(--bg-card-hover);
+    transform: translateY(-1px);
 }
 
 .feedback-header {

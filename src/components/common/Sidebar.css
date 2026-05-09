@@ -13,12 +13,10 @@
     left: var(--space-4);
     width: var(--sidebar-width);
     height: calc(100vh - var(--space-8));
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--glass-shadow);
+    box-shadow: var(--shadow-lg);
     display: flex;
     flex-direction: column;
     z-index: var(--z-fixed);
@@ -46,21 +44,19 @@
     width: 44px;
     height: 44px;
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    box-shadow: var(--shadow-glow);
+    color: var(--primary-500);
 }
 
 .logo-text {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
-    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
 }
 
 .sidebar-nav {
@@ -110,7 +106,7 @@
 }
 
 .nav-link.active {
-    background: var(--nav-active-bg, linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(20, 184, 166, 0.1)));
+    background: var(--nav-active-bg, rgba(99, 102, 241, 0.12));
     color: var(--nav-active-color, var(--primary-400));
 }
 
@@ -135,14 +131,14 @@
     transform: translateY(-50%);
     width: 3px;
     height: 24px;
-    background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+    background: var(--primary-500);
     border-radius: 0 var(--radius-full) var(--radius-full) 0;
 }
 
 /* AI Status Card */
 .ai-status-card {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(20, 184, 166, 0.05));
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.15);
     border-radius: var(--radius-xl);
     padding: var(--space-4);
 }

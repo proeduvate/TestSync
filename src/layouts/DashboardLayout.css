@@ -48,10 +48,11 @@
 }
 
 .page-title {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-extrabold);
     color: var(--text-primary);
     margin-bottom: var(--space-1);
+    letter-spacing: -0.02em;
 }
 
 .page-subtitle {
