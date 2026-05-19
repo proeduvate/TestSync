@@ -1,0 +1,15 @@
+.chart-wrapper {
+    width: 100%;
+}
+
+.chart-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+}

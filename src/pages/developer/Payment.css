@@ -1,0 +1,183 @@
+.payment-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.payment-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: var(--space-6);
+}
+
+@media (max-width: 768px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Order Summary */
+.order-summary {
+    height: fit-content;
+    position: sticky;
+    top: calc(var(--navbar-height) + var(--space-6));
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+}
+
+.order-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.order-value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.order-item.total .order-label,
+.order-item.total .order-value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+}
+
+.order-item.total .order-value {
+    color: var(--primary-400);
+}
+
+.order-divider {
+    height: 1px;
+    background: var(--border-primary);
+    margin: var(--space-3) 0;
+}
+
+.secure-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-xs);
+    color: var(--success-500);
+}
+
+/* Payment Methods */
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+@media (max-width: 480px) {
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+}
+
+.payment-method-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.payment-method-option input {
+    display: none;
+}
+
+.payment-method-option.selected {
+    border-color: var(--primary-500);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.payment-method-option:hover {
+    border-color: var(--border-secondary);
+}
+
+.method-icon {
+    font-size: 1.5rem;
+}
+
+.method-name {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.payment-method-option.selected .method-name {
+    color: var(--text-primary);
+}
+
+.method-check {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    color: var(--primary-400);
+}
+
+/* Card Form */
+.card-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* UPI/Netbanking */
+.section-note {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.bank-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.bank-option {
+    padding: var(--space-3);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.bank-option:hover {
+    border-color: var(--primary-500);
+    color: var(--text-primary);
+}
+
+/* Payment Note */
+.payment-note {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-xs);
+    color: var(--primary-400);
+    text-align: center;
+}

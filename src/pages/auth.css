@@ -1,0 +1,333 @@
+/* Auth Pages Shared Styles */
+
+/* Input with Icon */
+.input-with-icon {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.input-with-icon .form-input {
+    padding-left: calc(var(--space-4) + 28px);
+}
+
+.input-with-icon .password-toggle {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Error Banner */
+.form-error-banner {
+    padding: var(--space-3) var(--space-4);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-lg);
+    color: var(--error-400);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-4);
+}
+
+/* Back Button */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    padding: var(--space-2) 0;
+    margin-bottom: var(--space-6);
+    transition: color var(--transition-fast);
+}
+
+.back-button:hover {
+    color: var(--primary-400);
+}
+
+/* OTP Page Specific */
+.otp-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(20, 184, 166, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-400);
+    margin: 0 auto var(--space-4);
+}
+
+.otp-input-group {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.otp-input {
+    width: 52px;
+    height: 60px;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.otp-input:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    outline: none;
+}
+
+.otp-input.error {
+    border-color: var(--error-500);
+}
+
+@media (max-width: 400px) {
+    .otp-input {
+        width: 44px;
+        height: 52px;
+        font-size: var(--font-size-xl);
+    }
+
+    .otp-input-group {
+        gap: var(--space-2);
+    }
+}
+
+.resend-section {
+    text-align: center;
+    margin-top: var(--space-6);
+}
+
+.resend-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.resend-button {
+    background: transparent;
+    border: none;
+    color: var(--primary-400);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.resend-button:hover {
+    color: var(--primary-300);
+}
+
+.resend-timer {
+    color: var(--text-muted);
+}
+
+.otp-hint {
+    margin-top: var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.otp-hint p {
+    font-size: var(--font-size-xs);
+    color: var(--primary-400);
+    margin: 0;
+}
+
+/* Form Utilities */
+.text-center {
+    text-align: center;
+}
+
+/* Role Selector (Signup) */
+.role-selector {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.role-option {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
+}
+
+.role-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4) var(--space-2);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    gap: var(--space-2);
+    height: 100%;
+}
+
+.role-option input:checked + .role-card {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary-500);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
+.role-card:hover {
+    border-color: var(--primary-400);
+    background: var(--bg-card-hover);
+}
+
+.role-icon {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-normal);
+}
+
+.role-option input:checked + .role-card .role-icon {
+    color: var(--primary-500);
+}
+
+.role-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+/* Role Tabs (Login) */
+.role-tabs {
+    display: flex;
+    background: var(--bg-tertiary);
+    padding: var(--space-1);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-primary);
+    margin-bottom: var(--space-4);
+}
+
+.role-tab {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
+}
+
+.role-tab input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.role-tab-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    transition: all var(--transition-normal);
+}
+
+.role-tab input:checked + .role-tab-content {
+    background: var(--primary-500);
+    color: white;
+}
+
+.role-tab-icon {
+    font-size: 1.1rem;
+}
+
+/* Auth Form Footer */
+.auth-form-footer {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.auth-form-footer p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+.auth-form-footer a {
+    color: var(--primary-400);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.auth-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.875rem;
+}
+
+.auth-separator::before,
+.auth-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-separator span {
+    margin: 0 1rem;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    transition: all 0.2s ease;
+}
+
+.google-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px);
+}
+
+.auth-form-footer a:hover {
+    color: var(--primary-300);
+}
+
+/* Form Checkbox Error State */
+.form-checkbox.error span {
+    color: var(--error-400);
+}

@@ -1,0 +1,108 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-sm {
+    padding: 2px var(--space-2);
+    font-size: 10px;
+}
+
+.badge-md {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+}
+
+.badge-primary {
+    background: rgba(99, 102, 241, 0.2);
+    color: var(--primary-400);
+}
+
+.badge-secondary {
+    background: rgba(20, 184, 166, 0.2);
+    color: var(--secondary-400);
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success-500);
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning-500);
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--error-500);
+}
+
+.badge-info {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-400);
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+}
+
+.badge-icon {
+    display: flex;
+    align-items: center;
+}
+
+/* AI Badge */
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(20, 184, 166, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: var(--text-secondary);
+}
+
+.ai-badge.verified {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.15));
+    border-color: var(--success-500);
+    color: var(--success-500);
+}
+
+.ai-badge.low-quality {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+    border-color: var(--warning-500);
+    color: var(--warning-500);
+}
+
+.ai-badge.rejected {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(248, 113, 113, 0.15));
+    border-color: var(--error-500);
+    color: var(--error-500);
+}
+
+.ai-badge.pending {
+    background: linear-gradient(135deg, rgba(100, 116, 139, 0.15), rgba(148, 163, 184, 0.15));
+    border-color: var(--slate-500);
+    color: var(--slate-400);
+}
+
+.ai-badge-icon {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.ai-badge-label {
+    line-height: 1;
+}
