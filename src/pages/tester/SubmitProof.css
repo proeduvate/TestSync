@@ -1,0 +1,102 @@
+.submit-proof-page {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.submission-card {
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.proof-type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.type-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+.type-option i,
+.type-option svg {
+    font-size: 1.5rem;
+}
+
+.type-option input {
+    display: none;
+}
+
+.type-option:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-secondary);
+}
+
+.type-option.active {
+    border-color: var(--primary-color);
+    background: rgba(99, 102, 241, 0.05);
+    color: var(--primary-color);
+}
+
+.upload-zone {
+    margin-top: 0.5rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-offset);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary-color);
+}
+
+.upload-zone svg {
+    color: var(--text-secondary);
+}
+
+.upload-hint {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.form-textarea,
+.form-select {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-textarea:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+}
+
+.submission-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}

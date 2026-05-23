@@ -1,0 +1,128 @@
+.wallet-page {
+    padding: 2rem;
+}
+
+.wallet-stats-grid {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.wallet-stat-card {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+}
+
+.stat-icon.secondary {
+    background: rgba(20, 184, 166, 0.1);
+    color: #14b8a6;
+}
+
+.stat-icon.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-subtext {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.transaction-card {
+    margin-top: 2rem;
+    padding: 1.5rem;
+}
+
+.transaction-list {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.type-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.type-icon.credit {
+    background: rgba(20, 184, 166, 0.1);
+    color: #14b8a6;
+}
+
+.type-icon.debit,
+.type-icon.withdrawal {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.transaction-desc {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.transaction-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.transaction-amount {
+    font-weight: 700;
+}
+
+.transaction-amount.credit {
+    color: #14b8a6;
+}
+
+.transaction-amount.debit,
+.transaction-amount.withdrawal {
+    color: #ef4444;
+}
