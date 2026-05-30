@@ -302,3 +302,12 @@
     pointer-events: none; /* Ensure clicks on icon/span don't interfere */
 }
 
+/* Light Theme Navbar Override */
+[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.05) !important;
+}
+

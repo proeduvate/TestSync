@@ -206,18 +206,18 @@
 [data-theme="light"] {
   /* ── Background Surfaces ───────────────────────────────────────────── */
   /* "Indigo Mist" — tinted canvas so white cards visually pop off it   */
-  --bg-primary:   #e8ecf4;  /* blue-indigo tinted canvas — the "floor" */
-  --bg-secondary: #f0f3fa;  /* lighter panel, sidebars, modals         */
+  --bg-primary:   #F8FAFC;  /* blue-indigo tinted canvas — the "floor" */
+  --bg-secondary: #F8FAFC;  /* large content areas background */
   --bg-tertiary:  #ffffff;  /* pure white — inputs, dropdowns          */
   --bg-card:      #ffffff;  /* white cards lift off the canvas         */
-  --bg-card-hover:#f5f7ff;  /* faint indigo blush on card hover        */
+  --bg-card-hover:#ffffff;  /* card hover stays clean white            */
   --bg-overlay:   rgba(15, 20, 40, 0.55);
 
   /* ── Input-specific surface ───────────────────────────────────────── */
-  --input-bg:        #eef1f9;  /* tinted so inputs stand out on white cards */
-  --input-bg-focus:  #f0f3ff;  /* slightly lighter on focus */
-  --input-border:    #b8c2de;  /* visible border stroke */
-  --input-border-hover: #9aa5cc;
+  --input-bg:        #ffffff;  /* white inputs for clean bright design    */
+  --input-bg-focus:  #ffffff;  
+  --input-border:    rgba(226, 232, 240, 0.9);  /* soft border */
+  --input-border-hover: #cbd5e1;
 
   /* ── Ambient Glows (barely-there depth) ───────────────────────────── */
   --glow-1: rgba(99, 102, 241, 0.09);
@@ -225,10 +225,10 @@
   --glow-3: rgba(139, 92, 246, 0.07);
 
   /* ── Glassmorphism Tokens ──────────────────────────────────────────── */
-  --glass-bg:           rgba(255, 255, 255, 0.75);
-  --glass-border:       rgba(99, 102, 241, 0.15);
-  --glass-border-light: rgba(99, 102, 241, 0.08);
-  --glass-shadow:       0 4px 24px 0 rgba(15, 20, 60, 0.08);
+  --glass-bg:           #ffffff;
+  --glass-border:       rgba(226, 232, 240, 0.9);
+  --glass-border-light: rgba(226, 232, 240, 0.9);
+  --glass-shadow:       0 16px 40px rgba(79, 70, 229, 0.10);
 
   /* ── Typography ────────────────────────────────────────────────────── */
   --text-primary:   #1a1d2e;  /* deep navy-black — readable on white   */
@@ -238,18 +238,18 @@
   --text-inverse:   #f8fafc;
 
   /* ── Borders ───────────────────────────────────────────────────────── */
-  --border-primary:  #d6daea;  /* cool blue-grey stroke                */
-  --border-secondary:#c4ccdf;  /* stronger emphasis stroke             */
-  --border-focus:    #6366f1;  /* indigo-500 focus ring                */
+  --border-primary:  rgba(226, 232, 240, 0.9);  /* cool soft blue-grey stroke            */
+  --border-secondary:#cbd5e1;  /* stronger emphasis stroke             */
+  --border-focus:    #4F46E5;  /* indigo-500 focus ring                */
 
   /* ── Shadows (indigo-tinted for premium cohesion) ─────────────────── */
   --shadow-sm:   0 1px 3px 0 rgba(30, 40, 90, 0.06);
   --shadow-md:   0 4px 10px -1px rgba(30, 40, 90, 0.10), 0 2px 4px -1px rgba(30, 40, 90, 0.05);
-  --shadow-lg:   0 12px 24px -4px rgba(30, 40, 90, 0.11), 0 4px 8px -2px rgba(30, 40, 90, 0.05);
-  --shadow-xl:   0 20px 32px -6px rgba(30, 40, 90, 0.12), 0 8px 14px -4px rgba(30, 40, 90, 0.06);
+  --shadow-lg:   0 16px 40px rgba(79, 70, 229, 0.10);
+  --shadow-xl:   0 20px 50px rgba(79, 70, 229, 0.14);
   --shadow-2xl:  0 32px 52px -8px rgba(30, 40, 90, 0.16);
   --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.20);
-  --shadow-card: 0 2px 8px 0 rgba(30, 40, 90, 0.08), 0 0 0 1px rgba(30, 40, 90, 0.05);
+  --shadow-card: 0 16px 40px rgba(79, 70, 229, 0.10);
 
   /* ── Semantic Overrides ────────────────────────────────────────────── */
   --success-500: #16a34a;
@@ -259,8 +259,8 @@
   /* ── Component Tokens ──────────────────────────────────────────────── */
   --nav-active-bg:         rgba(99, 102, 241, 0.12);
   --nav-active-color:      #4338ca;
-  --btn-secondary-bg:      #edf0f9;
-  --btn-secondary-hover-bg:#e0e5f5;
+  --btn-secondary-bg:      #EEF2FF;
+  --btn-secondary-hover-bg:#E0E7FF;
 }
 
 /* Responsive breakpoints reference:

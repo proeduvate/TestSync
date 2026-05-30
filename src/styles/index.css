@@ -638,3 +638,12 @@ ol {
 .stagger-5 {
     animation-delay: 0.25s;
 }
+
+/* Light Theme Body Background Override */
+[data-theme="light"] body {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5FF 50%, #F6F5FF 100%) !important;
+}
+
+[data-theme="light"] body::before {
+    display: none !important;
+}
