@@ -39,7 +39,8 @@
 
 .request-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-primary);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     cursor: pointer;

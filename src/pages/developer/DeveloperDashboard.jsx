@@ -187,7 +187,7 @@ function DeveloperDashboard() {
 
                 {/* Charts Row */}
                 <div className="col-8">
-                    <div className="card chart-card">
+                    <div className="card">
                         <div className="card-header">
                             <h3 className="card-title">Bug Discovery Trends</h3>
                         </div>
@@ -200,7 +200,7 @@ function DeveloperDashboard() {
                 </div>
 
                 <div className="col-4">
-                    <div className="card chart-card">
+                    <div className="card">
                         <div className="card-header">
                             <h3 className="card-title">Budget Spent</h3>
                         </div>

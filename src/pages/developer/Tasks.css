@@ -172,8 +172,7 @@
 
 .tasks-page .actions-dropdown {
     position: absolute;
-    bottom: 100%;
-    top: auto;
+    top: 100%;
     right: 0;
     min-width: 160px;
     background: var(--bg-secondary);
@@ -182,8 +181,8 @@
     box-shadow: var(--shadow-xl);
     z-index: 100;
     overflow: hidden;
-    margin-bottom: 0.5rem;
-    animation: popUp 0.2s ease-out;
+    margin-top: 0.5rem;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .tasks-page .actions-dropdown button {
@@ -219,11 +218,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes popUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* View Details Modal Styling */
 .task-view-details {
     display: flex;
@@ -256,52 +250,47 @@
     margin: 0;
 }
 
-.task-view-details .detail-grid {
+.detail-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
 }
 
-.task-view-details .detail-item {
+.detail-item {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    align-items: flex-start;
 }
 
-.task-view-details .detail-item.full-width {
+.detail-item.full-width {
     grid-column: 1 / -1;
 }
 
-.task-view-details .detail-label {
+.detail-label {
     font-size: 10px;
     color: var(--text-secondary);
     text-transform: uppercase;
     opacity: 0.7;
-    text-align: left;
 }
 
-.task-view-details .detail-value {
+.detail-value {
     font-size: 0.875rem;
     color: var(--text-primary);
     font-weight: 500;
-    text-align: left;
 }
 
-.task-view-details .detail-value.link {
+.detail-value.link {
     color: var(--primary-color);
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 0.25rem;
     word-break: break-all;
-    text-align: left;
 }
 
-.task-view-details .detail-value.description {
+.detail-value.description {
     line-height: 1.5;
     color: var(--text-secondary);
-    text-align: left;
 }
 
 .detail-badges {

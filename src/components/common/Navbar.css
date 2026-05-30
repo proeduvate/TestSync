@@ -4,10 +4,12 @@
     left: var(--space-4);
     right: var(--space-4);
     height: var(--navbar-height);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-subtle);
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--glass-shadow);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,14 +17,6 @@
     z-index: var(--z-sticky);
     transition: left var(--transition-normal);
     overflow: visible !important;
-}
-
-[data-theme="light"] .navbar {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
 }
 
 .navbar.sidebar-collapsed {
@@ -180,14 +174,9 @@
     box-shadow: var(--shadow-xl);
     padding: var(--space-2);
     animation: slideUp var(--transition-fast) ease-out;
-    z-index: 1000;
+    z-index: 1000; /* Higher than anything else */
     display: flex;
     flex-direction: column;
-}
-
-[data-theme="light"] .navbar-profile-dropdown {
-    background: var(--bg-secondary);
-    box-shadow: var(--shadow-xl);
 }
 
 @keyframes slideUp {

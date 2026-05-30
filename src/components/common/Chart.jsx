@@ -66,29 +66,27 @@ const defaultOptions = {
     scales: {
         x: {
             grid: {
-                color: 'rgba(148, 163, 184, 0.15)',
+                color: 'rgba(51, 65, 85, 0.5)',
                 drawBorder: false,
             },
             ticks: {
-                color: '#94a3b8',
-                padding: 10,
+                color: '#64748b',
                 font: {
                     family: 'Inter, sans-serif',
-                    size: 12,
+                    size: 11,
                 },
             },
         },
         y: {
             grid: {
-                color: 'rgba(148, 163, 184, 0.15)',
+                color: 'rgba(51, 65, 85, 0.5)',
                 drawBorder: false,
             },
             ticks: {
-                color: '#94a3b8',
-                padding: 12,
+                color: '#64748b',
                 font: {
                     family: 'Inter, sans-serif',
-                    size: 12,
+                    size: 11,
                 },
             },
         },
@@ -135,7 +133,7 @@ function Chart({ type = 'line', data, options = {}, height = 300, title }) {
             ...dataset,
             borderColor: dataset.borderColor || getDefaultColor(index),
             backgroundColor: dataset.backgroundColor || getDefaultBgColor(index),
-            borderWidth: dataset.borderWidth || 3,
+            borderWidth: dataset.borderWidth || 2,
             tension: dataset.tension ?? 0.4,
             fill: dataset.fill ?? (type === 'line'),
             pointRadius: dataset.pointRadius ?? 4,

@@ -49,8 +49,9 @@
 .header-stats {
     display: flex;
     align-items: center;
-    background: var(--bg-card);
-    border: 1px solid var(--border-primary);
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     padding: 1.25rem 2rem;
     gap: 2rem;
@@ -238,9 +239,9 @@
 .error-container {
     text-align: center;
     padding: 4rem 2rem;
-    background: var(--bg-card);
+    background: rgba(30, 41, 59, 0.5);
     border-radius: 1rem;
-    border: 1px solid var(--border-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .error-container h2 {

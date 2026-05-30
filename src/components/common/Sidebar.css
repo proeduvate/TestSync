@@ -13,10 +13,12 @@
     left: var(--space-4);
     width: var(--sidebar-width);
     height: calc(100vh - var(--space-8));
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--glass-shadow);
     display: flex;
     flex-direction: column;
     z-index: var(--z-fixed);
@@ -44,19 +46,21 @@
     width: 44px;
     height: 44px;
     border-radius: var(--radius-xl);
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-500);
+    color: white;
+    box-shadow: var(--shadow-glow);
 }
 
 .logo-text {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .sidebar-nav {
@@ -106,7 +110,7 @@
 }
 
 .nav-link.active {
-    background: var(--nav-active-bg, rgba(99, 102, 241, 0.12));
+    background: var(--nav-active-bg, linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(20, 184, 166, 0.1)));
     color: var(--nav-active-color, var(--primary-400));
 }
 
@@ -131,14 +135,14 @@
     transform: translateY(-50%);
     width: 3px;
     height: 24px;
-    background: var(--primary-500);
+    background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
     border-radius: 0 var(--radius-full) var(--radius-full) 0;
 }
 
 /* AI Status Card */
 .ai-status-card {
-    background: rgba(99, 102, 241, 0.05);
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(20, 184, 166, 0.05));
+    border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: var(--radius-xl);
     padding: var(--space-4);
 }

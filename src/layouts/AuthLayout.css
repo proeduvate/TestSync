@@ -55,17 +55,21 @@
     width: 48px;
     height: 48px;
     border-radius: var(--radius-xl);
-    background: var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
+    box-shadow: var(--shadow-glow);
 }
 
 .auth-logo-text {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .auth-brand-hero {
@@ -89,7 +93,10 @@
 }
 
 .gradient-text {
-    color: var(--primary-400);
+    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Right Panel - Form */
@@ -240,9 +247,10 @@
 }
 
 .role-tab input:checked+.role-tab-content {
-    background: rgba(99, 102, 241, 0.25);
-    border: 1px solid rgba(99, 102, 241, 0.5);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(20, 184, 166, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
+    box-shadow: var(--shadow-glow);
 }
 
 .role-tab-icon {
