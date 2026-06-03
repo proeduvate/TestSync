@@ -1,270 +1,287 @@
 /* ========================================
    CSS Design Tokens - Software Testing Platform
+   Professional GitHub/Linear/Vercel Theme
    ======================================== */
 
 :root {
-  /* Primary Colors - Indigo */
-  --primary-50: #eef2ff;
-  --primary-100: #e0e7ff;
-  --primary-200: #c7d2fe;
-  --primary-300: #a5b4fc;
-  --primary-400: #818cf8;
-  --primary-500: #6366f1;
-  --primary-600: #4f46e5;
-  --primary-700: #4338ca;
-  --primary-800: #3730a3;
-  --primary-900: #312e81;
+  /* ── Brand Blue Palette ─────────────────────────────────────────────── */
+  --primary-50:  #EFF6FF;
+  --primary-100: #DBEAFE;
+  --primary-200: #BFDBFE;
+  --primary-300: #93C5FD;
+  --primary-400: #60A5FA;
+  --primary-500: #3B82F6;
+  --primary-600: #2563EB;
+  --primary-700: #1D4ED8;
+  --primary-800: #1E40AF;
+  --primary-900: #1E3A8A;
 
-  /* Secondary Colors - Teal */
-  --secondary-50: #f0fdfa;
-  --secondary-100: #ccfbf1;
-  --secondary-200: #99f6e4;
-  --secondary-300: #5eead4;
-  --secondary-400: #2dd4bf;
-  --secondary-500: #14b8a6;
-  --secondary-600: #0d9488;
-  --secondary-700: #0f766e;
-  --secondary-800: #115e59;
-  --secondary-900: #134e4a;
+  /* ── Secondary (kept for compatibility, mapped to blue) ─────────────── */
+  --secondary-50:  #EFF6FF;
+  --secondary-100: #DBEAFE;
+  --secondary-200: #BFDBFE;
+  --secondary-300: #93C5FD;
+  --secondary-400: #60A5FA;
+  --secondary-500: #3B82F6;
+  --secondary-600: #2563EB;
+  --secondary-700: #1D4ED8;
+  --secondary-800: #1E40AF;
+  --secondary-900: #1E3A8A;
 
-  /* Accent Colors - Blue */
-  --accent-50: #eff6ff;
-  --accent-100: #dbeafe;
-  --accent-200: #bfdbfe;
-  --accent-300: #93c5fd;
-  --accent-400: #60a5fa;
-  --accent-500: #3b82f6;
-  --accent-600: #2563eb;
-  --accent-700: #1d4ed8;
-  --accent-800: #1e40af;
-  --accent-900: #1e3a8a;
+  /* ── Accent (same blue) ─────────────────────────────────────────────── */
+  --accent-50:  #EFF6FF;
+  --accent-100: #DBEAFE;
+  --accent-200: #BFDBFE;
+  --accent-300: #93C5FD;
+  --accent-400: #60A5FA;
+  --accent-500: #3B82F6;
+  --accent-600: #2563EB;
+  --accent-700: #1D4ED8;
+  --accent-800: #1E40AF;
+  --accent-900: #1E3A8A;
 
-  /* Neutral Colors - Slate */
-  --slate-50: #f8fafc;
-  --slate-100: #f1f5f9;
-  --slate-200: #e2e8f0;
-  --slate-300: #cbd5e1;
-  --slate-400: #94a3b8;
-  --slate-500: #64748b;
+  /* ── Neutral Slate ──────────────────────────────────────────────────── */
+  --slate-50:  #F8FAFC;
+  --slate-100: #F1F5F9;
+  --slate-200: #E2E8F0;
+  --slate-300: #CBD5E1;
+  --slate-400: #94A3B8;
+  --slate-500: #64748B;
   --slate-600: #475569;
   --slate-700: #334155;
-  --slate-800: #1e293b;
-  --slate-900: #0f172a;
+  --slate-800: #1E293B;
+  --slate-900: #0F172A;
   --slate-950: #020617;
 
-  /* Semantic Colors */
-  --success-50: #ecfdf5;
-  --success-100: #d1fae5;
-  --success-500: #10b981;
+  /* ── Semantic Colors ────────────────────────────────────────────────── */
+  --success-50:  #ECFDF5;
+  --success-100: #D1FAE5;
+  --success-500: #10B981;
   --success-600: #059669;
   --success-700: #047857;
 
-  --warning-50: #fffbeb;
-  --warning-100: #fef3c7;
-  --warning-500: #f59e0b;
-  --warning-600: #d97706;
-  --warning-700: #b45309;
+  --warning-50:  #FFFBEB;
+  --warning-100: #FEF3C7;
+  --warning-500: #F59E0B;
+  --warning-600: #D97706;
+  --warning-700: #B45309;
 
-  --error-50: #fef2f2;
-  --error-100: #fee2e2;
-  --error-500: #ef4444;
-  --error-600: #dc2626;
-  --error-700: #b91c1c;
+  --error-50:  #FEF2F2;
+  --error-100: #FEE2E2;
+  --error-400: #F87171;
+  --error-500: #EF4444;
+  --error-600: #DC2626;
+  --error-700: #B91C1C;
 
-  --info-50: #eff6ff;
-  --info-100: #dbeafe;
-  --info-500: #3b82f6;
-  --info-600: #2563eb;
+  --info-50:  #EFF6FF;
+  --info-100: #DBEAFE;
+  --info-500: #3B82F6;
+  --info-600: #2563EB;
 
-  /* Background Colors */
-  --bg-primary: #0a0f1c;
-  --bg-secondary: rgba(15, 23, 42, 0.4);
-  --bg-tertiary: rgba(30, 41, 59, 0.4);
-  --bg-card: rgba(15, 23, 42, 0.4);
-  --bg-card-hover: rgba(30, 41, 59, 0.6);
-  --bg-overlay: rgba(2, 6, 23, 0.85);
+  /* ── Background Surfaces ────────────────────────────────────────────── */
+  --bg-primary:   #0B0F19; /* Rich bluish navy canvas */
+  --bg-secondary: #111625; /* Panel / sidebar navy */
+  --bg-tertiary:  #1B223C; /* Inset elements */
+  --bg-card:      #121B2D; /* Cohesive bluish-navy card background */
+  --bg-card-hover:#1E2644;
+  --bg-overlay:   rgba(11, 15, 25, 0.85);
+  --bg-hover:     #1E2644; /* Clean slate-blue hover state */
+  --bg-offset:    #111625;
 
-  /* Glassmorphism Tokens */
-  --glass-bg: rgba(15, 23, 42, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-light: rgba(255, 255, 255, 0.15);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
-  --glass-blur: blur(16px);
-  --glass-blur-sm: blur(8px);
-  --glass-blur-lg: blur(24px);
+  /* ── Glassmorphism Tokens (minimal — clean solid surfaces now) ──────── */
+  --glass-bg:           #111625;
+  --glass-border:       #273244;
+  --glass-border-light: #334155;
+  --glass-shadow:       0 1px 3px rgba(0, 0, 0, 0.25);
+  --glass-blur:         blur(0px);
+  --glass-blur-sm:      blur(0px);
+  --glass-blur-lg:      blur(0px);
 
-  /* Text Colors */
-  --text-primary: var(--slate-100);
-  --text-secondary: var(--slate-400);
-  --text-tertiary: var(--slate-500);
-  --text-muted: var(--slate-600);
-  --text-inverse: var(--slate-900);
+  /* ── Text Colors ────────────────────────────────────────────────────── */
+  --text-primary:   #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-tertiary:  #64748B;
+  --text-muted:     #64748B;
+  --text-inverse:   #0F172A;
 
-  /* Border Colors */
-  --border-primary: var(--slate-700);
-  --border-secondary: var(--slate-600);
-  --border-focus: var(--primary-500);
+  /* ── Border Colors ──────────────────────────────────────────────────── */
+  --border-primary:   #273244;
+  --border-secondary: #334155;
+  --border-color:     #273244;
+  --border-focus:     #2563EB;
 
-  /* Typography */
-  --font-family:
-    "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* ── Semantic Shortcuts ─────────────────────────────────────────────── */
+  --primary:       #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-light: #3B82F6;
+  --success:       #10B981;
+  --warning:       #F59E0B;
+  --danger:        #EF4444;
+  --info:          #3B82F6;
+  --border:        #273244;
+  --border-light:  #334155;
 
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --font-size-xs:   0.75rem;
+  --font-size-sm:   0.875rem;
   --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-size-4xl: 2.25rem;
-  --font-size-5xl: 3rem;
+  --font-size-lg:   1.125rem;
+  --font-size-xl:   1.25rem;
+  --font-size-2xl:  1.5rem;
+  --font-size-3xl:  1.875rem;
+  --font-size-4xl:  2.25rem;
+  --font-size-5xl:  3rem;
 
-  --font-weight-light: 300;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --font-weight-light:     300;
+  --font-weight-normal:    400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
   --font-weight-extrabold: 800;
 
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
+  --line-height-tight:   1.25;
+  --line-height-normal:  1.5;
   --line-height-relaxed: 1.75;
 
-  /* Spacing */
-  --space-0: 0;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
+  /* ── Spacing ─────────────────────────────────────────────────────────── */
+  --space-0:  0;
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* Border Radius */
+  /* ── Border Radius ──────────────────────────────────────────────────── */
   --radius-none: 0;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
+  --radius-sm:   0.25rem;
+  --radius-md:   0.375rem;
+  --radius-lg:   0.5rem;
+  --radius-xl:   0.75rem;
+  --radius-2xl:  1rem;
+  --radius-3xl:  1.5rem;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.5);
-  --shadow-glow-teal: 0 0 24px rgba(20, 184, 166, 0.5);
-  --shadow-card: var(--glass-shadow);
+  /* ── Shadows (clean, subtle) ────────────────────────────────────────── */
+  --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.20);
+  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.30), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+  --shadow-xl:   0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 10px 10px -5px rgba(0, 0, 0, 0.15);
+  --shadow-2xl:  0 25px 50px -12px rgba(0, 0, 0, 0.50);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25);
+  /* Deprecated glow shadows — kept as transparent fallbacks */
+  --shadow-glow:      none;
+  --shadow-glow-teal: none;
 
-  /* Transitions */
-  --transition-fast: 150ms ease;
+  /* ── Transitions ────────────────────────────────────────────────────── */
+  --transition-fast:   150ms ease;
   --transition-normal: 250ms ease;
-  --transition-slow: 350ms ease;
+  --transition-slow:   350ms ease;
   --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* Z-Index */
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-fixed: 300;
+  /* ── Z-Index ─────────────────────────────────────────────────────────── */
+  --z-dropdown:       100;
+  --z-sticky:         200;
+  --z-fixed:          300;
   --z-modal-backdrop: 400;
-  --z-modal: 500;
-  --z-popover: 600;
-  --z-tooltip: 700;
-  --z-toast: 800;
+  --z-modal:          500;
+  --z-popover:        600;
+  --z-tooltip:        700;
+  --z-toast:          800;
 
-  /* Sidebar */
-  --sidebar-width: 280px;
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  --sidebar-width:           280px;
   --sidebar-collapsed-width: 80px;
-  --navbar-height: 64px;
+  --navbar-height:           64px;
 
-  /* Background Glows */
-  --bg-glow: radial-gradient(circle at 15% 50%, var(--glow-1), transparent 30%),
-             radial-gradient(circle at 85% 30%, var(--glow-2), transparent 30%),
-             radial-gradient(circle at 50% 80%, var(--glow-3), transparent 30%);
-  --glow-1: rgba(99, 102, 241, 0.4);
-  --glow-2: rgba(20, 184, 166, 0.4);
-  --glow-3: rgba(139, 92, 246, 0.4);
+  /* ── Background Glows (removed) ─────────────────────────────────────── */
+  --bg-glow: none;
+  --glow-1:  rgba(0, 0, 0, 0);
+  --glow-2:  rgba(0, 0, 0, 0);
+  --glow-3:  rgba(0, 0, 0, 0);
 
-  /* Default Component Variables */
-  --nav-active-bg: rgba(99, 102, 241, 0.15);
-  --btn-secondary-bg: var(--bg-tertiary);
-  --btn-secondary-hover-bg: var(--slate-600);
+  /* ── Component Tokens ────────────────────────────────────────────────── */
+  --nav-active-bg:          #1E293B;
+  --nav-active-color:       #FFFFFF;
+  --btn-secondary-bg:       #1F2937;
+  --btn-secondary-hover-bg: #273244;
+
+  /* ── Input Tokens ────────────────────────────────────────────────────── */
+  --input-bg:           var(--bg-primary);
+  --input-bg-focus:     var(--bg-primary);
+  --input-border:       #334155;
+  --input-border-hover: #475569;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT THEME OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
-  /* ── Background Surfaces ───────────────────────────────────────────── */
-  /* "Indigo Mist" — tinted canvas so white cards visually pop off it   */
-  --bg-primary:   #F8FAFC;  /* blue-indigo tinted canvas — the "floor" */
-  --bg-secondary: #F8FAFC;  /* large content areas background */
-  --bg-tertiary:  #ffffff;  /* pure white — inputs, dropdowns          */
-  --bg-card:      #ffffff;  /* white cards lift off the canvas         */
-  --bg-card-hover:#ffffff;  /* card hover stays clean white            */
-  --bg-overlay:   rgba(15, 20, 40, 0.55);
+  /* ── Background Surfaces ────────────────────────────────────────────── */
+  --bg-primary:   #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-tertiary:  #E2E8F0;
+  --bg-card:      #FFFFFF;
+  --bg-card-hover:#F8FAFC;
+  --bg-overlay:   rgba(15, 23, 42, 0.55);
+  --bg-hover:     #F1F5F9;
+  --bg-offset:    #F1F5F9;
 
-  /* ── Input-specific surface ───────────────────────────────────────── */
-  --input-bg:        #ffffff;  /* white inputs for clean bright design    */
-  --input-bg-focus:  #ffffff;  
-  --input-border:    rgba(226, 232, 240, 0.9);  /* soft border */
-  --input-border-hover: #cbd5e1;
-
-  /* ── Ambient Glows (barely-there depth) ───────────────────────────── */
-  --glow-1: rgba(99, 102, 241, 0.09);
-  --glow-2: rgba(20, 184, 166, 0.07);
-  --glow-3: rgba(139, 92, 246, 0.07);
-
-  /* ── Glassmorphism Tokens ──────────────────────────────────────────── */
-  --glass-bg:           #ffffff;
+  /* ── Glassmorphism (solid surfaces in light mode) ───────────────────── */
+  --glass-bg:           #FFFFFF;
   --glass-border:       rgba(226, 232, 240, 0.9);
-  --glass-border-light: rgba(226, 232, 240, 0.9);
-  --glass-shadow:       0 16px 40px rgba(79, 70, 229, 0.10);
+  --glass-border-light: #CBD5E1;
+  --glass-shadow:       0 1px 3px rgba(0, 0, 0, 0.08);
 
-  /* ── Typography ────────────────────────────────────────────────────── */
-  --text-primary:   #1a1d2e;  /* deep navy-black — readable on white   */
-  --text-secondary: #3d4166;  /* indigo-tinted mid-dark body text      */
-  --text-tertiary:  #6b7099;  /* muted indigo-grey for labels          */
-  --text-muted:     #9fa6c2;  /* soft blue-grey placeholders           */
-  --text-inverse:   #f8fafc;
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --text-primary:   #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary:  #64748B;
+  --text-muted:     #94A3B8;
+  --text-inverse:   #F8FAFC;
 
-  /* ── Borders ───────────────────────────────────────────────────────── */
-  --border-primary:  rgba(226, 232, 240, 0.9);  /* cool soft blue-grey stroke            */
-  --border-secondary:#cbd5e1;  /* stronger emphasis stroke             */
-  --border-focus:    #4F46E5;  /* indigo-500 focus ring                */
+  /* ── Borders ────────────────────────────────────────────────────────── */
+  --border-primary:   rgba(226, 232, 240, 0.9);
+  --border-secondary: #CBD5E1;
+  --border-color:     rgba(226, 232, 240, 0.9);
+  --border-focus:     #2563EB;
 
-  /* ── Shadows (indigo-tinted for premium cohesion) ─────────────────── */
-  --shadow-sm:   0 1px 3px 0 rgba(30, 40, 90, 0.06);
-  --shadow-md:   0 4px 10px -1px rgba(30, 40, 90, 0.10), 0 2px 4px -1px rgba(30, 40, 90, 0.05);
-  --shadow-lg:   0 16px 40px rgba(79, 70, 229, 0.10);
-  --shadow-xl:   0 20px 50px rgba(79, 70, 229, 0.14);
-  --shadow-2xl:  0 32px 52px -8px rgba(30, 40, 90, 0.16);
-  --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.20);
-  --shadow-card: 0 16px 40px rgba(79, 70, 229, 0.10);
+  /* ── Shadows (light-mode) ────────────────────────────────────────────── */
+  --shadow-sm:   0 1px 3px 0 rgba(15, 23, 42, 0.06);
+  --shadow-md:   0 4px 10px -1px rgba(15, 23, 42, 0.10), 0 2px 4px -1px rgba(15, 23, 42, 0.05);
+  --shadow-lg:   0 16px 40px rgba(15, 23, 42, 0.10);
+  --shadow-xl:   0 20px 50px rgba(15, 23, 42, 0.12);
+  --shadow-2xl:  0 32px 52px -8px rgba(15, 23, 42, 0.16);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.08);
 
-  /* ── Semantic Overrides ────────────────────────────────────────────── */
-  --success-500: #16a34a;
-  --warning-500: #ca8a04;
-  --error-500:   #dc2626;
+  /* ── Ambient glows (none) ────────────────────────────────────────────── */
+  --glow-1: rgba(0, 0, 0, 0);
+  --glow-2: rgba(0, 0, 0, 0);
+  --glow-3: rgba(0, 0, 0, 0);
 
-  /* ── Component Tokens ──────────────────────────────────────────────── */
-  --nav-active-bg:         rgba(99, 102, 241, 0.12);
-  --nav-active-color:      #4338ca;
-  --btn-secondary-bg:      #EEF2FF;
-  --btn-secondary-hover-bg:#E0E7FF;
+  /* ── Component Tokens ────────────────────────────────────────────────── */
+  --nav-active-bg:          #EFF6FF;
+  --nav-active-color:       #1D4ED8;
+  --btn-secondary-bg:       #F1F5F9;
+  --btn-secondary-hover-bg: #E2E8F0;
+
+  /* ── Input Tokens ────────────────────────────────────────────────────── */
+  --input-bg:           #FFFFFF;
+  --input-bg-focus:     #FFFFFF;
+  --input-border:       #CBD5E1;
+  --input-border-hover: #94A3B8;
 }
 
 /* Responsive breakpoints reference:
-   - Mobile: < 640px
-   - Tablet: 640px - 1024px
+   - Mobile:  < 640px
+   - Tablet:  640px - 1024px
    - Desktop: > 1024px
 */

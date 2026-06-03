@@ -18,7 +18,7 @@
     justify-content: space-between;
     align-items: flex-start;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .tester-profile {
@@ -70,7 +70,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem;
-    background: var(--bg-offset);
+    background: var(--bg-secondary);
     border-radius: 8px;
     color: var(--primary-color);
     font-weight: 600;
@@ -79,7 +79,7 @@
 
 .verification-footer {
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-primary);
 }
 
 .credit-action-box {
@@ -121,8 +121,8 @@
     width: 100%;
     padding: 0.5rem 0.75rem;
     padding-left: 2rem;
-    background: var(--bg-offset);
-    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     color: var(--text-primary);
     font-weight: 700;

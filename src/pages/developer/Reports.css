@@ -16,7 +16,7 @@
 
 .secondary-btn {
     background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-primary);
     color: var(--text-primary);
 }
 
@@ -60,7 +60,7 @@
 
 .report-item {
     padding: 1rem;
-    background: var(--bg-offset);
+    background: var(--bg-secondary);
     border-radius: 8px;
     display: flex;
     justify-content: space-between;

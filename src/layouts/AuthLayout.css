@@ -2,9 +2,10 @@
     display: flex;
     width: 100%;
     min-height: 100vh;
-    background: transparent;
+    background: var(--bg-primary);
     position: relative;
     z-index: 10;
+    overflow: hidden;
 }
 
 @media (min-width: 1024px) {
@@ -20,6 +21,65 @@
     }
 }
 
+/* Floating interactive parallax glows */
+.auth-bg-glow-1,
+.auth-bg-glow-2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.14;
+    transition: transform 0.25s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.auth-bg-glow-1 {
+    width: 550px;
+    height: 550px;
+    background: var(--primary-light);
+    top: -10%;
+    left: -10%;
+    animation: authDrift 28s infinite alternate ease-in-out;
+    transform: translate(var(--move-x, 0px), var(--move-y, 0px));
+}
+
+.auth-bg-glow-2 {
+    width: 650px;
+    height: 650px;
+    background: #1e3a8a;
+    bottom: -10%;
+    right: -10%;
+    animation: authDrift 35s infinite alternate-reverse ease-in-out;
+    transform: translate(calc(var(--move-x, 0px) * -1), calc(var(--move-y, 0px) * -1));
+}
+
+@keyframes authDrift {
+    0% {
+        translate: 0 0;
+    }
+    50% {
+        translate: 80px 40px;
+    }
+    100% {
+        translate: -40px 100px;
+    }
+}
+
+/* Grid layout with mouse parallax */
+.auth-grid-overlay {
+    position: absolute;
+    inset: -40px;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.75;
+    transform: translate(calc(var(--move-x, 0px) * 0.5), calc(var(--move-y, 0px) * 0.5));
+    transition: transform 0.25s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
 /* Left Panel - Brand */
 .auth-brand-panel {
     flex: 1;
@@ -28,7 +88,9 @@
     justify-content: space-between;
     padding: var(--space-12);
     position: relative;
-    border-right: 1px solid var(--glass-border);
+    border-right: 1px solid var(--border);
+    background: transparent;
+    z-index: 10;
 }
 
 @media (min-width: 1024px) {
@@ -55,21 +117,17 @@
     width: 48px;
     height: 48px;
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
+    background: #2563EB;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: var(--shadow-glow);
 }
 
 .auth-logo-text {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
-    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #F8FAFC;
 }
 
 .auth-brand-hero {
@@ -93,10 +151,7 @@
 }
 
 .gradient-text {
-    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #3B82F6;
 }
 
 /* Right Panel - Form */
@@ -106,10 +161,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-6);
-    background: rgba(10, 15, 28, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: var(--shadow-2xl);
+    background: transparent;
     position: relative;
     z-index: 20;
     min-height: 100vh;
@@ -247,10 +299,9 @@
 }
 
 .role-tab input:checked+.role-tab-content {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(20, 184, 166, 0.2));
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(37, 99, 235, 0.20);
+    border: 1px solid rgba(37, 99, 235, 0.40);
     color: white;
-    box-shadow: var(--shadow-glow);
 }
 
 .role-tab-icon {

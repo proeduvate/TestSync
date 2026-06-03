@@ -49,7 +49,7 @@
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.30);
 }
 
 .landing-logo-text {
@@ -114,7 +114,7 @@
 
 .landing-btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
     color: white;
     background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
 }
@@ -238,7 +238,7 @@
 .glow-1 {
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.4), transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.30), transparent 70%);
     top: -10%;
     left: -5%;
     animation: floatGlow1 12s ease-in-out infinite alternate;
@@ -247,7 +247,7 @@
 .glow-2 {
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(20, 184, 166, 0.35), transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.35), transparent 70%);
     bottom: 0;
     right: -5%;
     animation: floatGlow2 14s ease-in-out infinite alternate;
@@ -256,7 +256,7 @@
 .glow-3 {
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.3), transparent 70%);
     top: 40%;
     left: 50%;
     transform: translateX(-50%);
@@ -291,8 +291,8 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-4);
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.25);
+    background: rgba(37, 99, 235, 0.12);
+    border: 1px solid rgba(37, 99, 235, 0.20);
     border-radius: var(--radius-full);
     color: var(--primary-300);
     font-size: var(--font-size-sm);
@@ -492,7 +492,7 @@
     width: 48px;
     height: 48px;
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(20, 184, 166, 0.15));
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(37, 99, 235, 0.15));
     color: var(--primary-400);
     display: flex;
     align-items: center;
@@ -542,8 +542,8 @@
     display: inline-flex;
     align-items: center;
     padding: var(--space-1) var(--space-4);
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(37, 99, 235, 0.10);
+    border: 1px solid rgba(37, 99, 235, 0.12);
     border-radius: var(--radius-full);
     color: var(--primary-400);
     font-size: var(--font-size-xs);
@@ -629,20 +629,30 @@
 }
 
 .landing-about-card {
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border-light);
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid #273244;
     border-radius: var(--radius-2xl);
     padding: var(--space-8);
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .landing-about-card:hover {
-    background: rgba(30, 41, 59, 0.45);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.landing-about-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .about-card-icon {
@@ -702,24 +712,35 @@
     position: relative;
     text-align: center;
     padding: var(--space-8) var(--space-4);
-    background: rgba(15, 23, 42, 0.3);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid #273244;
     border-radius: var(--radius-2xl);
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .landing-step-card:hover {
-    background: rgba(30, 41, 59, 0.4);
-    border-color: rgba(99, 102, 241, 0.3);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.landing-step-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .step-number {
     font-size: var(--font-size-5xl);
     font-weight: var(--font-weight-extrabold);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(20, 184, 166, 0.2));
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(37, 99, 235, 0.2));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -738,7 +759,7 @@
     justify-content: center;
     margin: 0 auto var(--space-4);
     font-size: var(--font-size-xl);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
 }
 
 .landing-step-card h3 {
@@ -768,19 +789,30 @@
 .landing-service-card {
     position: relative;
     padding: var(--space-8);
-    background: rgba(15, 23, 42, 0.35);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid #273244;
     border-radius: var(--radius-2xl);
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
 }
 
 .landing-service-card:hover {
-    background: rgba(30, 41, 59, 0.45);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.landing-service-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .service-icon {
@@ -830,18 +862,29 @@
 
 .landing-testimonial-card {
     padding: var(--space-8);
-    background: rgba(15, 23, 42, 0.35);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid #273244;
     border-radius: var(--radius-2xl);
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .landing-testimonial-card:hover {
-    background: rgba(30, 41, 59, 0.45);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-4px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.landing-testimonial-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .testimonial-stars {
@@ -913,23 +956,29 @@
     align-items: flex-start;
     gap: var(--space-4);
     padding: var(--space-5);
-    background: rgba(15, 23, 42, 0.35);
-    border: 1px solid var(--glass-border);
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid #273244;
     border-radius: var(--radius-xl);
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .contact-info-card:hover {
-    background: rgba(30, 41, 59, 0.4);
-    border-color: rgba(99, 102, 241, 0.25);
-    transform: translateX(4px);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateX(3px);
 }
 
 .contact-info-icon {
     width: 44px;
     height: 44px;
     border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(20, 184, 166, 0.15));
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(37, 99, 235, 0.15));
     color: var(--primary-400);
     display: flex;
     align-items: center;
@@ -992,7 +1041,7 @@
 .contact-form-group textarea:focus {
     outline: none;
     border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .contact-form-group input::placeholder,
@@ -1031,8 +1080,8 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse at 30% 50%, rgba(99, 102, 241, 0.25), transparent 60%),
-        radial-gradient(ellipse at 70% 50%, rgba(20, 184, 166, 0.2), transparent 60%);
+        radial-gradient(ellipse at 30% 50%, rgba(37, 99, 235, 0.20), transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(37, 99, 235, 0.2), transparent 60%);
     pointer-events: none;
 }
 

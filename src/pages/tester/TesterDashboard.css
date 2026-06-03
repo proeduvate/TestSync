@@ -55,7 +55,7 @@
 .task-credits {
     text-align: center;
     padding: var(--space-2) var(--space-4);
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(37, 99, 235, 0.10);
     border-radius: var(--radius-lg);
 }
 
@@ -92,16 +92,29 @@
 
 .available-task-card {
     padding: var(--space-4);
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-primary);
+    background: #111827;
+    border: 1px solid #273244;
     border-radius: var(--radius-xl);
-    transition: all var(--transition-fast);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .available-task-card:hover {
-    border-color: var(--primary-500);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+}
+
+.available-task-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .available-task-card .task-header {

@@ -51,29 +51,28 @@
 .btn-primary:focus,
 .btn-primary:disabled,
 .btn-primary:hover:disabled {
-    background: linear-gradient(135deg, #6366F1, #7C3AED) !important;
+    background: #2563EB !important;
     color: #FFFFFF !important;
-    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.35) !important;
+    box-shadow: none !important;
 }
 .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4F46E5, #6D28D9) !important;
-    box-shadow: 0 16px 40px rgba(124, 58, 237, 0.45) !important;
-    transform: translateY(-2px) !important;
+    background: #1D4ED8 !important;
+    transform: translateY(-1px) !important;
 }
-.btn-primary:active                { transform: translateY(1px) !important; }
+.btn-primary:active                { transform: translateY(0) !important; }
 
 .btn-secondary,
 .btn-secondary:active,
 .btn-secondary:focus,
 .btn-secondary:disabled {
-    background: rgba(99, 102, 241, 0.12) !important;
-    color: #A5B4FC !important;
-    border: 1px solid rgba(165, 180, 252, 0.25) !important;
+    background: #1F2937 !important;
+    color: #F8FAFC !important;
+    border: 1px solid #334155 !important;
 }
 .btn-secondary:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.20) !important;
+    background: #273244 !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(165, 180, 252, 0.45) !important;
+    border: 1px solid #475569 !important;
     transform: translateY(-1px) !important;
 }
 .btn-secondary:active                { transform: translateY(0) !important; }
@@ -83,11 +82,11 @@
 .btn-success:focus,
 .btn-success:disabled,
 .btn-success:hover:disabled {
-    background: linear-gradient(135deg, #059669, #10B981) !important;
+    background: #059669 !important;
     color: #FFFFFF !important;
 }
 .btn-success:hover:not(:disabled) {
-    background: linear-gradient(135deg, #10B981, #34D399) !important;
+    background: #047857 !important;
     transform: translateY(-1px) !important;
 }
 .btn-success:active                { transform: translateY(0) !important; }
@@ -131,28 +130,28 @@
 [data-theme="light"] .btn-primary:focus,
 [data-theme="light"] .btn-primary:disabled,
 [data-theme="light"] .btn-primary:hover:disabled {
-    background: linear-gradient(135deg, #4F46E5, #7C3AED) !important;
+    background: #2563EB !important;
     color: #FFFFFF !important;
-    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.28) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
 }
 [data-theme="light"] .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4338CA, #6D28D9) !important;
-    box-shadow: 0 14px 35px rgba(124, 58, 237, 0.35) !important;
-    transform: translateY(-2px) !important;
+    background: #1D4ED8 !important;
+    box-shadow: 0 6px 16px rgba(29, 78, 216, 0.30) !important;
+    transform: translateY(-1px) !important;
 }
 
 [data-theme="light"] .btn-secondary,
 [data-theme="light"] .btn-secondary:active,
 [data-theme="light"] .btn-secondary:focus,
 [data-theme="light"] .btn-secondary:disabled {
-    background: #EEF2FF !important;
-    color: #4F46E5 !important;
-    border: 1px solid #C7D2FE !important;
+    background: #F1F5F9 !important;
+    color: #1E293B !important;
+    border: 1px solid #CBD5E1 !important;
 }
 [data-theme="light"] .btn-secondary:hover:not(:disabled) {
-    background: #E0E7FF !important;
-    color: #3730A3 !important;
-    border: 1px solid #A5B4FC !important;
+    background: #E2E8F0 !important;
+    color: #0F172A !important;
+    border: 1px solid #94A3B8 !important;
     transform: translateY(-1px) !important;
 }
 
@@ -161,14 +160,13 @@
 [data-theme="light"] .btn-success:focus,
 [data-theme="light"] .btn-success:disabled,
 [data-theme="light"] .btn-success:hover:disabled {
-    background: #D1FAE5 !important;
-    color: #059669 !important;
-    border: 1px solid #A7F3D0 !important;
+    background: #059669 !important;
+    color: #FFFFFF !important;
+    border: none !important;
 }
 [data-theme="light"] .btn-success:hover:not(:disabled) {
-    background: #A7F3D0 !important;
-    color: #047857 !important;
-    border-color: #6EE7B7 !important;
+    background: #047857 !important;
+    color: #FFFFFF !important;
     transform: translateY(-1px) !important;
 }
 
@@ -239,7 +237,7 @@
     color: var(--text-secondary);
 }
 .btn-ghost:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: #1F2937;
     color: var(--text-primary);
 }
 

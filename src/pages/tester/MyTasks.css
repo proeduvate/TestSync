@@ -56,7 +56,7 @@
 .company-logo {
     width: 32px;
     height: 32px;
-    background: var(--bg-offset);
+    background: var(--bg-secondary);
     border-radius: 8px;
     display: flex;
     align-items: center;
