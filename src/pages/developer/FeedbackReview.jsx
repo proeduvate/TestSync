@@ -172,7 +172,12 @@ function FeedbackReview() {
                                         </div>
                                     </td>
                                     <td>
-                                        <div className="score-value">{feedback.creditScore}/100</div>
+                                        <div className="score-value">
+                                        {feedback.status === 'approved' || feedback.status === 'dev-approved'
+                                            ? <span style={{color:'var(--color-success)'}}>{feedback.creditScore} <small>credits</small></span>
+                                            : <span>{feedback.creditScore > 100 ? `${feedback.creditScore} credits` : `${feedback.creditScore}/100`}</span>
+                                        }
+                                    </div>
                                     </td>
                                     <td>
                                         <AIBadge status={feedback.aiVerification} />
@@ -308,8 +313,10 @@ function FeedbackReview() {
                                     <AIBadge status={selectedFeedback.aiVerification} />
                                 </div>
                                 <div className="analysis-item">
-                                    <span>Credit Score</span>
-                                    <strong>{selectedFeedback.creditScore}/100</strong>
+                                    <span>Credits Earned</span>
+                                    <strong style={{color: selectedFeedback.creditScore > 0 ? 'var(--color-success)' : 'inherit'}}>
+                                        {selectedFeedback.creditScore > 0 ? `${selectedFeedback.creditScore} credits` : '0 (not released)'}
+                                    </strong>
                                 </div>
                             </div>
                         </div>

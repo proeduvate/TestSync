@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { BsCurrencyRupee } from 'react-icons/bs';
 import { useState, useEffect } from 'react';
 import { tasksAPI } from '../../services/api';
@@ -25,15 +26,14 @@ const testingLevels = [
 ];
 
 function AdminTasks() {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showDropdown, setShowDropdown] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
-    const [viewingTask, setViewingTask] = useState(null);
     const [editFormData, setEditFormData] = useState({
         appName: '',
         appUrl: '',
@@ -89,9 +89,7 @@ function AdminTasks() {
     };
 
     const handleViewClick = (task) => {
-        setViewingTask(task);
-        setIsViewModalOpen(true);
-        setShowDropdown(null);
+        navigate(`/admin/tasks/${task._id || task.id}`);
     };
 
     const handleEditClick = (task) => {
@@ -413,102 +411,6 @@ function AdminTasks() {
                 )}
             </Modal>
 
-            {/* View Task Modal */}
-            <Modal
-                isOpen={isViewModalOpen}
-                onClose={() => setIsViewModalOpen(false)}
-                title="Task Details"
-                size="lg"
-                footer={
-                    <div className="modal-footer-btns">
-                        <Button variant="secondary" onClick={() => setIsViewModalOpen(false)}>Close</Button>
-                        <Button variant="primary" onClick={() => {
-                            handleEditClick(viewingTask);
-                            setIsViewModalOpen(false);
-                        }}>Edit Task</Button>
-                    </div>
-                }
-            >
-                {viewingTask && (
-                    <div className="task-view-details">
-                        <div className="view-section">
-                            <div className="view-section-header">
-                                <h4 className="section-title">Application Information</h4>
-                                {getStatusBadge(viewingTask.status)}
-                            </div>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span className="detail-label">App Name</span>
-                                    <span className="detail-value">{viewingTask.appName}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">App URL</span>
-                                    <a 
-                                        href={viewingTask.appUrl} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        className="detail-value link"
-                                    >
-                                        {viewingTask.appUrl} <FiExternalLink size={12} />
-                                    </a>
-                                </div>
-                                <div className="detail-item full-width">
-                                    <span className="detail-label">Description</span>
-                                    <p className="detail-value description">{viewingTask.description || 'No description provided.'}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="view-section">
-                            <h4 className="section-title">Developer Details</h4>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span className="detail-label">Developer/Owner</span>
-                                    <span className="detail-value">{viewingTask.developerName || viewingTask.developer?.name || 'System'}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Company/Group</span>
-                                    <span className="detail-value">{viewingTask.developerCompany || viewingTask.developer?.company || 'Internal'}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Contact Email</span>
-                                    <span className="detail-value">{viewingTask.developer?.email || 'admin@proeduvate.com'}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="view-section">
-                            <h4 className="section-title">Testing & Financials</h4>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span className="detail-label">Level</span>
-                                    <span className="detail-value capitalize">{viewingTask.testingLevel}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Budget</span>
-                                    <span className="detail-value">{formatCurrency(viewingTask.budget)}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Testers Joined</span>
-                                    <span className="detail-value">{viewingTask.testersAssigned} / {viewingTask.requiredTesters || 1}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Created At</span>
-                                    <span className="detail-value">{formatDate(viewingTask.createdAt)}</span>
-                                </div>
-                                <div className="detail-item full-width">
-                                    <span className="detail-label">Test Types Requsted</span>
-                                    <div className="detail-badges">
-                                        {(viewingTask.testTypes || []).map(type => (
-                                            <span key={type} className="mini-badge">{type}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </Modal>
         </div>
     );
 }

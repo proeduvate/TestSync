@@ -1,20 +1,68 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { feedbackAPI } from '../../services/api';
+import { feedbackAPI, aiVerificationAPI } from '../../services/api';
 import Badge, { AIBadge } from '../../components/common/Badge';
-import { FiClock, FiCheckCircle, FiXCircle, FiInfo } from 'react-icons/fi';
+import { FiClock, FiCheckCircle, FiXCircle, FiInfo, FiZap, FiShield } from 'react-icons/fi';
 import './Status.css';
 
+// ── AI Summary badge inline ────────────────────────────────────────────────
+function AIStatusBanner({ log }) {
+    if (!log) return null;
+
+    const conf = log.vision_confidence ?? 0;
+    const confPct = Math.round(conf * 100);
+    const isDup = log.image_duplicate || log.text_duplicate;
+
+    const color =
+        log.final_status === 'approved' ? '#22c55e' :
+        log.final_status === 'partial'  ? '#f59e0b' :
+        log.final_status === 'rejected' ? '#ef4444' : '#6366f1';
+
+    return (
+        <div className="ai-status-banner" style={{ borderColor: color }}>
+            <FiShield size={14} style={{ color }} />
+            <div className="ai-status-content">
+                <span className="ai-status-title" style={{ color }}>
+                    🤖 AI Verification — {log.credit_status?.toUpperCase() ?? 'PENDING'}
+                </span>
+                <span className="ai-status-desc">
+                    Confidence: <strong>{confPct}%</strong> ·{' '}
+                    {isDup
+                        ? '⚠️ Duplicate detected'
+                        : log.vision_is_valid
+                            ? '✅ Proof valid'
+                            : '❌ Proof invalid'
+                    } · Recommended: <strong>{log.recommended_credits ?? 0} credits</strong>
+                </span>
+                <span className="ai-status-reason">{log.credit_reason}</span>
+            </div>
+        </div>
+    );
+}
+
 function Status() {
-    const { user } = useAuth();
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [aiLogs, setAiLogs] = useState({});
 
     useEffect(() => {
         async function fetchSubmissions() {
             try {
                 const res = await feedbackAPI.list();
-                setSubmissions(res.feedback || []);
+                const items = res.feedback || [];
+                setSubmissions(items);
+
+                // Load AI logs for each submission (non-blocking)
+                items.forEach(async (sub) => {
+                    const id = sub._id || sub.id;
+                    try {
+                        const logRes = await aiVerificationAPI.getLog(id);
+                        if (logRes.log) {
+                            setAiLogs(prev => ({ ...prev, [id]: logRes.log }));
+                        }
+                    } catch {
+                        // ignore missing logs
+                    }
+                });
             } catch (err) {
                 console.error('Failed to load submissions:', err);
             } finally {
@@ -26,17 +74,17 @@ function Status() {
 
     const getStatusConfig = (status) => {
         switch (status) {
-            case 'approved': 
+            case 'approved':
                 return { label: 'Completed & Released', variant: 'success', icon: <FiCheckCircle className="status-icon success" /> };
-            case 'dev-approved': 
+            case 'dev-approved':
                 return { label: 'Waiting for Admin', variant: 'info', icon: <FiClock className="status-icon info" /> };
-            case 'pending': 
-                return { label: 'Waiting for Developer', variant: 'warning', icon: <FiClock className="status-icon warning" /> };
-            case 'needs-revision': 
+            case 'pending':
+                return { label: 'Under AI Review', variant: 'warning', icon: <FiZap className="status-icon warning" /> };
+            case 'needs-revision':
                 return { label: 'Revision Requested', variant: 'danger', icon: <FiInfo className="status-icon danger" /> };
-            case 'rejected': 
+            case 'rejected':
                 return { label: 'Rejected', variant: 'danger', icon: <FiXCircle className="status-icon danger" /> };
-            default: 
+            default:
                 return { label: status, variant: 'secondary', icon: <FiClock className="status-icon" /> };
         }
     };
@@ -46,68 +94,91 @@ function Status() {
             <div className="page-header">
                 <div>
                     <h1 className="page-title">Submission Tracking</h1>
-                    <p className="page-subtitle">Monitoring the verification pipeline for your testing reports.</p>
+                    <p className="page-subtitle">
+                        Monitor the AI verification pipeline for your testing proofs.
+                    </p>
                 </div>
             </div>
 
             <div className="status-list">
-                {submissions.map(sub => {
-                    const config = getStatusConfig(sub.status);
-                    return (
-                        <div key={sub._id || sub.id} className="card status-card">
-                            <div className="status-card-main">
-                                <div className="status-header">
-                                    {config.icon}
-                                    <div className="status-info">
-                                        <h3>{sub.taskName}</h3>
-                                        <p className="submission-date">Submitted on {new Date(sub.submittedAt).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-                                <div className="status-badges">
-                                    <AIBadge status={sub.aiVerification} />
-                                    <Badge variant={config.variant}>
-                                        {config.label}
-                                    </Badge>
-                                </div>
-                            </div>
-                            <div className="status-details">
-                                <div className="detail-grid-row">
-                                    <div className="detail-item">
-                                        <span className="detail-label">Observations</span>
-                                        <p className="detail-value">{sub.observations}</p>
-                                    </div>
-                                    <div className="status-timeline">
-                                        <div className={`timeline-step ${['pending', 'dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status !== 'pending' ? 'completed' : ''}`}>
-                                            <div className="step-dot"></div>
-                                            <span>Developer Review</span>
-                                        </div>
-                                        <div className={`timeline-step ${['dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status === 'approved' ? 'completed' : ''}`}>
-                                            <div className="step-dot"></div>
-                                            <span>Admin Approval</span>
-                                        </div>
-                                        <div className={`timeline-step ${sub.status === 'approved' ? 'active completed' : ''}`}>
-                                            <div className="step-dot"></div>
-                                            <span>Payment Released</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {sub.creditScore && (
-                                    <div className="detail-item">
-                                        <span className="detail-label">AI Analysis Progress</span>
-                                        <div className="score-bar-container">
-                                            <div className="score-bar">
-                                                <div className="score-fill" style={{ width: `${sub.creditScore}%` }}></div>
-                                            </div>
-                                            <span>{sub.creditScore}% Quality Score</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
+                {loading ? (
+                    <div className="status-empty">
+                        <FiZap size={32} className="spin-icon" />
+                        <p>Loading submissions…</p>
+                    </div>
+                ) : submissions.length === 0 ? (
+                    <div className="status-empty">
+                        <FiCheckCircle size={40} />
+                        <p>No submissions yet. Accept a task and submit your proof!</p>
+                    </div>
+                ) : (
+                    submissions.map(sub => {
+                        const id = sub._id || sub.id;
+                        const config = getStatusConfig(sub.status);
+                        const log = aiLogs[id];
 
+                        return (
+                            <div key={id} className="card status-card">
+                                <div className="status-card-main">
+                                    <div className="status-header">
+                                        {config.icon}
+                                        <div className="status-info">
+                                            <h3>{sub.taskName}</h3>
+                                            <p className="submission-date">
+                                                Submitted on {new Date(sub.submittedAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="status-badges">
+                                        <AIBadge status={sub.aiVerification} />
+                                        <Badge variant={config.variant}>{config.label}</Badge>
+                                    </div>
+                                </div>
+
+                                {/* AI Verification Banner */}
+                                {log && <AIStatusBanner log={log} />}
+
+                                <div className="status-details">
+                                    <div className="detail-grid-row">
+                                        <div className="detail-item">
+                                            <span className="detail-label">Observations</span>
+                                            <p className="detail-value">{sub.observations}</p>
+                                        </div>
+                                        <div className="status-timeline">
+                                            <div className={`timeline-step ${['pending', 'dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status !== 'pending' ? 'completed' : ''}`}>
+                                                <div className="step-dot"></div>
+                                                <span>AI Verification</span>
+                                            </div>
+                                            <div className={`timeline-step ${['dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status === 'approved' ? 'completed' : ''}`}>
+                                                <div className="step-dot"></div>
+                                                <span>Developer Review</span>
+                                            </div>
+                                            <div className={`timeline-step ${sub.status === 'approved' ? 'active completed' : ''}`}>
+                                                <div className="step-dot"></div>
+                                                <span>Credits Released</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {sub.creditScore > 0 && (
+                                        <div className="detail-item">
+                                            <span className="detail-label">AI Confidence Score</span>
+                                            <div className="score-bar-container">
+                                                <div className="score-bar">
+                                                    <div
+                                                        className="score-fill"
+                                                        style={{ width: `${sub.creditScore}%` }}
+                                                    />
+                                                </div>
+                                                <span>{Math.round(sub.creditScore)}%</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
             </div>
         </div>
     );

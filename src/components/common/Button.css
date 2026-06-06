@@ -219,16 +219,20 @@
 }
 
 .btn-warning,
-.btn-warning:hover,
 .btn-warning:active,
 .btn-warning:focus,
 .btn-warning:disabled,
 .btn-warning:hover:disabled {
-    background: #f59e0b !important;
-    color: white !important;
+    background: rgba(245, 158, 11, 0.16) !important;
+    color: #FBBF24 !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
 }
-.btn-warning:hover:not(:disabled) { transform: translateY(-1px); }
-.btn-warning:active                { transform: translateY(0); }
+.btn-warning:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.26) !important;
+    border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
+.btn-warning:active                { transform: translateY(0) !important; }
 
 .btn-ghost,
 .btn-ghost:active,

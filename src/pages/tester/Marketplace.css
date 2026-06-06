@@ -159,19 +159,15 @@
 }
 
 .task-card:hover {
-    background: linear-gradient(
-        180deg,
-        rgba(22, 27, 34, 0.98) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
-    border-color: #334155;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    background: var(--bg-card-hover);
+    border-color: var(--border-secondary);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
 .task-card:active {
-    background: #0F172A;
-    border-color: rgba(37, 99, 235, 0.55);
+    background: var(--bg-hover);
+    border-color: var(--primary-500);
     box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
     transform: translateY(0);
 }
@@ -227,6 +223,7 @@
     margin-bottom: var(--space-4);
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -255,21 +252,6 @@
     margin-top: var(--space-4);
 }
 
-.task-credits {
-    display: flex;
-    flex-direction: column;
-}
-
-.credits-amount {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--success-500);
-}
-
-.credits-text {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-}
 
 /* Empty Results */
 .marketplace-page .empty-results {

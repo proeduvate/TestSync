@@ -168,4 +168,76 @@
     .detail-grid-row {
         grid-template-columns: 1fr;
     }
-}
+}
+
+/* ─── AI Status Banner ────────────────────────────────────────────────── */
+.ai-status-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.85rem 1.25rem;
+    border-left: 3px solid #6366f1;
+    background: rgba(99, 102, 241, 0.06);
+    margin: 0 1.5rem;
+    border-radius: 0 10px 10px 0;
+    animation: fadeSlideIn 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.ai-status-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.ai-status-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.ai-status-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.ai-status-reason {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ─── Score Bar Container ─────────────────────────────────────────────── */
+.score-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ─── Empty State ─────────────────────────────────────────────────────── */
+.status-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.spin-icon {
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+

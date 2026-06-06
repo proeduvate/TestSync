@@ -200,9 +200,21 @@
     transform: translateY(-1px);
 }
 
+.btn-warning {
+    background: rgba(245, 158, 11, 0.16);
+    color: #FBBF24;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.btn-warning:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.26);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    transform: translateY(-1px);
+}
+
 .btn-danger {
     background: rgba(239, 68, 68, 0.16);
-    color: var(--error-400);
+    color: #F87171;
     border: 1px solid rgba(248, 113, 113, 0.22);
 }
 
@@ -1257,4 +1269,41 @@
 
 [data-theme="light"] .table tbody tr:hover {
     background: #F8FAFC;
+}
+
+/* ============ Credits Box ============ */
+.task-credits {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    border-radius: 12px;
+    padding: var(--space-2) var(--space-4);
+    min-width: 120px;
+    height: 52px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+[data-theme="light"] .task-credits {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.15);
+}
+
+.credits-amount {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--success-500);
+    line-height: 1.2;
+}
+
+.credits-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
 }

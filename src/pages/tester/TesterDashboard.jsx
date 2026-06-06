@@ -169,8 +169,8 @@ function TesterDashboard() {
                                                 <Badge variant={deadline.color} size="sm">{deadline.label}</Badge>
                                             </div>
                                             <div className="task-credits">
-                                                <span className="credits-value">{formatCredits(task.credits || task.budget || 0)}</span>
-                                                <span className="credits-label">Credits</span>
+                                                <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
+                                                <span className="credits-text">Credits</span>
                                             </div>
                                             <div className="task-action">
                                                 <Link to={`/tester/submit/${task._id || task.id}`}>
@@ -239,9 +239,9 @@ function TesterDashboard() {
                                         )}
                                     </div>
                                     <div className="task-footer">
-                                        <div className="task-reward">
-                                            <span className="reward-value">{formatCredits(task.credits || task.budget || 0)}</span>
-                                            <span className="reward-label">Credits</span>
+                                        <div className="task-credits">
+                                            <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
+                                            <span className="credits-text">Credits</span>
                                         </div>
                                         <Link to={`/tester/task/${task._id || task.id}`}>
                                             <Button variant="ghost" size="sm">View Details</Button>
