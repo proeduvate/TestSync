@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import supabase from '../lib/supabase';
 import { notificationsAPI } from '../services/api';
+import { notificationService } from '../services/notificationService';
 
 const AuthContext = createContext(null);
 
@@ -163,6 +164,22 @@ export function AuthProvider({ children }) {
                 throw new Error('Your account has been suspended. Please contact support.');
             }
 
+            // Detect and handle first-time login
+            const isFirstLogin = profile.created_at === profile.updated_at && !localStorage.getItem(`first_login_notified_${profile.id}`);
+            if (isFirstLogin) {
+                localStorage.setItem(`first_login_notified_${profile.id}`, 'true');
+                try {
+                    notificationService.sendLoginAlertEmailToAdmin(profile.name || profile.email, profile.role);
+                    await supabase
+                        .from('profiles')
+                        .update({ updated_at: new Date().toISOString() })
+                        .eq('id', profile.id);
+                    profile.updated_at = new Date().toISOString();
+                } catch (firstLoginErr) {
+                    console.error('[AuthContext] First login notification/update failed:', firstLoginErr);
+                }
+            }
+
             // We allow login for 'pending' status users so they can see the Pending Approval page
             // The redirection logic will be handled in Login.jsx or DashboardLayout.jsx
 
@@ -220,6 +237,12 @@ export function AuthProvider({ children }) {
             // If confirmation is required, the user will be created but not have a session necessarily
             // We check if a session was returned
             if (!data.session) {
+                try {
+                    await notificationService.sendWelcomeEmail(userData.email, userData.name, userData.role || 'tester');
+                    await notificationService.sendNewUserRegistrationAlertToAdmin(userData.name, userData.role || 'tester');
+                } catch (emailErr) {
+                    console.error('[AuthContext] Email notifications failed on signup:', emailErr);
+                }
                 return { needsVerification: true };
             }
 
@@ -246,6 +269,14 @@ export function AuthProvider({ children }) {
                     });
                 } catch (nError) {
                     console.error('Failed to notify admins of new user signup:', nError);
+                }
+
+                // Send welcome and admin alert email notifications
+                try {
+                    await notificationService.sendWelcomeEmail(userData.email, userData.name, userData.role || 'tester');
+                    await notificationService.sendNewUserRegistrationAlertToAdmin(userData.name, userData.role || 'tester');
+                } catch (emailErr) {
+                    console.error('[AuthContext] Email notifications failed on signup:', emailErr);
                 }
 
                 setUser(profile);

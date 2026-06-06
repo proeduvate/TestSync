@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { usersAPI, notificationsAPI } from '../../services/api';
+import { notificationService } from '../../services/notificationService';
 import { formatDate } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
@@ -62,6 +63,13 @@ function UserRequestDetails() {
                 link: `/${user.role}/dashboard`
             });
 
+            // Send approval email notification
+            try {
+                await notificationService.sendAccountApprovedEmail(user.email, user.name, user.role);
+            } catch (emailErr) {
+                console.error('[UserRequestDetails] Failed to send approval email:', emailErr);
+            }
+
             toast.success(
                 'User Approved',
                 `An enrollment email has been sent to ${user.email}.`
@@ -85,6 +93,13 @@ function UserRequestDetails() {
                 message: 'Thank you for your interest in ProEduvate. Unfortunately, your application could not be approved at this time.',
                 type: 'warning'
             });
+
+            // Send rejection email notification
+            try {
+                await notificationService.sendAccountRejectedEmail(user.email, user.name, 'Unfortunately, your application could not be approved at this time.');
+            } catch (emailErr) {
+                console.error('[UserRequestDetails] Failed to send rejection email:', emailErr);
+            }
 
             toast.error('Application Rejected', `The request from ${user.name} has been declined.`);
             navigate('/admin/requests');

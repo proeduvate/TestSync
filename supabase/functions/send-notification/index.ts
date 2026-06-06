@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 
-const RESEND_API_KEY = "re_MeqRTT3U_KLQ8T8LTxpbkvNZDHQPkJphe"
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || "re_MeqRTT3U_KLQ8T8LTxpbkvNZDHQPkJphe"
+const SENDER_EMAIL = Deno.env.get('SENDER_EMAIL') || "ProEduvate <onboarding@resend.dev>"
 
 serve(async (req) => {
   try {
@@ -27,6 +28,11 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'User email not found' }), { status: 400 })
     }
 
+    if (!RESEND_API_KEY) {
+      console.error('Missing Resend API Key')
+      return new Response(JSON.stringify({ error: 'Missing Resend API Key' }), { status: 500 })
+    }
+
     // 2. Send email via Resend
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -35,7 +41,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'ProEduvate <onboarding@resend.dev>', // Using Resend's default sender for sandbox/new accounts
+        from: SENDER_EMAIL, // Configured via Deno.env or fallback to Resend sandbox sender
         to: profile.email,
         subject: `New Notification: ${record.title}`,
         html: `

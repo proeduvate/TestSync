@@ -15,6 +15,7 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import AuthCallback from './pages/auth/AuthCallback';
 import PendingApproval from './pages/auth/PendingApproval';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 // Developer Pages
 import DeveloperDashboard from './pages/developer/DeveloperDashboard';
@@ -54,6 +55,7 @@ function App() {
                         <Route element={<AuthLayout />}>
                             <Route path="/login" element={<Login />} />
                             <Route path="/signup" element={<Signup />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/auth/callback" element={<AuthCallback />} />
                             <Route path="/pending-approval" element={<PendingApproval />} />
                         </Route>
