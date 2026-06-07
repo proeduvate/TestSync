@@ -22,13 +22,25 @@ function AuthLayout() {
         };
     }, []);
 
+    const handleMouseMove = (e) => {
+        const { clientX, clientY } = e;
+        const xOffset = (clientX - window.innerWidth / 2) * 0.015;
+        const yOffset = (clientY - window.innerHeight / 2) * 0.015;
+        e.currentTarget.style.setProperty('--move-x', `${xOffset}px`);
+        e.currentTarget.style.setProperty('--move-y', `${yOffset}px`);
+    };
+
     if (isLoading) {
         console.debug('[AuthLayout] Rendering loader (isLoading=true)');
         return <Loader fullScreen text="Loading..." />;
     }
 
     return (
-        <div className="auth-split-layout">
+        <div className="auth-split-layout" onMouseMove={handleMouseMove}>
+            <div className="auth-bg-glow-1"></div>
+            <div className="auth-bg-glow-2"></div>
+            <div className="auth-grid-overlay"></div>
+            
             <div className="auth-brand-panel">
                 <div className="auth-brand-content">
                     <Link to="/" className="auth-logo" style={{ marginBottom: 'var(--space-8)' }}>

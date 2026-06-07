@@ -38,23 +38,34 @@
 }
 
 .request-card {
-    background: var(--bg-card);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: #111827;
+    border: 1px solid #273244;
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     cursor: pointer;
-    transition: all var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
 }
 
 .request-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--primary-500);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-    background: var(--bg-card-hover);
+    background: linear-gradient(
+        180deg,
+        rgba(22, 27, 34, 0.98) 0%,
+        rgba(17, 24, 39, 0.98) 100%
+    );
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.request-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .request-card-header {

@@ -210,10 +210,7 @@ function UserManagement() {
                     <span className="stat-value">{users.filter(u => u.role === 'tester').length}</span>
                     <span className="stat-label">Testers</span>
                 </div>
-                <div className="stat-item">
-                    <span className="stat-value">{users.filter(u => u.status === 'active').length}</span>
-                    <span className="stat-label">Active</span>
-                </div>
+
             </div>
 
             {/* Users Table */}

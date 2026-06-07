@@ -95,9 +95,9 @@ export const tasksAPI = {
             const dev = task.profiles || {};
             const assignedTesters = (testerData || []).filter(tt => tt.task_id === task.id).map(tt => {
                 if (userRole === 'developer') {
-                    return { ...tt.profiles, name: `Tester-${tt.tester_id.substring(0, 8)}`, email: 'Hidden' };
+                    return { ...tt.profiles, id: tt.tester_id, name: `Tester-${tt.tester_id.substring(0, 8)}`, email: 'Hidden' };
                 }
-                return tt.profiles;
+                return { ...tt.profiles, id: tt.tester_id };
             });
             return {
                 _id: task.id,
@@ -282,9 +282,9 @@ export const tasksAPI = {
         const dev = data.profiles || {};
         const assignedTesters = (testerData || []).map(tt => {
             if (userRole === 'developer') {
-                return { ...tt.profiles, name: `Tester-${tt.tester_id.substring(0, 8)}`, email: 'Hidden' };
+                return { ...tt.profiles, id: tt.tester_id, name: `Tester-${tt.tester_id.substring(0, 8)}`, email: 'Hidden' };
             }
-            return tt.profiles;
+            return { ...tt.profiles, id: tt.tester_id };
         });
 
         return {
@@ -779,9 +779,9 @@ export const feedbackAPI = {
             proof_url: feedbackData.proofUrl || '',
             test_result: feedbackData.testResult || 'pass',
             tester_name: profile?.name || 'A tester',
-            ai_verification: 'pending',
-            status: 'pending', // Reset status to pending on (re)submission
-            credit_score: feedbackData.testResult === 'pass' ? 95 : (Math.floor(Math.random() * 40) + 60),
+            ai_verification: 'pending', // Will be updated by Edge Function
+            status: 'pending',
+            credit_score: 0, // Will be set by AI pipeline
         };
 
         let result;
@@ -836,6 +836,26 @@ export const feedbackAPI = {
         } catch (notifyError) {
             console.warn('Notification failed (non-blocking):', notifyError.message);
         }
+
+        // ── Trigger AI Verification Pipeline (non-blocking) ──────────────────
+        // Fetch task details for credit amount
+        const { data: taskForCredits } = await supabase
+            .from('tasks')
+            .select('credits, budget, description')
+            .eq('id', taskId)
+            .single();
+
+        // Fire-and-forget: call the verify-proof edge function
+        aiVerificationAPI.triggerPipeline({
+            feedbackId:      result.id,
+            testerId:        user.id,
+            taskId:          taskId,
+            proofUrl:        feedbackData.proofUrl || '',
+            proofType:       feedbackData.proofType || 'screenshot',
+            observations:    feedbackData.observations || '',
+            taskDescription: taskForCredits?.description || task?.app_name || 'Software testing task',
+            maxCredits:      taskForCredits?.credits || taskForCredits?.budget || 100,
+        }).catch(err => console.warn('AI pipeline trigger failed (non-blocking):', err.message));
 
         return { feedback: result };
     },
@@ -980,6 +1000,130 @@ export const feedbackAPI = {
         }
 
         return { feedback: data };
+    },
+};
+
+// ============ AI Verification API ============
+export const aiVerificationAPI = {
+    /**
+     * Triggers the full AI verification pipeline via Supabase Edge Function.
+     * Stages: Vision LLM → Image Duplicate (pHash proxy) → Text Duplicate (Embeddings) → Credit Rule Engine
+     * This is designed to be called fire-and-forget — it updates the feedback record directly in DB.
+     */
+    triggerPipeline: async ({
+        feedbackId,
+        testerId,
+        taskId,
+        proofUrl,
+        proofType,
+        observations,
+        taskDescription,
+        maxCredits,
+    }) => {
+        const { data, error } = await supabase.functions.invoke('verify-proof', {
+            body: {
+                feedback_id:      feedbackId,
+                tester_id:        testerId,
+                task_id:          taskId,
+                proof_url:        proofUrl,
+                proof_type:       proofType,
+                observations:     observations,
+                task_description: taskDescription,
+                max_credits:      maxCredits,
+            },
+        });
+
+        if (error) throw new Error(error.message || 'AI pipeline invocation failed');
+        return data;
+    },
+
+    /**
+     * Fetches the full AI audit log for a specific feedback submission.
+     * Used by the admin Verification page and tester Status page.
+     */
+    getLog: async (feedbackId) => {
+        const { data, error } = await supabase
+            .from('ai_verification_log')
+            .select('*')
+            .eq('feedback_id', feedbackId)
+            .maybeSingle();
+
+        if (error) throw new Error(error.message);
+        return { log: data };
+    },
+
+    /**
+     * Lists all AI verification logs. Admin only.
+     */
+    listLogs: async (params = {}) => {
+        let query = supabase
+            .from('ai_verification_log')
+            .select('*')
+            .order('pipeline_ran_at', { ascending: false });
+
+        if (params.status) query = query.eq('final_status', params.status);
+        if (params.limit)  query = query.limit(params.limit);
+
+        const { data, error } = await query;
+        if (error) throw new Error(error.message);
+
+        return {
+            logs: (data || []).map(log => ({
+                id:                  log.id,
+                feedbackId:          log.feedback_id,
+                testerId:            log.tester_id,
+                taskId:              log.task_id,
+                // Vision
+                isValid:             log.vision_is_valid,
+                confidence:          log.vision_confidence,
+                detectedText:        log.vision_detected_text,
+                visionReason:        log.vision_reason,
+                // Duplicates
+                imageDuplicate:      log.image_duplicate,
+                imageSimilarity:     log.image_similarity_score,
+                textDuplicate:       log.text_duplicate,
+                textSimilarity:      log.text_similarity_score,
+                // Credits
+                recommendedCredits:  log.recommended_credits,
+                creditStatus:        log.credit_status,
+                creditReason:        log.credit_reason,
+                // Final
+                finalStatus:         log.final_status,
+                pipelineRanAt:       log.pipeline_ran_at,
+            })),
+        };
+    },
+
+    /**
+     * Manually re-triggers the AI pipeline for a given feedback item.
+     * Useful if the initial run failed or the tester resubmitted proof.
+     */
+    retrigger: async (feedbackId) => {
+        const { data: fb, error } = await supabase
+            .from('feedback')
+            .select('id, tester_id, task_id, proof_url, proof_type, observations, task_name')
+            .eq('id', feedbackId)
+            .single();
+
+        if (error) throw new Error(error.message);
+        if (!fb) throw new Error('Feedback not found');
+
+        const { data: task } = await supabase
+            .from('tasks')
+            .select('credits, budget, description')
+            .eq('id', fb.task_id)
+            .single();
+
+        return aiVerificationAPI.triggerPipeline({
+            feedbackId:      fb.id,
+            testerId:        fb.tester_id,
+            taskId:          fb.task_id,
+            proofUrl:        fb.proof_url || '',
+            proofType:       fb.proof_type || 'screenshot',
+            observations:    fb.observations || '',
+            taskDescription: task?.description || fb.task_name || 'Software testing task',
+            maxCredits:      task?.credits || task?.budget || 100,
+        });
     },
 };
 
@@ -1620,4 +1764,5 @@ export default {
     notifications: notificationsAPI,
     support: supportAPI,
     profiles: profilesAPI,
+    aiVerification: aiVerificationAPI,
 };

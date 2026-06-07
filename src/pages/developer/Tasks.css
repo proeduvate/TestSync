@@ -13,7 +13,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-primary);
     gap: 1.5rem;
 }
 
@@ -34,7 +34,7 @@
 .tasks-page .search-box input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     background: var(--bg-secondary);
     color: var(--text-primary);
@@ -44,7 +44,7 @@
 
 .tasks-page .search-box input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
 }
 
 .filter-group {
@@ -57,7 +57,7 @@
 
 .filter-group select {
     padding: 0.6rem 1rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     background: var(--bg-secondary);
     color: var(--text-primary);
@@ -76,7 +76,7 @@
 
 .tasks-table th {
     padding: 1.25rem 1.5rem;
-    background: var(--bg-offset);
+    background: var(--bg-secondary);
     color: var(--text-secondary);
     font-weight: 600;
     font-size: 0.875rem;
@@ -86,7 +86,7 @@
 
 .tasks-table td {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-primary);
     vertical-align: middle;
 }
 
@@ -176,7 +176,7 @@
     right: 0;
     min-width: 160px;
     background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     box-shadow: var(--shadow-xl);
     z-index: 100;
@@ -227,7 +227,7 @@
 
 .view-section {
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .view-section:last-child {
@@ -302,8 +302,8 @@
 
 .mini-badge {
     padding: 2px 8px;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(37, 99, 235, 0.10);
+    border: 1px solid rgba(37, 99, 235, 0.12);
     border-radius: 99px;
     font-size: 10px;
     color: var(--primary-color);

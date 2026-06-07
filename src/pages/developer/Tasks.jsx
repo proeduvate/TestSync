@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/common/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { tasksAPI } from '../../services/api';
@@ -12,14 +12,13 @@ import { FiPlus, FiSearch, FiFilter, FiMoreVertical, FiEye, FiExternalLink, FiMe
 import './Tasks.css';
 
 function Tasks() {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('active');
     const [showDropdown, setShowDropdown] = useState(null);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [viewingTask, setViewingTask] = useState(null);
     const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
     const [extendingTask, setExtendingTask] = useState(null);
     const [newDeadline, setNewDeadline] = useState('');
@@ -207,10 +206,7 @@ function Tasks() {
                                                 <button 
                                                     className="icon-btn" 
                                                     title="View Details"
-                                                    onClick={() => {
-                                                        setViewingTask(task);
-                                                        setIsViewModalOpen(true);
-                                                    }}
+                                                    onClick={() => navigate(`/developer/tasks/${task._id || task.id}`)}
                                                 >
                                                     <FiEye />
                                                 </button>
@@ -227,11 +223,7 @@ function Tasks() {
                                                     </button>
                                                     {showDropdown === (task._id || task.id) && (
                                                         <div className="actions-dropdown">
-                                                            <button onClick={() => {
-                                                                setViewingTask(task);
-                                                                setIsViewModalOpen(true);
-                                                                setShowDropdown(null);
-                                                            }}>
+                                                            <button onClick={() => navigate(`/developer/tasks/${task._id || task.id}`)}>
                                                                 <FiEye size={14} /> View Details
                                                             </button>
                                                             <Link to={`/developer/feedback?taskId=${task._id || task.id}`} style={{ textDecoration: 'none' }}>
@@ -273,71 +265,7 @@ function Tasks() {
                 </div>
             </div>
 
-            {/* View Task Modal */}
-            <Modal
-                isOpen={isViewModalOpen}
-                onClose={() => setIsViewModalOpen(false)}
-                title="Task Details"
-                size="lg"
-            >
-                {viewingTask && (
-                    <div className="task-view-details">
-                        <div className="view-section">
-                            <div className="view-section-header">
-                                <h4 className="section-title">Application Information</h4>
-                                {getStatusBadge(viewingTask.status)}
-                            </div>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span className="detail-label">App Name</span>
-                                    <span className="detail-value">{viewingTask.appName}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">App URL</span>
-                                    <a 
-                                        href={viewingTask.appUrl} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        className="detail-value link"
-                                    >
-                                        {viewingTask.appUrl} <FiExternalLink size={12} />
-                                    </a>
-                                </div>
-                                <div className="detail-item full-width">
-                                    <span className="detail-label">Description</span>
-                                    <p className="detail-value description">{viewingTask.description || 'No description provided.'}</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="view-section">
-                            <h4 className="section-title">Testing Requirements</h4>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span className="detail-label">Testing Level</span>
-                                    <span className="detail-value capitalize">{viewingTask.testingLevel || 'Intermediate'}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Budget</span>
-                                    <span className="detail-value">{formatCurrency(viewingTask.budget)}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span className="detail-label">Testers Assigned</span>
-                                    <span className="detail-value">{viewingTask.testersAssigned || 0}</span>
-                                </div>
-                                <div className="detail-item full-width">
-                                    <span className="detail-label">Test Types Requested</span>
-                                    <div className="detail-badges">
-                                        {(viewingTask.testTypes || []).map(type => (
-                                            <span key={type} className="mini-badge">{type}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </Modal>
 
             {/* Extend Deadline Modal */}
             <Modal

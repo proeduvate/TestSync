@@ -191,7 +191,7 @@ function Marketplace() {
 
                             <div className="task-card-footer">
                                 <div className="task-credits">
-                                    <span className="credits-amount">{formatCredits(task.credits || task.budget || 0)}</span>
+                                    <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
                                     <span className="credits-text">Credits</span>
                                 </div>
                                 <Link to={`/tester/task/${task._id || task.id}`}>

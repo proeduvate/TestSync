@@ -134,8 +134,8 @@
 
 .skill-tag {
     padding: var(--space-1) var(--space-3);
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(37, 99, 235, 0.10);
+    border: 1px solid rgba(37, 99, 235, 0.12);
     border-radius: var(--radius-full);
     color: var(--primary-300);
     font-size: var(--font-size-xs);

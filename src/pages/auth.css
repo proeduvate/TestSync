@@ -60,11 +60,12 @@
     width: 80px;
     height: 80px;
     border-radius: var(--radius-full);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(20, 184, 166, 0.2));
+    background: rgba(37, 99, 235, 0.12);
+    border: 1px solid rgba(37, 99, 235, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-400);
+    color: #3B82F6;
     margin: 0 auto var(--space-4);
 }
 
@@ -89,8 +90,8 @@
 }
 
 .otp-input:focus {
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     outline: none;
 }
 
@@ -140,15 +141,15 @@
 .otp-hint {
     margin-top: var(--space-6);
     padding: var(--space-3) var(--space-4);
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.20);
     border-radius: var(--radius-lg);
     text-align: center;
 }
 
 .otp-hint p {
     font-size: var(--font-size-xs);
-    color: var(--primary-400);
+    color: #60A5FA;
     margin: 0;
 }
 
@@ -192,9 +193,9 @@
 }
 
 .role-option input:checked + .role-card {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: var(--primary-500);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+    background: rgba(37, 99, 235, 0.10);
+    border-color: #2563EB;
+    box-shadow: none;
 }
 
 .role-card:hover {
@@ -257,7 +258,7 @@
 }
 
 .role-tab input:checked + .role-tab-content {
-    background: var(--primary-500);
+    background: #2563EB;
     color: white;
 }
 
@@ -269,7 +270,7 @@
 .auth-form-footer {
     margin-top: var(--space-8);
     padding-top: var(--space-6);
-    border-top: 1px solid var(--glass-border);
+    border-top: 1px solid var(--border);
     text-align: center;
 }
 

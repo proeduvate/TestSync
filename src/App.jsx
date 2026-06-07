@@ -23,6 +23,7 @@ import CreateTask from './pages/developer/CreateTask';
 import Payment from './pages/developer/Payment';
 import FeedbackReview from './pages/developer/FeedbackReview';
 import Tasks from './pages/developer/Tasks';
+import DeveloperTaskDetails from './pages/developer/DeveloperTaskDetails';
 import Reports from './pages/developer/Reports';
 
 // Tester Pages
@@ -43,6 +44,7 @@ import UserRequests from './pages/admin/UserRequests';
 import UserRequestDetails from './pages/admin/UserRequestDetails';
 import SupportTickets from './pages/admin/SupportTickets';
 import AdminUserProfile from './pages/admin/AdminUserProfile';
+import AdminTaskDetails from './pages/admin/AdminTaskDetails';
 import Profile from './pages/profile/Profile';
 
 function App() {
@@ -65,6 +67,7 @@ function App() {
                             <Route path="dashboard" element={<DeveloperDashboard />} />
                             <Route path="create-task" element={<CreateTask />} />
                             <Route path="tasks" element={<Tasks />} />
+                            <Route path="tasks/:taskId" element={<DeveloperTaskDetails />} />
                             <Route path="feedback" element={<FeedbackReview />} />
                             <Route path="payments" element={<Payment />} />
                             <Route path="reports" element={<Reports />} />
@@ -95,6 +98,7 @@ function App() {
                             <Route path="users" element={<UserManagement />} />
                             <Route path="users/:userId" element={<AdminUserProfile />} />
                             <Route path="tasks" element={<AdminTasks />} />
+                            <Route path="tasks/:taskId" element={<AdminTaskDetails />} />
                             <Route path="verification" element={<Verification />} />
                             <Route path="support" element={<SupportTickets />} />
                             <Route path="credits" element={<AdminDashboard />} />

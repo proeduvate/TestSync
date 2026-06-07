@@ -23,12 +23,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(37, 99, 235, 0.10);
     color: var(--primary-color);
 }
 
 .stat-icon.secondary {
-    background: rgba(20, 184, 166, 0.1);
+    background: rgba(37, 99, 235, 0.1);
     color: #14b8a6;
 }
 
@@ -71,7 +71,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .transaction-item:last-child {
@@ -94,7 +94,7 @@
 }
 
 .type-icon.credit {
-    background: rgba(20, 184, 166, 0.1);
+    background: rgba(37, 99, 235, 0.1);
     color: #14b8a6;
 }
 

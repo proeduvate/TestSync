@@ -2,6 +2,7 @@
    Global Styles - Software Testing Platform
    ======================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import './variables.css';
 
 /* Reset & Base */
@@ -31,58 +32,43 @@ body {
     overflow-x: hidden;
 }
 
-/* Background Pattern */
-body::before {
-    content: '';
-    position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    background:
-        radial-gradient(circle at 15% 50%, var(--glow-1), transparent 30%),
-        radial-gradient(circle at 85% 30%, var(--glow-2), transparent 30%),
-        radial-gradient(circle at 50% 80%, var(--glow-3), transparent 30%);
-    animation: backgroundRotate 40s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: -1;
-}
+/* No animated background — clean professional dark base */
 
-@keyframes backgroundRotate {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-10%, -10%) scale(1.1); }
-}
-
-/* Glass Utilities */
+/* ── Clean Surface Utilities (replaces glassmorphism) ── */
 .glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-card);
     border-radius: var(--radius-2xl);
 }
 
 .glass-card {
-    background: rgba(15, 23, 42, 0.2);
-    backdrop-filter: var(--glass-blur-sm);
-    -webkit-backdrop-filter: var(--glass-blur-sm);
-    border: 1px solid var(--glass-border-light);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: var(--radius-xl);
-    transition: all var(--transition-normal);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .glass-card:hover {
-    background: rgba(30, 41, 59, 0.3);
-    border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-4px);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.01) 100%
+    ), var(--bg-card);
+    border-color: var(--border-light);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+    transform: translateY(-2px);
+}
+
+.glass-card:active {
+    background: #0F172A;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    transform: translateY(0);
 }
 
 .gradient-text {
-    background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-400);
 }
 
 #root {
@@ -139,7 +125,7 @@ a {
 }
 
 a:hover {
-    color: var(--primary-300);
+    color: var(--primary-500);
 }
 
 /* Form Elements */
@@ -185,16 +171,16 @@ ol {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--slate-600);
+    background: var(--border-light);
     border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--slate-500);
+    background: var(--slate-600);
 }
 
 /* Focus Ring */
@@ -637,4 +623,9 @@ ol {
 
 .stagger-5 {
     animation-delay: 0.25s;
+}
+
+/* Light Theme Body Background Override */
+[data-theme="light"] body {
+    background: #F8FAFC !important;
 }
