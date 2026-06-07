@@ -1,5 +1,6 @@
 // API Service Layer — Supabase client for backend communication
 import supabase from '../lib/supabase';
+import { notificationService } from './notificationService';
 
 // ============ Auth API ============
 // Auth is handled directly via supabase.auth in AuthContext
@@ -342,10 +343,33 @@ export const tasksAPI = {
         if (error) throw new Error(error.message);
         if (!data) throw new Error('Task creation failed: Failed to verify record creation.');
 
+        // Send email notifications (fail-safe and non-blocking)
+        try {
+            const { data: profile } = await supabase.from('profiles').select('name').eq('id', user.id).single();
+            const devName = profile?.name || user.email;
+            
+            // 1. Send alert to Admin
+            notificationService.sendNewProjectCreatedAlertToAdmin(devName, taskData.appName);
+            
+            // 2. Send confirmation to Developer
+            notificationService.sendDeveloperAddedToProjectEmail(user.id, taskData.appName);
+        } catch (emailErr) {
+            console.error('[api.js] Project creation notification error:', emailErr);
+        }
+
         return { task: data };
     },
 
     update: async (id, updates) => {
+        // Fetch current state for notification comparison (fail-safe)
+        let oldTask = null;
+        try {
+            const { data: ot } = await supabase.from('tasks').select('status, developer_id, app_name').eq('id', id).maybeSingle();
+            oldTask = ot;
+        } catch (fetchErr) {
+            console.warn('[api.js] Failed to fetch pre-update task state:', fetchErr);
+        }
+
         const updateData = {};
         if (updates.status !== undefined) updateData.status = updates.status;
         if (updates.progress !== undefined) updateData.progress = updates.progress;
@@ -362,6 +386,28 @@ export const tasksAPI = {
 
         if (error) throw new Error(error.message);
         if (!data) throw new Error('Update failed: Task not found or permission denied.');
+
+        // Trigger notifications after successful database update
+        if (oldTask) {
+            try {
+                // Fetch assigned testers
+                const { data: testers } = await supabase.from('task_testers').select('tester_id').eq('task_id', id);
+                const testerIds = (testers || []).map(t => t.tester_id);
+
+                // 1. Status change alert
+                if (updates.status !== undefined && oldTask.status !== updates.status) {
+                    notificationService.sendTaskStatusChangeEmail(oldTask.developer_id, oldTask.app_name, oldTask.status, updates.status);
+                    notificationService.sendProjectStatusChangeEmail(oldTask.developer_id, testerIds, oldTask.app_name, oldTask.status, updates.status);
+                }
+
+                // 2. Detail update alert
+                if (updates.appName !== undefined || updates.description !== undefined || updates.deadline !== undefined) {
+                    notificationService.sendTaskDetailsUpdatedEmail(oldTask.app_name, oldTask.developer_id, testerIds);
+                }
+            } catch (notifyErr) {
+                console.error('[api.js] Failed to trigger update notifications:', notifyErr);
+            }
+        }
         
         return { task: data };
     },
@@ -560,7 +606,7 @@ export const tasksAPI = {
         }
 
         // Check if task is now full and update status
-        const { data: task } = await supabase.from('tasks').select('required_testers, developer_id, app_name').eq('id', id).single();
+        const { data: task } = await supabase.from('tasks').select('required_testers, developer_id, app_name, deadline, budget').eq('id', id).single();
         const { count } = await supabase.from('task_testers').select('*', { count: 'exact', head: true }).eq('task_id', id);
 
         const updates = { applied_testers: count };
@@ -570,7 +616,7 @@ export const tasksAPI = {
 
         await supabase.from('tasks').update(updates).eq('id', id);
 
-        // Notify developer (Wrapped in try/catch to be non-blocking)
+        // Notify developer and tester (Wrapped in try/catch to be non-blocking)
         try {
             const { data: profile } = await supabase.from('profiles').select('name').eq('id', user.id).single();
             if (task?.developer_id) {
@@ -581,6 +627,9 @@ export const tasksAPI = {
                     type: 'task_assigned',
                     link: `/developer/tasks`
                 });
+
+                // Send email notification to Developer, Tester and Admins
+                await notificationService.sendTaskAssignedEmail(task.developer_id, user.id, task.app_name, task.deadline, task.budget);
             }
         } catch (notifyError) {
             console.warn('Notification failed (non-blocking):', notifyError.message);
@@ -767,6 +816,22 @@ export const feedbackAPI = {
                     type: 'feedback_received',
                     link: `/developer/feedback`
                 });
+
+                // 1. Send submission email alert to Developer & Admin
+                await notificationService.sendTaskSubmittedEmail(
+                    task.developer_id,
+                    profile?.name || 'A tester',
+                    task.app_name,
+                    new Date().toLocaleString()
+                );
+                
+                // 2. Send submission confirmation to Tester
+                await notificationService.sendTaskSubmissionConfirmation(
+                    user.email,
+                    profile?.name || 'A tester',
+                    task.app_name,
+                    new Date().toLocaleString()
+                );
             }
         } catch (notifyError) {
             console.warn('Notification failed (non-blocking):', notifyError.message);
@@ -853,6 +918,16 @@ export const feedbackAPI = {
                 const { data: allFb } = await supabase.from('feedback').select('status').eq('task_id', fb.task_id);
                 if (allFb && allFb.every(f => f.status === 'approved')) {
                     await supabase.from('tasks').update({ status: 'completed' }).eq('id', fb.task_id);
+
+                    // Trigger completion emails to developer, tester, and admins
+                    try {
+                        const { data: task } = await supabase.from('tasks').select('developer_id, budget').eq('id', fb.task_id).single();
+                        if (task) {
+                            await notificationService.sendTaskCompletedEmail(task.developer_id, fb.tester_id, fb.task_name, task.budget || creditAmount);
+                        }
+                    } catch (emailErr) {
+                        console.error('[api.js] Failed to send task completion emails:', emailErr);
+                    }
                 }
             }
         } else if (updates.status === 'needs-revision') {
@@ -869,6 +944,17 @@ export const feedbackAPI = {
                         type: 'warning',
                         link: `/tester/status`
                     });
+
+                    // Send email notification to Developer, Tester and Admins
+                    const { data: task } = await supabase.from('tasks').select('developer_id').eq('id', fb.task_id).single();
+                    if (task) {
+                        await notificationService.sendTaskReworkRejectedEmail(
+                            task.developer_id,
+                            fb.tester_id,
+                            fb.task_name,
+                            updates.comment || 'Revision required by developer.'
+                        );
+                    }
                 } catch (notifyError) {
                     console.warn('Revision request notification failed (non-blocking):', notifyError.message);
                 }
@@ -1355,8 +1441,27 @@ export const transactionsAPI = {
                 type: 'success',
                 link: targetUserType === 'tester' ? '/tester/wallet' : targetUserType === 'developer' ? '/developer/payments' : '/admin/dashboard'
             });
+
+            // Handle transaction email notifications (fail-safe)
+            const isPayment = txData.type === 'payment';
+            const status = txData.status || 'completed';
+            const txIdShort = data.id ? data.id.substring(0, 8) : 'TXN-' + Math.floor(Math.random() * 90000 + 10000);
+            
+            if (isPayment) {
+                if (status === 'completed') {
+                    // 1. Send payment success email to User
+                    await notificationService.sendPaymentSuccessEmail(targetUserId, txData.amount, txIdShort, txData.taskName || 'Platform Service');
+                    // 2. Send invoice receipt email to User
+                    await notificationService.sendInvoiceReceiptEmail(targetUserId, txData.amount, txIdShort, txData.taskName || 'Platform Service');
+                    // 3. Send payment received notification to Admin
+                    await notificationService.sendPaymentReceivedNotificationToAdmin(targetUserName || 'Developer', txData.amount, txData.taskName || 'Platform Service');
+                } else if (status === 'failed') {
+                    // 4. Send payment failure email to User
+                    await notificationService.sendPaymentFailureEmail(targetUserId, txData.amount, txData.errorMsg || 'Payment processor declined the transaction.');
+                }
+            }
         } catch (nError) {
-            console.error('Failed to create transaction notification:', nError);
+            console.error('Failed to handle transaction notifications:', nError);
         }
 
         return { transaction: data };
