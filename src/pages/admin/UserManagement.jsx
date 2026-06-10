@@ -23,6 +23,9 @@ function UserManagement() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [showDropdown, setShowDropdown] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
+    
     const [editFormData, setEditFormData] = useState({
         name: '',
         email: '',
@@ -46,6 +49,17 @@ function UserManagement() {
         fetchUsers();
     }, []);
 
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleOutsideClick = () => setShowDropdown(null);
+        window.addEventListener('click', handleOutsideClick);
+        return () => window.removeEventListener('click', handleOutsideClick);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, roleFilter, statusFilter]);
+
     if (loading) return <Loader />;
 
     const filteredUsers = users.filter(user => {
@@ -55,6 +69,12 @@ function UserManagement() {
         const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
         return matchesSearch && matchesRole && matchesStatus;
     });
+
+    // Pagination Calculations
+    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
     const getStatusBadge = (status) => {
         const statusMap = {
@@ -111,7 +131,7 @@ function UserManagement() {
 
         setIsSaving(true);
         try {
-            const { user: updatedUser } = await usersAPI.update(selectedUser.id, editFormData);
+            await usersAPI.update(selectedUser.id, editFormData);
             
             setUsers(prev => prev.map(u => 
                 (u._id || u.id) === selectedUser.id ? { ...u, ...editFormData } : u
@@ -145,76 +165,45 @@ function UserManagement() {
 
     return (
         <div className="user-management-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">User Management</h1>
-                    <p className="page-subtitle">Manage platform users and their permissions</p>
-                </div>
-                <Button
-                    variant="primary"
-                    icon={<FiUsers />}
-                    onClick={() => navigate('/admin/requests')}
-                >
-                    User Requests {pendingCount > 0 && <span className="btn-badge">{pendingCount}</span>}
-                </Button>
-            </div>
 
-            {/* Filters */}
-            <div className="filters-section">
-                <div className="search-box">
-                    <FiSearch size={18} className="search-icon" />
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search by name or email..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-
-                <select
-                    className="form-input filter-select"
-                    value={roleFilter}
-                    onChange={(e) => setRoleFilter(e.target.value)}
-                >
-                    <option value="all">All Roles</option>
-                    <option value="developer">Developers</option>
-                    <option value="tester">Testers</option>
-                    <option value="admin">Admins</option>
-                </select>
-
-                <select
-                    className="form-input filter-select"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="pending">Pending</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
-                </select>
-            </div>
-
-            {/* Stats Summary */}
-            <div className="stats-summary">
-                <div className="stat-item">
-                    <span className="stat-value">{users.length}</span>
-                    <span className="stat-label">Total Users</span>
-                </div>
-                <div className="stat-item">
-                    <span className="stat-value">{users.filter(u => u.role === 'developer').length}</span>
-                    <span className="stat-label">Developers</span>
-                </div>
-                <div className="stat-item">
-                    <span className="stat-value">{users.filter(u => u.role === 'tester').length}</span>
-                    <span className="stat-label">Testers</span>
-                </div>
-
-            </div>
-
-            {/* Users Table */}
             <div className="card users-table-card">
+                {/* Filters Inside Card */}
+                <div className="filters-bar">
+                    <div className="search-box">
+                        <FiSearch size={18} className="search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Search by name or email..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
+
+                    <div className="filter-group" onClick={(e) => e.stopPropagation()}>
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                        >
+                            <option value="all">All Roles</option>
+                            <option value="developer">Developers</option>
+                            <option value="tester">Testers</option>
+                            <option value="admin">Admins</option>
+                        </select>
+
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div className="table-wrapper">
                     <table className="users-table">
                         <thead>
@@ -229,7 +218,7 @@ function UserManagement() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.map(user => (
+                            {currentUsers.map(user => (
                                 <tr
                                     key={user._id || user.id}
                                     className="clickable-row"
@@ -244,9 +233,8 @@ function UserManagement() {
                                                     user.name ? user.name.split(' ').map(n => n[0]).join('') : '?'
                                                 )}
                                             </div>
-                                            <div>
+                                            <div className="user-info">
                                                 <p className="user-name">{user.name}</p>
-                                                <p className="user-email">{user.email}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -296,6 +284,45 @@ function UserManagement() {
                 {filteredUsers.length === 0 && (
                     <div className="empty-table">
                         <p>No users found matching your criteria.</p>
+                    </div>
+                )}
+
+                {/* Pagination Bar */}
+                {filteredUsers.length > 0 && (
+                    <div className="pagination-bar">
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                            }}
+                            disabled={currentPage === 1}
+                        >
+                            &larr; Previous
+                        </button>
+                        
+                        <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                            }}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next &rarr;
+                        </button>
                     </div>
                 )}
             </div>

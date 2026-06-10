@@ -36,10 +36,6 @@ function UserRequests() {
                     <button className="back-btn" onClick={() => navigate('/admin/users')}>
                         <FiArrowLeft size={20} />
                     </button>
-                    <div>
-                        <h1 className="page-title">User Requests</h1>
-                        <p className="page-subtitle">Review and approve new platform registrations</p>
-                    </div>
                 </div>
             </div>
 

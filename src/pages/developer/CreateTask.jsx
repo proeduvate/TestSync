@@ -133,19 +133,14 @@ function CreateTask() {
 
     return (
         <div className="create-task-page">
-            <div className="page-header">
-                <button className="back-btn" onClick={() => navigate(-1)}>
+            <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-5)' }}>
+                <button className="back-btn" onClick={() => navigate(-1)} style={{ position: 'absolute', left: 0, top: 0, margin: 0 }}>
                     <FiArrowLeft size={18} />
                     <span>Back</span>
                 </button>
-                <div>
-                    <h1 className="page-title">Create Testing Task</h1>
-                    <p className="page-subtitle">Post a new task for testers to complete</p>
-                </div>
-            </div>
 
-            {/* Progress Steps */}
-            <div className="steps-container">
+                {/* Progress Steps */}
+                <div className="steps-container" style={{ margin: 0, marginTop: 'var(--space-3)' }}>
                 {steps.map((step, index) => (
                     <div
                         key={step.id}
@@ -158,6 +153,7 @@ function CreateTask() {
                         {index < steps.length - 1 && <div className="step-connector" />}
                     </div>
                 ))}
+                </div>
             </div>
 
             {/* Form Card */}
@@ -278,42 +274,43 @@ function CreateTask() {
                         <h3 className="step-heading">Budget & Deadline</h3>
                         <p className="step-description">Set your budget and project timeline.</p>
 
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label className="form-label">Number of Testers *</label>
-                                <input
-                                    type="number"
-                                    name="requiredTesters"
-                                    className={`form-input ${errors.requiredTesters ? 'error' : ''}`}
-                                    placeholder="3"
-                                    min="1"
-                                    max="50"
-                                    value={formData.requiredTesters}
-                                    onChange={handleChange}
-                                />
-                                {errors.requiredTesters && <p className="form-error">{errors.requiredTesters}</p>}
-                                <p className="form-hint">Total testers needed for this project.</p>
-                            </div>
-                        </div>
+                        <div className="budget-deadline-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+                            <div className="budget-inputs">
+                                <div className="form-group">
+                                    <label className="form-label">Number of Testers *</label>
+                                    <input
+                                        type="number"
+                                        name="requiredTesters"
+                                        className={`form-input ${errors.requiredTesters ? 'error' : ''}`}
+                                        placeholder="3"
+                                        min="1"
+                                        max="50"
+                                        value={formData.requiredTesters}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.requiredTesters && <p className="form-error">{errors.requiredTesters}</p>}
+                                    <p className="form-hint">Total testers needed for this project.</p>
+                                </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Deadline *</label>
-                            <div className="input-with-icon">
-                                <FiCalendar className="input-icon" />
-                                <input
-                                    type="date"
-                                    name="deadline"
-                                    className={`form-input ${errors.deadline ? 'error' : ''}`}
-                                    value={formData.deadline}
-                                    onChange={handleChange}
-                                    min={new Date().toISOString().split('T')[0]}
-                                />
+                                <div className="form-group">
+                                    <label className="form-label">Deadline *</label>
+                                    <div className="input-with-icon">
+                                        <FiCalendar className="input-icon" />
+                                        <input
+                                            type="date"
+                                            name="deadline"
+                                            className={`form-input ${errors.deadline ? 'error' : ''}`}
+                                            value={formData.deadline}
+                                            onChange={handleChange}
+                                            min={new Date().toISOString().split('T')[0]}
+                                        />
+                                    </div>
+                                    {errors.deadline && <p className="form-error">{errors.deadline}</p>}
+                                </div>
                             </div>
-                            {errors.deadline && <p className="form-error">{errors.deadline}</p>}
-                        </div>
 
                         {/* Summary */}
-                        <div className="task-summary">
+                        <div className="task-summary" style={{ marginTop: 0 }}>
                             <h4>Task Summary</h4>
                             <div className="summary-grid">
                                 <div className="summary-item">
@@ -345,6 +342,7 @@ function CreateTask() {
                                     <span className="summary-value">{formatCurrency(calculatedBudget * 1.1)}</span>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 )}

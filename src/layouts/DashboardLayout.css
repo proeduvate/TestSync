@@ -14,15 +14,16 @@
 
 .dashboard-content {
     flex: 1;
-    padding: var(--space-6);
-    /* Push content below floating nav, plus padding */
-    margin-top: calc(var(--navbar-height) + var(--space-8)); 
-    /* Enable internal scrolling */
+    padding: var(--space-5) var(--space-6);
+    /* Push content below floating nav */
+    margin-top: calc(var(--navbar-height) + var(--space-2));
+    /* Fixed height so child pages can use height:100% */
+    height: calc(100vh - var(--navbar-height) - var(--space-2));
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100vh - var(--navbar-height) - var(--space-8));
-    
-    /* Scrollbar for dashboard content */
+    box-sizing: border-box;
+
+    /* Scrollbar */
     scrollbar-width: thin;
     scrollbar-color: var(--slate-600) transparent;
 }
@@ -82,8 +83,8 @@
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 
 @media (max-width: 1200px) {
@@ -102,7 +103,7 @@
 .content-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: var(--space-6);
+    gap: var(--space-3);
 }
 
 .content-grid .col-4 {

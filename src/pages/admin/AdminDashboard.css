@@ -1,5 +1,45 @@
+/* ========================================
+   Admin Dashboard – Non-scrollable,
+   fully utilised viewport layout
+   ======================================== */
+
+/* ── Root container fills the entire content area ── */
 .admin-dashboard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
     animation: fadeIn var(--transition-normal) ease-out;
+    overflow: hidden;
+}
+
+/* Prevent the parent scroll container from scrolling */
+.dashboard-content:has(.admin-dashboard) {
+    overflow-y: hidden;
+}
+
+/* ── Page Header ── */
+.admin-dashboard .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.admin-dashboard .page-header .page-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.admin-dashboard .page-header .page-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin: 0;
 }
 
 /* Time Range Selector */
@@ -9,6 +49,7 @@
     background: var(--bg-tertiary);
     padding: var(--space-1);
     border-radius: var(--radius-lg);
+    flex-shrink: 0;
 }
 
 .time-btn {
@@ -32,62 +73,200 @@
     color: white;
 }
 
-/* Users Table */
-.users-table {
-    overflow-x: auto;
+/* ── Stats Grid – grows to fill space freed by the shorter content cards ── */
+.admin-dashboard .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    min-height: 0;
 }
 
-.users-table table {
-    width: 100%;
-    border-collapse: collapse;
+/* Stats card: icon top-left, large value left, label right */
+.admin-dashboard .stats-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--space-5) var(--space-5);
+    min-height: 0;
 }
 
-.users-table th {
-    text-align: left;
-    padding: var(--space-3) var(--space-2);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border-primary);
+.admin-dashboard .stats-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex: 1;
+    min-width: 0;
+    padding-right: var(--space-5);
 }
 
-.users-table td {
-    padding: var(--space-3) var(--space-2);
-    font-size: var(--font-size-sm);
-    border-bottom: 1px solid var(--border-primary);
+.admin-dashboard .stats-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50%;
+    border-left: 1px solid var(--border-primary);
+    padding-left: var(--space-5);
+    text-align: right;
+    gap: var(--space-2);
 }
 
-.users-table tr:last-child td {
-    border-bottom: none;
-}
-
-.user-cell {
+.admin-dashboard .stats-card .stats-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
-.user-name {
-    font-weight: var(--font-weight-medium);
+/* Custom background/color classes for dashboard stats icons */
+.admin-dashboard .stats-card .stats-icon.primary {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: #6366f1;
+}
+
+.admin-dashboard .stats-card .stats-icon.success {
+    background: rgba(20, 184, 166, 0.12);
+    border: 1px solid rgba(20, 184, 166, 0.25);
+    color: #14b8a6;
+}
+
+.admin-dashboard .stats-card .stats-icon.secondary {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    color: #3b82f6;
+}
+
+.admin-dashboard .stats-card .stats-icon.warning {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #f59e0b;
+}
+
+.admin-dashboard .stats-card .stats-value {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.03em;
 }
 
-.user-email {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-}
-
-.date-cell {
+.admin-dashboard .stats-card .stats-label {
+    font-size: 0.92rem;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.admin-dashboard .stats-card .stats-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    align-self: flex-start;
+}
+
+.admin-dashboard .stats-card .stats-change.positive {
+    background: rgba(20, 184, 166, 0.12);
+    color: #14b8a6;
+    border: 1px solid rgba(20, 184, 166, 0.25);
+}
+
+.admin-dashboard .stats-card .stats-change.negative {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ── Content Grid – fixed at 62 % of the dashboard height ── */
+.admin-dashboard .content-grid {
+    flex: 0 0 62%;
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: var(--space-3);
+    min-height: 0;
+    margin-top: 0;
+}
+
+/* Override column span definitions to respect flex parent */
+.admin-dashboard .content-grid .col-8,
+.admin-dashboard .content-grid .col-4 {
+    grid-column: auto;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cards inside content grid fill their column */
+.admin-dashboard .content-grid .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    min-height: 0;
+    overflow: hidden;
+    transform: none !important;
+}
+
+.admin-dashboard .content-grid .card:hover {
+    transform: none !important;
+}
+
+.admin-dashboard .content-grid .card-header {
+    flex-shrink: 0;
+    margin-bottom: var(--space-3);
+}
+
+/* ── Card Link ── */
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--primary-400);
+    text-decoration: none;
+    transition: color var(--transition-fast);
     white-space: nowrap;
 }
 
-/* Credit Activity */
+.card-link:hover {
+    color: var(--primary-300);
+}
+
+/* ── Chart Wrapper ── */
+.chart-wrapper {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* ── Credit Activity ── */
 .credit-activity {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .credit-log-item {
@@ -96,6 +275,8 @@
     align-items: center;
     padding: var(--space-3) 0;
     border-bottom: 1px solid var(--border-primary);
+    flex: 1;
+    min-height: 0;
 }
 
 .credit-log-item:last-child {
@@ -104,12 +285,17 @@
 
 .log-info {
     min-width: 0;
+    padding-right: var(--space-3);
 }
 
 .log-description {
     font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
     color: var(--text-primary);
     margin-bottom: var(--space-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .log-user {
@@ -119,7 +305,7 @@
 
 .log-amount {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     white-space: nowrap;
 }
 
@@ -129,4 +315,45 @@
 
 .log-amount.debit {
     color: var(--error-400);
+}
+
+.no-data {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-6) 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+    .admin-dashboard .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .admin-dashboard .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-dashboard .content-grid .col-8,
+    .admin-dashboard .content-grid .col-4 {
+        grid-column: span 12;
+    }
+
+    /* Re-enable scroll on small screens */
+    .dashboard-content:has(.admin-dashboard) {
+        overflow-y: auto;
+    }
+
+    .admin-dashboard {
+        height: auto;
+        overflow: visible;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-dashboard .stats-grid {
+        grid-template-columns: 1fr;
+    }
 }

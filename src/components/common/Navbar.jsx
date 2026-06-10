@@ -62,6 +62,9 @@ function Navbar({ onMenuToggle, isSidebarOpen }) {
     // Get current page title
     const getPageTitle = () => {
         const path = location.pathname;
+        if (path === '/developer/dashboard') {
+            return `Welcome back, ${user?.name?.split(' ')[0] || 'User'}!`;
+        }
         if (path.includes('dashboard')) return 'Dashboard';
         if (path.includes('create-task')) return 'Create Task';
         if (path.includes('marketplace')) return 'Task Marketplace';

@@ -1,20 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { tasksAPI } from '../../services/api';
 import { formatCredits, formatDate, getDeadlineStatus } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
-import { FiSearch, FiFilter, FiCalendar, FiClock, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiCalendar, FiClock, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import './Marketplace.css';
 
 function Marketplace() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedLevel, setSelectedLevel] = useState('all');
-    const [selectedTestType, setSelectedTestType] = useState('all');
+    const [selectedLevels, setSelectedLevels] = useState([]);
+    const [selectedTestTypes, setSelectedTestTypes] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
     const [showFilters, setShowFilters] = useState(false);
+    const [viewMode, setViewMode] = useState(() => localStorage.getItem('marketplace_view_mode') || 'grid');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 15;
+    const popoverRef = useRef(null);
 
     const testingLevels = [
         { id: 'basic', name: 'Basic' },
@@ -36,13 +40,56 @@ function Marketplace() {
         fetchTasks();
     }, []);
 
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+                setShowFilters(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const handleLevelChange = (levelId) => {
+        setSelectedLevels(prev => 
+            prev.includes(levelId) 
+                ? prev.filter(l => l !== levelId) 
+                : [...prev, levelId]
+        );
+    };
+
+    const handleTestTypeChange = (type) => {
+        setSelectedTestTypes(prev => 
+            prev.includes(type) 
+                ? prev.filter(t => t !== type) 
+                : [...prev, type]
+        );
+    };
+
+    const handleResetFilters = () => {
+        setSelectedLevels([]);
+        setSelectedTestTypes([]);
+        setSortBy('newest');
+    };
+
     const testTypes = ['UI Testing', 'Functional', 'Performance', 'Security', 'Usability'];
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedLevels, selectedTestTypes, sortBy]);
 
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = (task.appName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
             (task.companyName || task.developerCompany || '').toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesLevel = selectedLevel === 'all' || (task.level || task.testingLevel || '').toLowerCase() === selectedLevel;
-        const matchesType = selectedTestType === 'all' || (task.testTypes || []).includes(selectedTestType);
+        
+        const matchesLevel = selectedLevels.length === 0 || 
+            selectedLevels.includes((task.level || task.testingLevel || '').toLowerCase());
+            
+        const matchesType = selectedTestTypes.length === 0 || 
+            (task.testTypes || []).some(type => selectedTestTypes.includes(type));
+            
         return matchesSearch && matchesLevel && matchesType;
     }).sort((a, b) => {
         if (sortBy === 'newest') return new Date(b.postedAt) - new Date(a.postedAt);
@@ -52,15 +99,12 @@ function Marketplace() {
         return 0;
     });
 
+    const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedTasks = filteredTasks.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
     return (
         <div className="marketplace-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Task Marketplace</h1>
-                    <p className="page-subtitle">Find and accept testing tasks to earn credits</p>
-                </div>
-            </div>
-
             {/* Search and Filters */}
             <div className="search-filters">
                 <div className="search-box">
@@ -74,134 +118,225 @@ function Marketplace() {
                     />
                 </div>
 
-                <button
-                    className="filter-toggle"
-                    onClick={() => setShowFilters(!showFilters)}
-                >
-                    <FiFilter size={18} />
-                    Filters
-                    <FiChevronDown
-                        size={16}
-                        style={{ transform: showFilters ? 'rotate(180deg)' : 'rotate(0)' }}
-                    />
-                </button>
-
-                <div className="sort-select">
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="form-input"
+                <div className="filters-container" ref={popoverRef}>
+                    <button
+                        className={`filter-toggle ${showFilters ? 'active' : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
                     >
-                        <option value="newest">Newest First</option>
-                        <option value="credits-high">Highest Credits</option>
-                        <option value="credits-low">Lowest Credits</option>
-                        <option value="deadline">Deadline Soon</option>
-                    </select>
-                </div>
-            </div>
+                        <FiFilter size={18} />
+                        Filters
+                        <FiChevronDown
+                            size={16}
+                            style={{ transform: showFilters ? 'rotate(180deg)' : 'rotate(0)' }}
+                        />
+                    </button>
 
-            {showFilters && (
-                <div className="filter-panel">
-                    <div className="filter-group">
-                        <label className="filter-label">Testing Level</label>
-                        <div className="filter-options">
-                            <button
-                                className={`filter-option ${selectedLevel === 'all' ? 'active' : ''}`}
-                                onClick={() => setSelectedLevel('all')}
-                            >
-                                All Levels
-                            </button>
-                            {testingLevels.map(level => (
-                                <button
-                                    key={level.id}
-                                    className={`filter-option ${selectedLevel === level.id ? 'active' : ''}`}
-                                    onClick={() => setSelectedLevel(level.id)}
+                    {showFilters && (
+                        <div className="filters-popout">
+                            {/* Sort By Group */}
+                            <div className="popout-group">
+                                <label className="popout-label">Sort By</label>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="form-input popout-select"
                                 >
-                                    {level.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="filter-group">
-                        <label className="filter-label">Test Type</label>
-                        <div className="filter-options">
-                            <button
-                                className={`filter-option ${selectedTestType === 'all' ? 'active' : ''}`}
-                                onClick={() => setSelectedTestType('all')}
-                            >
-                                All Types
-                            </button>
-                            {testTypes.map(type => (
-                                <button
-                                    key={type}
-                                    className={`filter-option ${selectedTestType === type ? 'active' : ''}`}
-                                    onClick={() => setSelectedTestType(type)}
-                                >
-                                    {type}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
+                                    <option value="newest">Newest First</option>
+                                    <option value="credits-high">Highest Credits</option>
+                                    <option value="credits-low">Lowest Credits</option>
+                                    <option value="deadline">Deadline Soon</option>
+                                </select>
+                            </div>
 
-            {/* Results Count */}
-            <div className="results-count">
-                <span>{filteredTasks.length} tasks available</span>
+                            {/* Testing Level Group */}
+                            <div className="popout-group">
+                                <label className="popout-label">Testing Level</label>
+                                <div className="checkbox-options">
+                                    {testingLevels.map(level => (
+                                        <label key={level.id} className="checkbox-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedLevels.includes(level.id)}
+                                                onChange={() => handleLevelChange(level.id)}
+                                            />
+                                            <span>{level.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Test Type Group */}
+                            <div className="popout-group">
+                                <label className="popout-label">Test Type</label>
+                                <div className="checkbox-options">
+                                    {testTypes.map(type => (
+                                        <label key={type} className="checkbox-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedTestTypes.includes(type)}
+                                                onChange={() => handleTestTypeChange(type)}
+                                            />
+                                            <span>{type}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Reset Button */}
+                            {(selectedLevels.length > 0 || selectedTestTypes.length > 0 || sortBy !== 'newest') && (
+                                <button className="popout-reset-btn" onClick={handleResetFilters}>
+                                    Reset Filters
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                <div className="view-toggle">
+                    <button
+                        className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => {
+                            setViewMode('grid');
+                            localStorage.setItem('marketplace_view_mode', 'grid');
+                        }}
+                        title="Grid View"
+                    >
+                        <FiGrid size={18} />
+                    </button>
+                    <button
+                        className={`view-btn ${viewMode === 'table' ? 'active' : ''}`}
+                        onClick={() => {
+                            setViewMode('table');
+                            localStorage.setItem('marketplace_view_mode', 'table');
+                        }}
+                        title="Table View"
+                    >
+                        <FiList size={18} />
+                    </button>
+                </div>
             </div>
 
             {/* Tasks Grid */}
-            <div className="tasks-grid">
-                {filteredTasks.map(task => {
-                    const deadline = getDeadlineStatus(task.deadline);
-                    return (
-                        <div key={task._id || task.id} className="card task-card">
-                            <div className="task-card-header">
-                                <Badge variant="primary">{task.level || task.testingLevel}</Badge>
-                                <span className="spots-left">{task.openSlots || '?'} spots left</span>
-                            </div>
-
-                            <div className="task-card-body">
-                                <h3 className="task-name">{task.appName}</h3>
-                                <p className="task-company">{task.companyName || task.developerCompany || ''}</p>
-
-                                <div className="task-test-types">
-                                    {task.testTypes.map(type => (
-                                        <span key={type} className="test-type-tag">{type}</span>
-                                    ))}
+            {/* Tasks Grid / Table View */}
+            {viewMode === 'grid' ? (
+                <div className="tasks-grid">
+                    {paginatedTasks.map(task => {
+                        const deadline = getDeadlineStatus(task.deadline);
+                        return (
+                            <div key={task._id || task.id} className="card task-card">
+                                <div className="task-card-header">
+                                    <Badge variant="primary">{task.level || task.testingLevel}</Badge>
+                                    <span className="spots-left">{task.openSlots || '?'} spots left</span>
                                 </div>
 
-                                <p className="task-description">{task.description}</p>
+                                <div className="task-card-body">
+                                    <h3 className="task-name">{task.appName}</h3>
+                                    <p className="task-company">{task.companyName || task.developerCompany || ''}</p>
 
-                                <div className="task-meta-row">
-                                    <div className="task-meta-item">
-                                        <FiCalendar size={14} />
-                                        <span>Deadline: {formatDate(task.deadline)}</span>
+                                    <div className="task-test-types">
+                                        {task.testTypes.map(type => (
+                                            <span key={type} className="test-type-tag">{type}</span>
+                                        ))}
                                     </div>
-                                    <Badge variant={deadline.color} size="sm">{deadline.label}</Badge>
-                                </div>
 
-                                <div className="task-meta-row">
-                                    <div className="task-meta-item">
-                                        <FiClock size={14} />
-                                        <span>Est. {task.estimatedTime}</span>
+                                    <div className="task-meta-row">
+                                        <div className="task-meta-item">
+                                            <FiCalendar size={14} />
+                                            <span>Deadline: {formatDate(task.deadline)}</span>
+                                        </div>
+                                        <Badge variant={deadline.color} size="sm">{deadline.label}</Badge>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="task-card-footer">
-                                <div className="task-credits">
-                                    <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
-                                    <span className="credits-text">Credits</span>
+                                <div className="task-card-footer">
+                                    <div className="task-credits">
+                                        <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
+                                        <span className="credits-text">Credits</span>
+                                    </div>
+                                    <Link to={`/tester/task/${task._id || task.id}`}>
+                                        <Button variant="primary">View & Accept</Button>
+                                    </Link>
                                 </div>
-                                <Link to={`/tester/task/${task._id || task.id}`}>
-                                    <Button variant="primary">View & Accept</Button>
-                                </Link>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="table-wrapper">
+                    <table className="table marketplace-table">
+                        <thead>
+                            <tr>
+                                <th>Task & Developer</th>
+                                <th>Type of Testing</th>
+                                <th>Deadline</th>
+                                <th>Credits</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paginatedTasks.map(task => {
+                                const deadline = getDeadlineStatus(task.deadline);
+                                return (
+                                    <tr key={task._id || task.id}>
+                                        <td>
+                                            <div className="task-primary-info">
+                                                <span className="task-title-bold">{task.appName}</span>
+                                                <span className="task-dev-small">{task.companyName || task.developerCompany || ''}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="task-test-types">
+                                                {task.testTypes.map(type => (
+                                                    <span key={type} className="test-type-tag">{type}</span>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="task-deadline-cell">
+                                                <span className="task-deadline-date">{formatDate(task.deadline)}</span>
+                                                <Badge variant={deadline.color} size="sm">{deadline.label}</Badge>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="task-credits-cell">
+                                                <span className="credits-amount">{(task.credits || task.budget || 0).toLocaleString()}</span>
+                                                <span className="credits-text"> Credits</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <Link to={`/tester/task/${task._id || task.id}`}>
+                                                <Button variant="primary" size="sm">View & Accept</Button>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {totalPages > 1 && (
+                <div className="pagination">
+                    <Button 
+                        variant="secondary" 
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    >
+                        Previous
+                    </Button>
+                    <span className="pagination-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <Button 
+                        variant="secondary" 
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    >
+                        Next
+                    </Button>
+                </div>
+            )}
 
             {filteredTasks.length === 0 && (
                 <div className="empty-results">
@@ -210,8 +345,9 @@ function Marketplace() {
                         variant="secondary"
                         onClick={() => {
                             setSearchQuery('');
-                            setSelectedLevel('all');
-                            setSelectedTestType('all');
+                            setSelectedLevels([]);
+                            setSelectedTestTypes([]);
+                            setSortBy('newest');
                         }}
                     >
                         Clear Filters

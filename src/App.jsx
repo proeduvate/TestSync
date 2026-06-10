@@ -46,8 +46,10 @@ import SupportTickets from './pages/admin/SupportTickets';
 import AdminUserProfile from './pages/admin/AdminUserProfile';
 import AdminTaskDetails from './pages/admin/AdminTaskDetails';
 import Profile from './pages/profile/Profile';
+import { useTheme } from './hooks/useTheme';
 
 function App() {
+    useTheme();
     return (
         <AuthProvider>
             <ToastProvider>

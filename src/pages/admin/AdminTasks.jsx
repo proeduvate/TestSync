@@ -44,7 +44,13 @@ function AdminTasks() {
         testTypes: [],
         deadline: ''
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const tasksPerPage = 10;
     const toast = useToast();
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter]);
 
     useEffect(() => {
         async function fetchTasks() {
@@ -66,6 +72,11 @@ function AdminTasks() {
         const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
+
+    const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
 
     const getStatusBadge = (status) => {
         const statusMap = {
@@ -175,12 +186,6 @@ function AdminTasks() {
 
     return (
         <div className="admin-tasks-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Global Task Management</h1>
-                    <p className="page-subtitle">Oversight of all testing activities across the platform.</p>
-                </div>
-            </div>
 
             <div className="card admin-tasks-card">
                 <div className="filters-bar">
@@ -222,7 +227,7 @@ function AdminTasks() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredTasks.map(task => (
+                            {currentTasks.map(task => (
                                 <tr key={task._id || task.id}>
                                     <td>
                                         <div className="task-detail-cell">
@@ -277,6 +282,45 @@ function AdminTasks() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination bar inside card */}
+                {filteredTasks.length > 0 && (
+                    <div className="pagination-bar">
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                            }}
+                            disabled={currentPage === 1}
+                        >
+                            &larr; Previous
+                        </button>
+                        
+                        <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                            }}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next &rarr;
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Edit Task Modal */}

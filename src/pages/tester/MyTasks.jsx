@@ -72,10 +72,11 @@ function MyTasks() {
                         <Button 
                             variant={task.submissionStatus === 'needs-revision' ? 'warning' : 'primary'} 
                             fullWidth 
+                            size="sm"
                             icon={<FiArrowRight />} 
                             iconPosition="right"
                         >
-                            {task.submissionStatus === 'needs-revision' ? 'Revise Submission' : 'Continue Testing'}
+                            {task.submissionStatus === 'needs-revision' ? 'Revise Submission' : 'Testing'}
                         </Button>
                     </Link>
                 );
@@ -83,20 +84,20 @@ function MyTasks() {
             case 'pending-review':
             case 'under-verification':
                 return (
-                    <Button variant="secondary" fullWidth disabled>
+                    <Button variant="secondary" fullWidth size="sm" disabled>
                         Awaiting Review
                     </Button>
                 );
             case 'rejected':
                 return (
-                    <Button variant="danger" fullWidth disabled>
+                    <Button variant="danger" fullWidth size="sm" disabled>
                         Submission Rejected
                     </Button>
                 );
             default:
                 return (
                     <Link to={`/tester/submit/${task._id || task.taskId || task.id}`}>
-                        <Button variant="primary" fullWidth icon={<FiArrowRight />} iconPosition="right">
+                        <Button variant="primary" fullWidth size="sm" icon={<FiArrowRight />} iconPosition="right">
                             View Task
                         </Button>
                     </Link>
@@ -108,10 +109,6 @@ function MyTasks() {
     return (
         <div className="my-tasks-page">
             <div className="page-header">
-                <div>
-                    <h1 className="page-title">My Tasks</h1>
-                    <p className="page-subtitle">Manage your active tests and track submissions.</p>
-                </div>
                 <div className="tab-switcher">
                     <button
                         className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
@@ -130,33 +127,16 @@ function MyTasks() {
 
             <div className="tasks-grid">
                 {displayedTasks.map(task => (
-                    <div key={task._id || task.id} className={`card task-card ${task.status === 'completed' ? 'completed' : ''}`}>
-                        <div className="task-card-header">
-                            <div className="company-info">
-                                <div className="company-logo">
-                                    {(task.company || task.developerCompany || 'C').split(' ').map(n => n[0]).join('')}
-                                </div>
-                                <span className="company-name">{task.company || task.developerCompany || ''}</span>
-                            </div>
-                            {getStatusBadge(task.status)}
+                    <div key={task._id || task.id} className="card task-card">
+                        <div className="task-info-group">
+                            <h3 className="app-name">{task.appName}</h3>
+                            <span className="developer-name-sub">{task.company || task.developerCompany || ''}</span>
                         </div>
-
-                        <h3 className="app-name">{task.appName}</h3>
 
                         <div className="task-meta-grid">
                             <div className="meta-item">
                                 <FiClock size={14} />
-                                <span>Deadline: {formatDate(task.deadline)}</span>
-                            </div>
-                            <div className="meta-item">
-                                <BsCurrencyRupee size={14} />
-                                <span>Credits: {formatCredits(task.credits || task.budget || 0)}</span>
-                            </div>
-                            <div className="meta-item full-width">
-                                <FiExternalLink size={14} />
-                                <a href={task.appUrl} target="_blank" rel="noopener noreferrer" className="app-link-inline">
-                                    Visit App URL
-                                </a>
+                                <span>Deadline: <strong>{formatDate(task.deadline)}</strong></span>
                             </div>
                         </div>
 

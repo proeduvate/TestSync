@@ -112,6 +112,7 @@
 
   /* ── Semantic Shortcuts ─────────────────────────────────────────────── */
   --primary:       #2563EB;
+  --primary-color: var(--primary);
   --primary-hover: #1D4ED8;
   --primary-light: #3B82F6;
   --success:       #10B981;
@@ -219,19 +220,22 @@
   --input-bg-focus:     var(--bg-primary);
   --input-border:       #334155;
   --input-border-hover: #475569;
+  --grid-color: rgba(255, 255, 255, 0.012);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
    LIGHT THEME OVERRIDES
    ═══════════════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
+  --border: rgba(226, 232, 240, 0.9);
+  --grid-color: rgba(0, 0, 0, 0.03);
   /* ── Background Surfaces ────────────────────────────────────────────── */
   --bg-primary:   #F8FAFC;
   --bg-secondary: #F1F5F9;
   --bg-tertiary:  #E2E8F0;
   --bg-card:      #FFFFFF;
   --bg-card-hover:#F8FAFC;
-  --bg-overlay:   rgba(15, 23, 42, 0.55);
+  --bg-overlay:   rgba(255, 255, 255, 0.85);
   --bg-hover:     #F1F5F9;
   --bg-offset:    #F1F5F9;
 

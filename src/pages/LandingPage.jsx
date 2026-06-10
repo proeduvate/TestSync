@@ -570,10 +570,10 @@ export default function LandingPage() {
                         for reliable, affordable, and fast software quality assurance.
                     </p>
                     <div className="landing-cta-actions">
-                        <Link to="/signup" className="landing-btn-white landing-btn-lg" id="cta-signup-btn">
+                        <Link to="/signup" className="landing-btn-primary landing-btn-lg" id="cta-signup-btn">
                             Create Free Account <FiArrowRight size={18} />
                         </Link>
-                        <Link to="/login" className="landing-btn-outline-white landing-btn-lg" id="cta-login-btn">
+                        <Link to="/login" className="landing-btn-outline landing-btn-lg" id="cta-login-btn">
                             Sign In
                         </Link>
                     </div>

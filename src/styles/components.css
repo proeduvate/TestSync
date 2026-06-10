@@ -105,6 +105,13 @@
     color: #10B981;
 }
 
+.stats-card .stats-icon.warning {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #F59E0B;
+}
+
+
 .stats-card .stats-value {
     font-size: var(--font-size-3xl);
     font-weight: var(--font-weight-bold);
@@ -466,6 +473,7 @@
     border-radius: var(--radius-full);
     text-transform: uppercase;
     letter-spacing: 0.025em;
+    white-space: nowrap;
 }
 
 .badge-primary {
@@ -1211,6 +1219,13 @@
     background: rgba(16, 185, 129, 0.10) !important;
     color: #059669 !important;
     border: 1px solid rgba(16, 185, 129, 0.20) !important;
+    box-shadow: none !important;
+}
+
+[data-theme="light"] .stats-card .stats-icon.warning {
+    background: rgba(245, 158, 11, 0.10) !important;
+    color: #D97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.20) !important;
     box-shadow: none !important;
 }
 

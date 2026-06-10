@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { feedbackAPI } from '../../services/api';
 import { formatDate } from '../../utils/helpers';
 import Button from '../../components/common/Button';
@@ -10,6 +11,8 @@ import './FeedbackReview.css';
 
 function FeedbackReview() {
     const toast = useToast();
+    const [searchParams] = useSearchParams();
+    const feedbackIdParam = searchParams.get('feedbackId');
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
@@ -30,6 +33,16 @@ function FeedbackReview() {
         }
         fetchFeedback();
     }, []);
+
+    useEffect(() => {
+        if (feedbacks.length > 0 && feedbackIdParam) {
+            const fb = feedbacks.find(f => (f._id || f.id) === feedbackIdParam);
+            if (fb) {
+                setSelectedFeedback(fb);
+                setShowModal(true);
+            }
+        }
+    }, [feedbacks, feedbackIdParam]);
 
     const filteredFeedbacks = filter === 'all'
         ? feedbacks
@@ -84,13 +97,7 @@ function FeedbackReview() {
 
     return (
         <div className="feedback-review-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Feedback Review</h1>
-                    <p className="page-subtitle">Review and manage tester submissions</p>
-                </div>
-            </div>
-
+    
             {/* Filter Tabs */}
             <div className="filter-tabs">
                 <button
@@ -216,7 +223,7 @@ function FeedbackReview() {
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
                 title="Review Submission"
-                size="xl"
+                size="xxl"
                 footer={
                     selectedFeedback && selectedFeedback.status === 'pending' ? (
                         <>

@@ -8,7 +8,22 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
 import Modal from '../../components/common/Modal';
-import { FiPlus, FiSearch, FiFilter, FiMoreVertical, FiEye, FiExternalLink, FiMessageCircle, FiEdit2, FiTrash2, FiClipboard, FiCalendar } from 'react-icons/fi';
+import { 
+    FiPlus, 
+    FiSearch, 
+    FiFilter, 
+    FiMoreVertical, 
+    FiEye, 
+    FiMessageCircle, 
+    FiEdit2, 
+    FiTrash2, 
+    FiClipboard, 
+    FiCalendar, 
+    FiPieChart, 
+    FiDollarSign, 
+    FiUsers, 
+    FiActivity 
+} from 'react-icons/fi';
 import './Tasks.css';
 
 function Tasks() {
@@ -22,19 +37,33 @@ function Tasks() {
     const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
     const [extendingTask, setExtendingTask] = useState(null);
     const [newDeadline, setNewDeadline] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const tasksPerPage = 10;
     const toast = useToast();
 
+    // Close dropdown on click outside
     useEffect(() => {
-        async function fetchTasks() {
-            try {
-                const res = await tasksAPI.list();
-                setTasks(res.tasks || []);
-            } catch (err) {
-                console.error('Failed to load tasks:', err);
-            } finally {
-                setLoading(false);
-            }
+        const handleOutsideClick = () => setShowDropdown(null);
+        window.addEventListener('click', handleOutsideClick);
+        return () => window.removeEventListener('click', handleOutsideClick);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter]);
+
+    async function fetchTasks() {
+        try {
+            const res = await tasksAPI.list();
+            setTasks(res.tasks || []);
+        } catch (err) {
+            console.error('Failed to load tasks:', err);
+        } finally {
+            setLoading(false);
         }
+    }
+
+    useEffect(() => {
         fetchTasks();
     }, []);
 
@@ -44,11 +73,9 @@ function Tasks() {
         try {
             await tasksAPI.delete(taskId);
             toast.success('Task Deleted', 'The task has been successfully removed.');
-            const res = await tasksAPI.list();
-            setTasks(res.tasks || []);
+            fetchTasks();
         } catch (err) {
             toast.error('Deletion Failed', err.message);
-        } finally {
             setLoading(false);
         }
     };
@@ -64,13 +91,9 @@ function Tasks() {
             toast.success('Deadline Extended', 'Your task is back in the marketplace.');
             setIsExtendModalOpen(false);
             setNewDeadline('');
-            
-            // Refresh tasks
-            const res = await tasksAPI.list();
-            setTasks(res.tasks || []);
+            fetchTasks();
         } catch(err) {
             toast.error('Failed to extend deadline', err.message);
-        } finally {
             setLoading(false);
         }
     };
@@ -85,6 +108,11 @@ function Tasks() {
         return matchesSearch && matchesStatus;
     });
 
+    const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+
     const getStatusBadge = (status) => {
         const statusMap = {
             'open': { label: 'Open', variant: 'info' },
@@ -96,22 +124,23 @@ function Tasks() {
         return <Badge variant={config.variant}>{config.label}</Badge>;
     };
 
+    // Calculate Summary Stats
+    const totalCreatedTasks = tasks.length;
+    const totalBudgetInvested = tasks.reduce((sum, t) => sum + (t.budget || 0), 0);
+    const totalTestersAssigned = tasks.reduce((sum, t) => sum + (t.testersAssigned || 0), 0);
+    const overallProgress = tasks.length > 0 
+        ? Math.round(tasks.reduce((sum, t) => sum + (t.progress || 0), 0) / tasks.length)
+        : 0;
+
     if (loading) return <Loader />;
 
     return (
         <div className="tasks-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">My Tasks</h1>
-                    <p className="page-subtitle">Manage and track your testing requests.</p>
-                </div>
-                <Link to="/developer/create-task">
-                    <Button variant="primary" icon={<FiPlus />}>
-                        Create New Task
-                    </Button>
-                </Link>
-            </div>
 
+
+
+
+            {/* ── Tasks Table Card ── */}
             <div className="card tasks-list-card">
                 <div className="filters-bar">
                     <div className="search-box">
@@ -121,21 +150,34 @@ function Tasks() {
                             placeholder="Search tasks..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                         />
                     </div>
-                    <div className="filter-group">
-                        <FiFilter />
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                    <div className="actions-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div className="filter-group" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', borderRadius: 'var(--radius-lg)', background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', cursor: 'pointer' }}>
+                            <FiFilter style={{ color: 'var(--text-secondary)' }} />
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                            >
+                                <option value="active">Active Tasks</option>
+                                <option value="all">All Tasks</option>
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="pending-review">Pending Review</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => navigate('/developer/create-task')}
+                            icon={<FiPlus />}
                         >
-                            <option value="active">Active Tasks</option>
-                            <option value="all">All Tasks</option>
-                            <option value="open">Open</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="pending-review">Pending Review</option>
-                            <option value="completed">Completed</option>
-                        </select>
+                            Create New Task
+                        </Button>
                     </div>
                 </div>
 
@@ -150,7 +192,7 @@ function Tasks() {
                                 <th>Progress</th>
                                 <th>Status</th>
                                 <th>Deadline</th>
-                                <th>Actions</th>
+                                <th style={{ textAlign: 'right' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -158,21 +200,22 @@ function Tasks() {
                                 <tr>
                                     <td colSpan="8" style={{ textAlign: 'center', padding: '40px' }}>
                                         <div className="empty-state">
-                                            <FiClipboard size={48} style={{ marginBottom: '10px', opacity: 0.5 }} />
+                                            <FiClipboard size={40} style={{ opacity: 0.4 }} />
                                             <h3>No Tasks Found</h3>
                                             <p>You haven't created any tasks yet or no tasks match your filter.</p>
                                         </div>
                                     </td>
                                 </tr>
                             )}
-                            {filteredTasks.map(task => {
+                            {currentTasks.map(task => {
                                 const deadlineStatus = getDeadlineStatus(task.deadline);
+                                const taskIdStr = task._id || task.id;
                                 return (
-                                    <tr key={task._id || task.id}>
+                                    <tr key={taskIdStr}>
                                         <td>
                                             <div className="task-name-cell">
                                                 <span className="task-name">{task.appName}</span>
-                                                <span className="task-id">#{(task._id || task.id).slice(-6)}</span>
+                                                <span className="task-id">#{taskIdStr.slice(-6)}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -181,18 +224,18 @@ function Tasks() {
                                                     <span key={i} className="type-tag">{type}</span>
                                                 ))}
                                                 {task.testTypes.length > 2 && (
-                                                    <span className="type-tag">+{task.testTypes.length - 2}</span>
+                                                    <span className="type-tag plus-more">+{task.testTypes.length - 2}</span>
                                                 )}
                                             </div>
                                         </td>
-                                        <td>{formatCurrency(task.budget)}</td>
+                                        <td className="budget-cell">{formatCurrency(task.budget)}</td>
                                         <td>{task.testersAssigned || 0}</td>
                                         <td>
                                             <div className="progress-cell">
                                                 <div className="progress-mini">
-                                                    <div className="progress-bar" style={{ width: `${task.progress}%` }} />
+                                                    <div className="progress-bar" style={{ width: `${task.progress || 0}%` }} />
                                                 </div>
-                                                <span>{task.progress}%</span>
+                                                <span>{task.progress || 0}%</span>
                                             </div>
                                         </td>
                                         <td>{getStatusBadge(task.status)}</td>
@@ -201,42 +244,45 @@ function Tasks() {
                                                 {deadlineStatus.label}
                                             </Badge>
                                         </td>
-                                        <td>
-                                            <div className="action-btns">
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
                                                 <button 
                                                     className="icon-btn" 
                                                     title="View Details"
-                                                    onClick={() => navigate(`/developer/tasks/${task._id || task.id}`)}
+                                                    onClick={() => navigate(`/developer/tasks/${taskIdStr}`)}
                                                 >
-                                                    <FiEye />
+                                                    <FiEye size={15} />
                                                 </button>
                                                 <div className="more-actions-container">
                                                     <button 
-                                                        className={`icon-btn ${showDropdown === (task._id || task.id) ? 'active' : ''}`}
+                                                        className={`icon-btn ${showDropdown === taskIdStr ? 'active' : ''}`}
                                                         title="More Options"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            setShowDropdown(showDropdown === (task._id || task.id) ? null : (task._id || task.id));
+                                                            setShowDropdown(showDropdown === taskIdStr ? null : taskIdStr);
                                                         }}
                                                     >
-                                                        <FiMoreVertical />
+                                                        <FiMoreVertical size={15} />
                                                     </button>
-                                                    {showDropdown === (task._id || task.id) && (
-                                                        <div className="actions-dropdown">
-                                                            <button onClick={() => navigate(`/developer/tasks/${task._id || task.id}`)}>
-                                                                <FiEye size={14} /> View Details
+                                                    {showDropdown === taskIdStr && (
+                                                        <div className="actions-dropdown" onClick={(e) => e.stopPropagation()}>
+                                                            <button onClick={() => {
+                                                                navigate(`/developer/tasks/${taskIdStr}`);
+                                                                setShowDropdown(null);
+                                                            }}>
+                                                                <FiEye size={13} /> View Details
                                                             </button>
-                                                            <Link to={`/developer/feedback?taskId=${task._id || task.id}`} style={{ textDecoration: 'none' }}>
-                                                                <button>
-                                                                    <FiMessageCircle size={14} /> View Feedback
-                                                                </button>
+                                                            <Link to={`/developer/feedback?taskId=${taskIdStr}`} style={{ textDecoration: 'none' }}>
+                                                                <button onClick={() => setShowDropdown(null)}>
+                                                                    <FiMessageCircle size={13} /> View Feedback
+                                                                 </button>
                                                             </Link>
                                                             {task.status === 'open' && (
                                                                 <button onClick={() => {
                                                                     toast.info('Task Editing', 'Full task editing is coming soon. For now, you can extend the deadline or delete and recreate.');
                                                                     setShowDropdown(null);
                                                                 }}>
-                                                                    <FiEdit2 size={14} /> Edit Task
+                                                                    <FiEdit2 size={13} /> Edit Task
                                                                 </button>
                                                             )}
                                                             {deadlineStatus.status === 'overdue' && (
@@ -246,11 +292,11 @@ function Tasks() {
                                                                     setIsExtendModalOpen(true);
                                                                     setShowDropdown(null);
                                                                 }}>
-                                                                    <FiCalendar size={14} /> Extend Deadline
+                                                                    <FiCalendar size={13} /> Extend Deadline
                                                                 </button>
                                                             )}
-                                                            <button className="danger" onClick={() => { handleDeleteTask(task._id || task.id); setShowDropdown(null); }}>
-                                                                <FiTrash2 size={14} /> Delete Task
+                                                            <button className="danger" onClick={() => { handleDeleteTask(taskIdStr); setShowDropdown(null); }}>
+                                                                <FiTrash2 size={13} /> Delete Task
                                                             </button>
                                                         </div>
                                                     )}
@@ -263,9 +309,46 @@ function Tasks() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination bar inside card */}
+                {filteredTasks.length > 0 && (
+                    <div className="pagination-bar">
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                            }}
+                            disabled={currentPage === 1}
+                        >
+                            &larr; Previous
+                        </button>
+                        
+                        <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                            }}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next &rarr;
+                        </button>
+                    </div>
+                )}
             </div>
-
-
 
             {/* Extend Deadline Modal */}
             <Modal

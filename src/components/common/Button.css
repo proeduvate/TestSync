@@ -18,10 +18,8 @@
 }
 
 .btn-text {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: inherit;
+    line-height: 1;
+    padding-top: 1px; /* visual adjustment */
 }
 
 .btn:disabled {

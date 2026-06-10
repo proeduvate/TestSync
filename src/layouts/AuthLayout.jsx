@@ -9,9 +9,9 @@ function AuthLayout() {
     const { isLoading, isAuthenticated, user } = useAuth();
 
     useEffect(() => {
-        // Force dark theme for auth pages
+        // Force light theme for auth pages unconditionally
         const originalTheme = document.documentElement.getAttribute('data-theme');
-        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'light');
         
         return () => {
             if (originalTheme) {

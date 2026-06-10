@@ -108,12 +108,12 @@ function DeveloperDashboard() {
             {/* Page Header */}
             <div className="page-header">
                 <div>
-                    <h1 className="page-title">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+                    <h1 className="page-title">Dashboard Overview</h1>
                     <p className="page-subtitle">Here's what's happening with your projects today.</p>
                 </div>
                 <div className="page-actions">
                     <Link to="/developer/create-task">
-                        <Button variant="primary" icon={<FiPlus />}>
+                        <Button variant="primary" icon={<FiPlus />} size="sm">
                             Create New Task
                         </Button>
                     </Link>
@@ -124,17 +124,21 @@ function DeveloperDashboard() {
             <div className="stats-grid">
                 {stats.map((stat, index) => (
                     <div key={index} className="card stats-card">
-                        <div className={`stats-icon ${stat.iconClass}`}>
-                            <stat.icon size={24} />
-                        </div>
-                        <div className="stats-value">{stat.value}</div>
-                        <div className="stats-label">{stat.label}</div>
-                        {stat.change && (
-                            <div className={`stats-change ${stat.positive ? 'positive' : 'negative'}`}>
-                                {stat.positive ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
-                                <span>{stat.change}% from last month</span>
+                        <div className="stats-left">
+                            <div className={`stats-icon ${stat.iconClass}`}>
+                                <stat.icon size={20} />
                             </div>
-                        )}
+                            <div className="stats-value">{stat.value}</div>
+                            {stat.change && (
+                                <div className={`stats-change ${stat.positive ? 'positive' : 'negative'}`}>
+                                    {stat.positive ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
+                                    <span>{stat.change}% from last month</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="stats-right">
+                            <div className="stats-label">{stat.label}</div>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -154,7 +158,7 @@ function DeveloperDashboard() {
                             {tasks.filter(t => t.status !== 'completed').slice(0, 4).map(task => {
                                 const deadlineStatus = getDeadlineStatus(task.deadline);
                                 return (
-                                    <div key={task._id || task.id} className="task-item">
+                                    <Link key={task._id || task.id} to={`/developer/tasks/${task._id || task.id}`} className="task-item">
                                         <div className="task-info">
                                             <h4 className="task-name">{task.appName}</h4>
                                             <p className="task-meta">
@@ -178,49 +182,15 @@ function DeveloperDashboard() {
                                                 {deadlineStatus.label}
                                             </Badge>
                                         </div>
-                                    </div>
+                                    </Link>
                                 );
                             })}
                         </div>
                     </div>
                 </div>
 
-                {/* Charts Row */}
-                <div className="col-8">
-                    <div className="card">
-                        <div className="card-header">
-                            <h3 className="card-title">Bug Discovery Trends</h3>
-                        </div>
-                        <Chart
-                            type="line"
-                            data={bugTrendsData}
-                            height={220}
-                        />
-                    </div>
-                </div>
-
-                <div className="col-4">
-                    <div className="card">
-                        <div className="card-header">
-                            <h3 className="card-title">Budget Spent</h3>
-                        </div>
-                        <Chart
-                            type="bar"
-                            data={{
-                                labels: analytics?.budgetSpent?.labels || [],
-                                datasets: [{
-                                    label: 'Monthly Spend',
-                                    data: analytics?.budgetSpent?.data || [],
-                                    backgroundColor: '#10b981'
-                                }]
-                            }}
-                            height={220}
-                        />
-                    </div>
-                </div>
-
                 {/* Recent Feedback */}
-                <div className="col-12">
+                <div className="col-4">
                     <div className="card">
                         <div className="card-header">
                             <h3 className="card-title">Recent Feedback</h3>
@@ -228,34 +198,29 @@ function DeveloperDashboard() {
                                 View all <FiArrowUpRight size={14} />
                             </Link>
                         </div>
-                        <div className="feedback-grid">
-                            {feedback.slice(0, 3).map(fb => (
-                                <div key={fb._id || fb.id} className="feedback-card">
+                        <div className="feedback-vertical-list">
+                            {feedback.slice(0, 2).map(fb => (
+                                <Link 
+                                    key={fb._id || fb.id} 
+                                    to={`/developer/feedback?feedbackId=${fb._id || fb.id}`} 
+                                    className="feedback-item-mini"
+                                >
                                     <div className="feedback-header">
                                         <div className="feedback-tester">
-                                            <div className="avatar sm">{(fb.testerName || 'U').split(' ').map(n => n[0]).join('')}</div>
-                                            <div>
-                                                <p className="tester-name">{fb.testerName}</p>
-                                                <p className="tester-rating">
-                                                    <FiStar size={14} style={{ color: '#f59e0b', marginRight: '4px' }} />
-                                                    {fb.testerRating}
-                                                </p>
+                                            <div className="avatar xs">
+                                                {(fb.testerName || 'U').split(' ').map(n => n[0]).join('')}
                                             </div>
+                                            <span className="tester-name">{fb.testerName}</span>
                                         </div>
                                         <AIBadge status={fb.aiVerification} />
                                     </div>
                                     <p className="feedback-task">{fb.taskName}</p>
                                     <p className="feedback-observations">{fb.observations}</p>
-                                    <div className="feedback-footer">
-                                        <span className="feedback-date">{formatDate(fb.submittedAt || fb.createdAt)}</span>
-                                        <Badge
-                                            variant={fb.status === 'approved' ? 'success' : fb.status === 'needs-revision' ? 'warning' : 'info'}
-                                        >
-                                            {fb.status}
-                                        </Badge>
-                                    </div>
-                                </div>
+                                </Link>
                             ))}
+                            {feedback.length === 0 && (
+                                <p className="no-data">No feedback received yet.</p>
+                            )}
                         </div>
                     </div>
                 </div>

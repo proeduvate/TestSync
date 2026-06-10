@@ -90,82 +90,75 @@ function DeveloperTaskDetails() {
 
     return (
         <div className="developer-task-details-page">
-            {/* Page Header */}
+
+            {/* ── Row 1: Header ── */}
             <div className="page-header">
                 <div>
                     <button className="back-btn" onClick={() => navigate('/developer/tasks')}>
-                        <FiArrowLeft size={16} /> Back to Tasks
+                        <FiArrowLeft size={14} /> Back to Tasks
                     </button>
-                    <h1 className="page-title">{task.appName}</h1>
-                    <p className="page-subtitle">Track your application testing status, assignments, and submitted results.</p>
                 </div>
-                <div>
-                    {getStatusBadge(task.status)}
-                </div>
+                <div>{getStatusBadge(task.status)}</div>
             </div>
 
-            {/* Grid Layout */}
-            <div className="task-details-grid">
-                
-                {/* Application Information */}
-                <div className="card app-info-card">
-                    <h3 className="card-title"><FiGlobe /> Application Information</h3>
-                    <div className="card-body">
-                        <div className="detail-item">
-                            <span className="detail-label">App Name</span>
-                            <span className="detail-value">{task.appName}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span className="detail-label">App URL</span>
-                            <a 
-                                href={task.appUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="detail-value link"
-                            >
-                                {task.appUrl} <FiExternalLink size={12} />
-                            </a>
-                        </div>
+            {/* ── Row 2: 4 cards at top ── */}
+            <div className="task-top-strip">
+
+                {/* Card 1 – App Information */}
+                <div className="card">
+                    <h3 className="card-title"><FiGlobe size={13} /> Application Information</h3>
+                    <div className="detail-item">
+                        <span className="detail-label">App Name</span>
+                        <span className="detail-value">{task.appName}</span>
+                    </div>
+                    <div className="detail-item">
+                        <span className="detail-label">App URL</span>
+                        <a href={task.appUrl} target="_blank" rel="noopener noreferrer" className="detail-value link">
+                            {task.appUrl} <FiExternalLink size={11} />
+                        </a>
                     </div>
                 </div>
 
-                {/* Developer Details */}
-                <div className="card developer-card">
-                    <h3 className="card-title"><FiUser /> Testing Constraints</h3>
-                    <div className="card-body">
-                        <div className="detail-item">
-                            <span className="detail-label">Required Testers</span>
-                            <span className="detail-value">{task.testersAssigned} / {task.requiredTesters || 1} Assigned</span>
-                        </div>
-                        <div className="detail-item">
-                            <span className="detail-label">Testing Level</span>
-                            <span className="detail-value capitalize">{task.testingLevel}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span className="detail-label">Created At</span>
-                            <span className="detail-value"><FiCalendar size={12} /> {formatDate(task.createdAt)}</span>
-                        </div>
+                {/* Card 2 – Testing Constraints */}
+                <div className="card">
+                    <h3 className="card-title"><FiUser size={13} /> Testing Constraints</h3>
+                    <div className="detail-item">
+                        <span className="detail-label">Required Testers</span>
+                        <span className="detail-value">{task.testersAssigned} / {task.requiredTesters || 1} Assigned</span>
+                    </div>
+                    <div className="detail-item">
+                        <span className="detail-label">Testing Level</span>
+                        <span className="detail-value capitalize">{task.testingLevel}</span>
+                    </div>
+                    <div className="detail-item">
+                        <span className="detail-label">Created At</span>
+                        <span className="detail-value"><FiCalendar size={11} /> {formatDate(task.createdAt)}</span>
                     </div>
                 </div>
 
-                {/* Description (Full Width) */}
-                <div className="card description-card full-width">
-                    <h3 className="card-title"><FiInfo /> Description</h3>
-                    <div className="card-body">
-                        <p className="detail-value description">{task.description || 'No description provided.'}</p>
-                    </div>
+                {/* Card 3 – Description */}
+                <div className="card">
+                    <h3 className="card-title"><FiInfo size={13} /> Description</h3>
+                    <p className="detail-value description">{task.description || 'No description provided.'}</p>
                 </div>
 
-                {/* Assigned Testers List */}
+
+            </div>
+
+
+            {/* ── Row 3: Assigned Testers (left) + Submission Details (right) ── */}
+            <div className="task-submission-row">
+
+                {/* Card 4 – Assigned Testers (Left) */}
                 <div className="card testers-list-card">
-                    <h3 className="card-title"><FiLayers /> Assigned Testers</h3>
-                    <div className="card-body">
+                    <h3 className="card-title"><FiUser size={13} /> Assigned Testers</h3>
+                    <div className="tester-card-body">
                         {task.assignedTesters?.length === 0 ? (
-                            <p className="no-data">No testers assigned to this task yet.</p>
+                            <p className="no-data">No testers assigned.</p>
                         ) : (
                             <div className="testers-interactive-list">
                                 {task.assignedTesters.map(tester => {
-                                    const submission = feedbacks.find(f => f.tester === tester.id);
+                                    const feedback = feedbacks.find(f => f.tester === tester.id);
                                     return (
                                         <div
                                             key={tester.id}
@@ -181,18 +174,11 @@ function DeveloperTaskDetails() {
                                                     <p className="tester-email-text">{tester.email}</p>
                                                 </div>
                                             </div>
-                                            <div className="tester-badge-wrap">
-                                                {submission ? (
-                                                    <Badge variant={
-                                                        submission.status === 'approved' ? 'success' :
-                                                        submission.status === 'rejected' ? 'danger' : 'warning'
-                                                    }>
-                                                        {submission.status}
-                                                    </Badge>
-                                                ) : (
-                                                    <Badge variant="secondary">In Progress</Badge>
-                                                )}
-                                            </div>
+                                            {feedback && (
+                                                <Badge variant={feedback.testResult === 'pass' ? 'success' : 'danger'}>
+                                                    {feedback.testResult?.toUpperCase()}
+                                                </Badge>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -201,14 +187,38 @@ function DeveloperTaskDetails() {
                     </div>
                 </div>
 
-                {/* Submission Details & Proofs (Full Width in Grid) */}
-                <div className="card submission-details-card full-width">
-                    <h3 className="card-title">Submission Details & Submitted Proof</h3>
-                    <div className="card-body">
+                {/* Submission Details & Submitted Proof (Right) */}
+                <div className="card submission-details-card">
+                    <h3 className="card-title">Submission Details &amp; Submitted Proof</h3>
+                    <div className="submission-body">
                         {selectedTester ? (
                             selectedFeedback ? (
-                                <div className="submission-grid">
-                                    <div className="submission-item">
+                                <>
+                                    {/* Metadata strip */}
+                                    <div className="submission-metadata-grid" style={{flexShrink: 0}}>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Test Result</span>
+                                            <Badge variant={selectedFeedback.testResult === 'pass' ? 'success' : 'danger'}>
+                                                {selectedFeedback.testResult?.toUpperCase()}
+                                            </Badge>
+                                        </div>
+                                        <div className="detail-item">
+                                            <span className="detail-label">AI Verification</span>
+                                            <Badge variant={
+                                                selectedFeedback.aiVerification === 'verified' ? 'success' :
+                                                selectedFeedback.aiVerification === 'failed' || selectedFeedback.aiVerification === 'rejected' ? 'danger' : 'warning'
+                                            }>
+                                                {selectedFeedback.aiVerification}
+                                            </Badge>
+                                        </div>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Credit Score</span>
+                                            <span className="credits-score-value">{selectedFeedback.creditScore} Credits</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Observations – fills remaining height */}
+                                    <div className="observations-wrapper">
                                         <span className="detail-label">Observations</span>
                                         <div className="observations-grid">
                                             <div className="observations-col">
@@ -229,8 +239,10 @@ function DeveloperTaskDetails() {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Steps */}
                                     {steps.length > 0 && (
-                                        <div className="submission-item">
+                                        <div className="submission-item" style={{flexShrink: 0}}>
                                             <span className="detail-label">Steps to Reproduce</span>
                                             <div className="steps-list">
                                                 {steps.map((line, idx) => (
@@ -242,65 +254,40 @@ function DeveloperTaskDetails() {
                                             </div>
                                         </div>
                                     )}
-                                    <div className="submission-metadata-grid">
-                                        <div className="detail-item">
-                                            <span className="detail-label">Test Result</span>
-                                            <Badge variant={selectedFeedback.testResult === 'pass' ? 'success' : 'danger'}>
-                                                {selectedFeedback.testResult?.toUpperCase()}
-                                            </Badge>
-                                        </div>
-                                        <div className="detail-item">
-                                            <span className="detail-label">AI Verification Status</span>
-                                            <Badge variant={
-                                                selectedFeedback.aiVerification === 'verified' ? 'success' :
-                                                selectedFeedback.aiVerification === 'failed' || selectedFeedback.aiVerification === 'rejected' ? 'danger' : 'warning'
-                                            }>
-                                                {selectedFeedback.aiVerification}
-                                            </Badge>
-                                        </div>
-                                        <div className="detail-item">
-                                            <span className="detail-label">Credit Score</span>
-                                            <span className="credits-score-value">{selectedFeedback.creditScore} Credits</span>
-                                        </div>
-                                    </div>
+
+                                    {/* Proof link */}
                                     {selectedFeedback.proofUrl && (
-                                        <div className="submission-item full-width proof-viewer-section">
-                                            <span className="detail-label">Submitted Proof URL / Document</span>
-                                            <a 
-                                                href={selectedFeedback.proofUrl} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="proof-link-tag"
-                                            >
-                                                <FiExternalLink /> View Original Proof URL
+                                        <div className="proof-viewer-section" style={{flexShrink: 0}}>
+                                            <span className="detail-label">Submitted Proof</span>
+                                            <a href={selectedFeedback.proofUrl} target="_blank" rel="noopener noreferrer" className="proof-link-tag">
+                                                <FiExternalLink size={12} /> View Original Proof URL
                                             </a>
                                             {selectedFeedback.proofType === 'screenshot' && !imageError && (
                                                 <div className="proof-screenshot-container">
-                                                    <img 
-                                                        src={selectedFeedback.proofUrl} 
-                                                        alt="Tester Submission Screenshot" 
-                                                        onError={() => setImageError(true)}
-                                                    />
+                                                    <img src={selectedFeedback.proofUrl} alt="Screenshot" onError={() => setImageError(true)} />
                                                 </div>
                                             )}
                                         </div>
                                     )}
-                                </div>
+                                </>
                             ) : (
                                 <div className="no-submission-state">
-                                    <p className="info-msg">{selectedTester.name} has not submitted any proof or feedback yet.</p>
-                                    <p className="sub-msg">This tester is currently assigned and working on this task.</p>
+                                    <p className="info-msg">{selectedTester.name} has not submitted any proof yet.</p>
+                                    <p className="sub-msg">This tester is assigned and working on the task.</p>
                                 </div>
                             )
                         ) : (
-                            <p className="no-tester-selected-msg">Select a tester from the list to view their submissions.</p>
+                            <p className="no-tester-selected-msg">Select a tester from the list to view their submission.</p>
                         )}
                     </div>
                 </div>
 
             </div>
+
         </div>
     );
+
 }
 
 export default DeveloperTaskDetails;
+

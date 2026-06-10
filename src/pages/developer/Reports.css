@@ -21,8 +21,8 @@
 }
 
 .primary-btn {
-    background: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    background: var(--primary);
+    border: 1px solid var(--primary);
     color: white;
 }
 
@@ -86,4 +86,44 @@
     .main-chart {
         grid-column: span 1;
     }
+}
+
+/* ============ Export Dropdown ============ */
+.export-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    box-shadow: var(--shadow-xl);
+    z-index: 100;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 160px;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.export-dropdown button {
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.export-dropdown button:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+@keyframes dropdownFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

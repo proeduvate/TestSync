@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { feedbackAPI, aiVerificationAPI } from '../../services/api';
 import Badge, { AIBadge } from '../../components/common/Badge';
-import { FiClock, FiCheckCircle, FiXCircle, FiInfo, FiZap, FiShield } from 'react-icons/fi';
+import { FiClock, FiCheckCircle, FiXCircle, FiInfo, FiZap, FiShield, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import './Status.css';
 
 // ── AI Summary badge inline ────────────────────────────────────────────────
@@ -43,6 +43,7 @@ function Status() {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [aiLogs, setAiLogs] = useState({});
+    const [expandedIds, setExpandedIds] = useState({});
 
     useEffect(() => {
         async function fetchSubmissions() {
@@ -71,6 +72,10 @@ function Status() {
         }
         fetchSubmissions();
     }, []);
+
+    const toggleExpand = (id) => {
+        setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
+    };
 
     const getStatusConfig = (status) => {
         switch (status) {
@@ -116,10 +121,15 @@ function Status() {
                         const id = sub._id || sub.id;
                         const config = getStatusConfig(sub.status);
                         const log = aiLogs[id];
+                        const isExpanded = !!expandedIds[id];
 
                         return (
-                            <div key={id} className="card status-card">
-                                <div className="status-card-main">
+                            <div key={id} className={`card status-card ${isExpanded ? 'is-expanded' : ''}`}>
+                                <div 
+                                    className="status-card-main" 
+                                    onClick={() => toggleExpand(id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <div className="status-header">
                                         {config.icon}
                                         <div className="status-info">
@@ -129,52 +139,74 @@ function Status() {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="status-badges">
+                                    <div className="status-badges" onClick={(e) => e.stopPropagation()}>
                                         <AIBadge status={sub.aiVerification} />
                                         <Badge variant={config.variant}>{config.label}</Badge>
+                                        <button 
+                                            className="expand-toggle-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleExpand(id);
+                                            }}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'var(--text-secondary)',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                padding: '4px'
+                                            }}
+                                        >
+                                            {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+                                        </button>
                                     </div>
                                 </div>
 
-                                {/* AI Verification Banner */}
-                                {log && <AIStatusBanner log={log} />}
+                                {isExpanded && (
+                                    <>
+                                        {/* AI Verification Banner */}
+                                        {log && <AIStatusBanner log={log} />}
 
-                                <div className="status-details">
-                                    <div className="detail-grid-row">
-                                        <div className="detail-item">
-                                            <span className="detail-label">Observations</span>
-                                            <p className="detail-value">{sub.observations}</p>
-                                        </div>
-                                        <div className="status-timeline">
-                                            <div className={`timeline-step ${['pending', 'dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status !== 'pending' ? 'completed' : ''}`}>
-                                                <div className="step-dot"></div>
-                                                <span>AI Verification</span>
-                                            </div>
-                                            <div className={`timeline-step ${['dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status === 'approved' ? 'completed' : ''}`}>
-                                                <div className="step-dot"></div>
-                                                <span>Developer Review</span>
-                                            </div>
-                                            <div className={`timeline-step ${sub.status === 'approved' ? 'active completed' : ''}`}>
-                                                <div className="step-dot"></div>
-                                                <span>Credits Released</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {sub.creditScore > 0 && (
-                                        <div className="detail-item">
-                                            <span className="detail-label">AI Confidence Score</span>
-                                            <div className="score-bar-container">
-                                                <div className="score-bar">
-                                                    <div
-                                                        className="score-fill"
-                                                        style={{ width: `${sub.creditScore}%` }}
-                                                    />
+                                        <div className="status-details">
+                                            <div className="detail-grid-row">
+                                                <div className="detail-item">
+                                                    <span className="detail-label">Observations</span>
+                                                    <p className="detail-value">{sub.observations}</p>
                                                 </div>
-                                                <span>{Math.round(sub.creditScore)}%</span>
+                                                <div className="status-timeline">
+                                                    <div className={`timeline-step ${['pending', 'dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status !== 'pending' ? 'completed' : ''}`}>
+                                                        <div className="step-dot"></div>
+                                                        <span>AI Verification</span>
+                                                    </div>
+                                                    <div className={`timeline-step ${['dev-approved', 'approved'].includes(sub.status) ? 'active' : ''} ${sub.status === 'approved' ? 'completed' : ''}`}>
+                                                        <div className="step-dot"></div>
+                                                        <span>Developer Review</span>
+                                                    </div>
+                                                    <div className={`timeline-step ${sub.status === 'approved' ? 'active completed' : ''}`}>
+                                                        <div className="step-dot"></div>
+                                                        <span>Credits Released</span>
+                                                    </div>
+                                                </div>
                                             </div>
+
+                                            {sub.creditScore > 0 && (
+                                                <div className="detail-item">
+                                                    <span className="detail-label">AI Confidence Score</span>
+                                                    <div className="score-bar-container">
+                                                        <div className="score-bar">
+                                                            <div
+                                                                className="score-fill"
+                                                                style={{ width: `${sub.creditScore}%` }}
+                                                            />
+                                                        </div>
+                                                        <span>{Math.round(sub.creditScore)}%</span>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    </>
+                                )}
                             </div>
                         );
                     })

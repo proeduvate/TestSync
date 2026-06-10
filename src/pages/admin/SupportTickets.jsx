@@ -93,12 +93,7 @@ function SupportTickets() {
 
     return (
         <div className="support-tickets-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Support Tickets</h1>
-                    <p className="page-subtitle">Manage user queries and platform issues.</p>
-                </div>
-            </div>
+
 
             <div className="card support-card">
                 <div className="filters-bar">

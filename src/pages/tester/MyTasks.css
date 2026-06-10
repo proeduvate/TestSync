@@ -28,89 +28,54 @@
 }
 
 .tasks-grid {
-    margin-top: 2rem;
+    margin-top: 0.75rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-}
-
-.task-card {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.task-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.company-info {
-    display: flex;
-    align-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 300px));
     gap: 0.75rem;
 }
 
-.company-logo {
-    width: 32px;
-    height: 32px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
+.task-card {
+    padding: 1.25rem !important;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary-color);
+    flex-direction: column;
+    gap: 1.15rem;
+    height: 100%;
+    max-width: 300px;
+    width: 100%;
 }
 
-.company-name {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+.task-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
 }
 
 .app-name {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 800;
     color: var(--text-primary);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.developer-name-sub {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
 }
 
 .task-meta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
 }
 
 .meta-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
-}
-
-.meta-item.full-width {
-    grid-column: span 2;
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
-    margin-top: 0.25rem;
-}
-
-.app-link-inline {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.app-link-inline:hover {
-    color: var(--primary-light, #818cf8);
-    text-decoration: underline;
 }
 
 .task-progress-section {
@@ -122,31 +87,33 @@
 .progress-info {
     display: flex;
     justify-content: space-between;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
 .progress-bar-container {
-    height: 8px;
+    height: 6px;
     background: var(--bg-secondary);
-    border-radius: 10px;
+    border-radius: var(--radius-full);
     overflow: hidden;
 }
 
 .progress-bar {
     height: 100%;
     background: var(--primary-color);
-    border-radius: 10px;
+    border-radius: var(--radius-full);
     transition: width 0.3s ease;
 }
 
 .task-card-footer {
-    margin-top: 0.5rem;
+    margin-top: auto;
+    width: 100%;
 }
 
-.task-card.completed {
-    opacity: 0.85;
-    border-left: 3px solid var(--accent-success, #10b981);
+.task-card-footer a {
+    display: block;
+    width: 100%;
+    text-decoration: none;
 }
 
 .completed-info {

@@ -17,7 +17,9 @@ export function formatCredits(credits) {
 
 // Format date
 export function formatDate(dateString, options = {}) {
+    if (!dateString) return 'No Deadline';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'No Deadline';
     const defaultOptions = {
         year: 'numeric',
         month: 'short',
@@ -82,6 +84,7 @@ export function getDaysRemaining(deadline) {
 // Get deadline status
 export function getDeadlineStatus(deadline) {
     const days = getDaysRemaining(deadline);
+    if (isNaN(days)) return { status: 'none', label: 'No Deadline', color: 'secondary' };
     if (days < 0) return { status: 'overdue', label: 'Overdue', color: 'danger' };
     if (days === 0) return { status: 'today', label: 'Due Today', color: 'warning' };
     if (days <= 3) return { status: 'urgent', label: `${days} days left`, color: 'warning' };
