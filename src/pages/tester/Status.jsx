@@ -44,6 +44,9 @@ function Status() {
     const [loading, setLoading] = useState(true);
     const [aiLogs, setAiLogs] = useState({});
     const [expandedIds, setExpandedIds] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sortBy, setSortBy] = useState('newest');
+    const [selectedTab, setSelectedTab] = useState('all');
 
     useEffect(() => {
         async function fetchSubmissions() {
@@ -77,6 +80,49 @@ function Status() {
         setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
+    // Calculate dynamic counts
+    const counts = {
+        all: submissions.length,
+        pending: submissions.filter(sub => sub.status === 'pending').length,
+        verified: submissions.filter(sub => sub.status === 'dev-approved').length,
+        released: submissions.filter(sub => sub.status === 'approved').length,
+        needsRevision: submissions.filter(sub => sub.status === 'needs-revision').length
+    };
+
+    // Filter logic based on tabs
+    const filteredSubmissions = submissions.filter(sub => {
+        if (selectedTab === 'all') return true;
+        if (selectedTab === 'pending') return sub.status === 'pending';
+        if (selectedTab === 'verified') return sub.status === 'dev-approved';
+        if (selectedTab === 'released') return sub.status === 'approved';
+        if (selectedTab === 'needs-revision') return sub.status === 'needs-revision';
+        return true;
+    });
+
+    // Sorting logic
+    const sortedSubmissions = [...filteredSubmissions].sort((a, b) => {
+        if (sortBy === 'newest') {
+            return new Date(b.submittedAt) - new Date(a.submittedAt);
+        }
+        if (sortBy === 'oldest') {
+            return new Date(a.submittedAt) - new Date(b.submittedAt);
+        }
+        if (sortBy === 'taskName') {
+            return (a.taskName || '').localeCompare(b.taskName || '');
+        }
+        if (sortBy === 'status') {
+            return (a.status || '').localeCompare(b.status || '');
+        }
+        return 0;
+    });
+
+    // Pagination calculations
+    const tasksPerPage = 7;
+    const totalPages = Math.ceil(sortedSubmissions.length / tasksPerPage);
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentSubmissions = sortedSubmissions.slice(indexOfFirstTask, indexOfLastTask);
+
     const getStatusConfig = (status) => {
         switch (status) {
             case 'approved':
@@ -103,6 +149,72 @@ function Status() {
                         Monitor the AI verification pipeline for your testing proofs.
                     </p>
                 </div>
+                <div className="status-filters-bar">
+                    <div className="sort-group">
+                        <label htmlFor="sort-select">Sort By:</label>
+                        <select
+                            id="sort-select"
+                            value={sortBy}
+                            onChange={(e) => {
+                                setSortBy(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                        >
+                            <option value="newest">Newest Submitted</option>
+                            <option value="oldest">Oldest Submitted</option>
+                            <option value="taskName">Task Name</option>
+                            <option value="status">Status</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div className="status-tabs-container">
+                <button
+                    className={`status-tab ${selectedTab === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                        setSelectedTab('all');
+                        setCurrentPage(1);
+                    }}
+                >
+                    All ({counts.all})
+                </button>
+                <button
+                    className={`status-tab ${selectedTab === 'pending' ? 'active' : ''}`}
+                    onClick={() => {
+                        setSelectedTab('pending');
+                        setCurrentPage(1);
+                    }}
+                >
+                    Pending ({counts.pending})
+                </button>
+                <button
+                    className={`status-tab ${selectedTab === 'verified' ? 'active' : ''}`}
+                    onClick={() => {
+                        setSelectedTab('verified');
+                        setCurrentPage(1);
+                    }}
+                >
+                    Verified ({counts.verified})
+                </button>
+                <button
+                    className={`status-tab ${selectedTab === 'released' ? 'active' : ''}`}
+                    onClick={() => {
+                        setSelectedTab('released');
+                        setCurrentPage(1);
+                    }}
+                >
+                    Released ({counts.released})
+                </button>
+                <button
+                    className={`status-tab ${selectedTab === 'needs-revision' ? 'active' : ''}`}
+                    onClick={() => {
+                        setSelectedTab('needs-revision');
+                        setCurrentPage(1);
+                    }}
+                >
+                    Needs Revision ({counts.needsRevision})
+                </button>
             </div>
 
             <div className="status-list">
@@ -117,7 +229,7 @@ function Status() {
                         <p>No submissions yet. Accept a task and submit your proof!</p>
                     </div>
                 ) : (
-                    submissions.map(sub => {
+                    currentSubmissions.map(sub => {
                         const id = sub._id || sub.id;
                         const config = getStatusConfig(sub.status);
                         const log = aiLogs[id];
@@ -212,6 +324,45 @@ function Status() {
                     })
                 )}
             </div>
+
+            {/* Pagination Bar */}
+            {!loading && totalPages > 1 && (
+                <div className="pagination-bar">
+                    <button 
+                        className="pagination-btn" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentPage(prev => Math.max(prev - 1, 1));
+                        }}
+                        disabled={currentPage === 1}
+                    >
+                        &larr; Previous
+                    </button>
+                    
+                    <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                            <button
+                                key={page}
+                                className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
+                                onClick={() => setCurrentPage(page)}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button 
+                        className="pagination-btn" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                        }}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next &rarr;
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

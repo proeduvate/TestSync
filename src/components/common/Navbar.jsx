@@ -76,6 +76,7 @@ function Navbar({ onMenuToggle, isSidebarOpen }) {
         if (path.includes('feedback')) return 'Feedback';
         if (path.includes('proof')) return 'Proof Submission';
         if (path.includes('wallet')) return 'Wallet';
+        if (path.includes('status')) return 'Task Status';
         if (path.endsWith('/tasks') || path.includes('my-tasks')) return 'My Tasks';
         return 'Dashboard';
     };

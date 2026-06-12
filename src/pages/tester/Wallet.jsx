@@ -12,6 +12,7 @@ function Wallet() {
     const { user } = useAuth();
     const [walletData, setWalletData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         async function fetchWallet() {
@@ -53,7 +54,12 @@ function Wallet() {
         ? walletData.totalEarnings
         : (user?.total_earnings || 0);
 
-
+    // Pagination calculations
+    const transactionsPerPage = 5;
+    const totalPages = Math.ceil((recentTransactions || []).length / transactionsPerPage);
+    const indexOfLastTx = currentPage * transactionsPerPage;
+    const indexOfFirstTx = indexOfLastTx - transactionsPerPage;
+    const currentTransactions = (recentTransactions || []).slice(indexOfFirstTx, indexOfLastTx);
 
     return (
         <div className="wallet-page">
@@ -107,7 +113,7 @@ function Wallet() {
                     <h3 className="card-title">Transaction History</h3>
                 </div>
                 <div className="transaction-list">
-                    {recentTransactions.map(log => (
+                    {currentTransactions.map(log => (
                         <div key={log._id || log.id} className="transaction-item">
                             <div className="transaction-info">
                                 <div className={`type-icon ${log.type}`}>
@@ -124,6 +130,45 @@ function Wallet() {
                         </div>
                     ))}
                 </div>
+
+                {/* Pagination Bar */}
+                {totalPages > 1 && (
+                    <div className="pagination-bar">
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                            }}
+                            disabled={currentPage === 1}
+                        >
+                            &larr; Previous
+                        </button>
+                        
+                        <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button 
+                            className="pagination-btn" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                            }}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next &rarr;
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

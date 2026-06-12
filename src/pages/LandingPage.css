@@ -638,11 +638,7 @@
 }
 
 .landing-about-card:hover {
-    background: linear-gradient(
-        180deg,
-        var(--bg-card-hover) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
+    background: var(--bg-card-hover-gradient);
     border-color: var(--border-primary);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
@@ -720,11 +716,7 @@
 }
 
 .landing-step-card:hover {
-    background: linear-gradient(
-        180deg,
-        var(--bg-card-hover) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
+    background: var(--bg-card-hover-gradient);
     border-color: var(--border-primary);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
@@ -798,11 +790,7 @@
 }
 
 .landing-service-card:hover {
-    background: linear-gradient(
-        180deg,
-        var(--bg-card-hover) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
+    background: var(--bg-card-hover-gradient);
     border-color: var(--border-primary);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
@@ -870,11 +858,7 @@
 }
 
 .landing-testimonial-card:hover {
-    background: linear-gradient(
-        180deg,
-        var(--bg-card-hover) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
+    background: var(--bg-card-hover-gradient);
     border-color: var(--border-primary);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
@@ -964,11 +948,7 @@
 }
 
 .contact-info-card:hover {
-    background: linear-gradient(
-        180deg,
-        var(--bg-card-hover) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
+    background: var(--bg-card-hover-gradient);
     border-color: rgba(37, 99, 235, 0.35);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     transform: translateX(3px);

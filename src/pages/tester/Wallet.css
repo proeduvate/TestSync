@@ -126,3 +126,69 @@
 .transaction-amount.withdrawal {
     color: #ef4444;
 }
+
+/* ============ Pagination ============ */
+.pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-primary);
+    background: transparent;
+    margin-top: 1.5rem;
+}
+
+.pagination-btn {
+    padding: 0.45rem 0.85rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--border-secondary);
+    color: var(--text-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pagination-number-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-number-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.pagination-number-btn.active {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+    color: #ffffff;
+    font-weight: var(--font-weight-bold);
+}

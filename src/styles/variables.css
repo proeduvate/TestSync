@@ -84,6 +84,7 @@
   --bg-tertiary:  #1B223C; /* Inset elements */
   --bg-card:      #121B2D; /* Cohesive bluish-navy card background */
   --bg-card-hover:#1E2644;
+  --bg-card-hover-gradient: linear-gradient(180deg, var(--bg-card-hover) 0%, rgba(17, 24, 39, 0.98) 100%);
   --bg-overlay:   rgba(11, 15, 25, 0.85);
   --bg-hover:     #1E2644; /* Clean slate-blue hover state */
   --bg-offset:    #111625;
@@ -235,6 +236,7 @@
   --bg-tertiary:  #E2E8F0;
   --bg-card:      #FFFFFF;
   --bg-card-hover:#F8FAFC;
+  --bg-card-hover-gradient: linear-gradient(180deg, var(--bg-card-hover) 0%, var(--primary-50) 100%);
   --bg-overlay:   rgba(255, 255, 255, 0.85);
   --bg-hover:     #F1F5F9;
   --bg-offset:    #F1F5F9;

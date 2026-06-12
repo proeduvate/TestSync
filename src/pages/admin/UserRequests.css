@@ -38,8 +38,8 @@
 }
 
 .request-card {
-    background: #111827;
-    border: 1px solid #273244;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     cursor: pointer;
@@ -51,18 +51,14 @@
 }
 
 .request-card:hover {
-    background: linear-gradient(
-        180deg,
-        rgba(22, 27, 34, 0.98) 0%,
-        rgba(17, 24, 39, 0.98) 100%
-    );
-    border-color: #334155;
+    background: var(--bg-card-hover-gradient);
+    border-color: var(--border-secondary);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
     transform: translateY(-2px);
 }
 
 .request-card:active {
-    background: #0F172A;
+    background: var(--bg-hover);
     border-color: rgba(37, 99, 235, 0.55);
     box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
     transform: translateY(0);
