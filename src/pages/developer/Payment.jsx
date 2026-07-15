@@ -32,12 +32,9 @@ function Payment() {
     const handleCardChange = (e) => {
         let { name, value } = e.target;
 
-        // Format card number with spaces
         if (name === 'number') {
             value = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
         }
-
-        // Format expiry
         if (name === 'expiry') {
             value = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
         }
@@ -50,10 +47,8 @@ function Payment() {
         setIsProcessing(true);
 
         try {
-            // Simulate payment processing
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Actually create the task in Supabase
             await tasksAPI.create({
                 appName: task.appName,
                 appUrl: task.appUrl,
@@ -66,7 +61,6 @@ function Payment() {
                 requiredTesters: task.requiredTesters || 3,
             });
 
-            // Record the payment transaction
             await transactionsAPI.record({
                 type: 'payment',
                 amount: amount,
@@ -87,47 +81,46 @@ function Payment() {
 
     return (
         <div className="payment-page">
+
+            {/* ── Back Button ── */}
             <button className="back-btn" onClick={() => navigate(-1)}>
-                <FiArrowLeft size={18} />
+                <FiArrowLeft size={16} />
                 <span>Back</span>
             </button>
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Complete Payment</h1>
-                    <p className="page-subtitle">Secure payment powered by TestFlow</p>
-                </div>
-            </div>
 
+            {/* ── Two-column layout ── */}
             <div className="payment-container">
-                {/* Order Summary */}
+
+                {/* Left – Order Summary */}
                 <div className="card order-summary">
                     <h3 className="card-title">Order Summary</h3>
 
-                    <div className="order-item">
-                        <span className="order-label">Testing Task</span>
-                        <span className="order-value">{task.appName || 'New Task'}</span>
-                    </div>
-
-                    <div className="order-item">
-                        <span className="order-label">Testing Level</span>
-                        <span className="order-value" style={{ textTransform: 'capitalize' }}>{task.testingLevel}</span>
-                    </div>
-
-                    <div className="order-item">
-                        <span className="order-label">Test Types</span>
-                        <span className="order-value">{task.selectedTestTypes?.length || 0} types</span>
+                    <div className="order-items-group">
+                        <div className="order-item">
+                            <span className="order-label">Testing Task</span>
+                            <span className="order-value">{task.appName || 'New Task'}</span>
+                        </div>
+                        <div className="order-item">
+                            <span className="order-label">Testing Level</span>
+                            <span className="order-value" style={{ textTransform: 'capitalize' }}>{task.testingLevel}</span>
+                        </div>
+                        <div className="order-item">
+                            <span className="order-label">Test Types</span>
+                            <span className="order-value">{task.selectedTestTypes?.length || 0} types</span>
+                        </div>
                     </div>
 
                     <div className="order-divider" />
 
-                    <div className="order-item">
-                        <span className="order-label">Subtotal</span>
-                        <span className="order-value">{formatCurrency(task.budget || 0)}</span>
-                    </div>
-
-                    <div className="order-item">
-                        <span className="order-label">Platform Fee (10%)</span>
-                        <span className="order-value">{formatCurrency((task.budget || 0) * 0.1)}</span>
+                    <div className="order-items-group">
+                        <div className="order-item">
+                            <span className="order-label">Subtotal</span>
+                            <span className="order-value">{formatCurrency(task.budget || 0)}</span>
+                        </div>
+                        <div className="order-item">
+                            <span className="order-label">Platform Fee (10%)</span>
+                            <span className="order-value">{formatCurrency((task.budget || 0) * 0.1)}</span>
+                        </div>
                     </div>
 
                     <div className="order-divider" />
@@ -137,16 +130,14 @@ function Payment() {
                         <span className="order-value">{formatCurrency(amount)}</span>
                     </div>
 
-                    <div className="secure-badge">
-                        <FiShield size={16} />
-                        <span>Secure 256-bit SSL encryption</span>
-                    </div>
+
                 </div>
 
-                {/* Payment Form */}
+                {/* Right – Payment Form */}
                 <div className="card payment-form-card">
                     <h3 className="card-title">Payment Method</h3>
 
+                    {/* Method selector */}
                     <div className="payment-methods">
                         {paymentMethods.map(method => (
                             <label
@@ -162,11 +153,12 @@ function Payment() {
                                 />
                                 <span className="method-icon">{method.icon}</span>
                                 <span className="method-name">{method.name}</span>
-                                {paymentMethod === method.id && <FiCheck className="method-check" size={18} />}
+                                {paymentMethod === method.id && <FiCheck className="method-check" size={12} />}
                             </label>
                         ))}
                     </div>
 
+                    {/* Card */}
                     {paymentMethod === 'card' && (
                         <form onSubmit={handleSubmit} className="card-form">
                             <div className="form-group">
@@ -192,7 +184,7 @@ function Payment() {
                                     type="text"
                                     name="name"
                                     className="form-input"
-                                    placeholder="Anbarasan"
+                                    placeholder="Full name on card"
                                     value={cardData.name}
                                     onChange={handleCardChange}
                                     required
@@ -228,53 +220,43 @@ function Payment() {
                                 </div>
                             </div>
 
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                size="lg"
-                                fullWidth
-                                loading={isProcessing}
-                            >
+                            <Button type="submit" variant="primary" size="lg" fullWidth loading={isProcessing}>
                                 Pay {formatCurrency(amount)}
                             </Button>
+
+
                         </form>
                     )}
 
+                    {/* UPI */}
                     {paymentMethod === 'upi' && (
                         <div className="upi-section">
                             <div className="form-group">
                                 <label className="form-label">UPI ID</label>
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    placeholder="yourname@upi"
-                                />
+                                <input type="text" className="form-input" placeholder="yourname@upi" />
                             </div>
                             <Button variant="primary" size="lg" fullWidth onClick={handleSubmit} loading={isProcessing}>
                                 Pay {formatCurrency(amount)}
                             </Button>
+
                         </div>
                     )}
 
+                    {/* Net Banking */}
                     {paymentMethod === 'netbanking' && (
                         <div className="netbanking-section">
                             <p className="section-note">Select your bank to proceed with Net Banking</p>
                             <div className="bank-grid">
                                 {['HDFC Bank', 'ICICI Bank', 'SBI', 'Axis Bank'].map(bank => (
-                                    <button key={bank} className="bank-option">
-                                        {bank}
-                                    </button>
+                                    <button key={bank} className="bank-option">{bank}</button>
                                 ))}
                             </div>
                             <Button variant="primary" size="lg" fullWidth onClick={handleSubmit} loading={isProcessing}>
                                 Pay {formatCurrency(amount)}
                             </Button>
+
                         </div>
                     )}
-
-                    <p className="payment-note">
-                        This is a demo payment page. No real transaction will occur.
-                    </p>
                 </div>
             </div>
         </div>

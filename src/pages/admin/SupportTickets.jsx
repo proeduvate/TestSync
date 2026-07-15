@@ -107,7 +107,6 @@ function SupportTickets() {
                         />
                     </div>
                     <div className="filter-group">
-                        <FiFilter className="filter-icon" />
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}

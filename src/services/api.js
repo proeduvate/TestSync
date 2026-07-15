@@ -1754,6 +1754,570 @@ export const supportAPI = {
     }
 };
 
+// ============ Reputation & Recommendation API ============
+export const reputationAPI = {
+    /**
+     * Fetches all tester data for a given task and assembles the full payload
+     * needed by the tester-reputation Edge Function.
+     */
+    getTesterDataForTask: async (taskId) => {
+        // 1. Get task details
+        const { data: task, error: taskErr } = await supabase
+            .from('tasks')
+            .select('*')
+            .eq('id', taskId)
+            .single();
+        if (taskErr) throw new Error(taskErr.message);
+
+        // 2. Get ALL active testers (profiles with role=tester, excluding pending/suspended)
+        const { data: allTesters } = await supabase
+            .from('profiles')
+            .select('id, name, email, skills, experience, rating, completed_tests, total_earnings')
+            .eq('role', 'tester')
+            .not('status', 'in', '(pending,suspended)');
+
+        const testers = allTesters || [];
+        const testerIds = testers.map(t => t.id);
+
+        // 3. Get feedback records for all testers
+        const { data: allFeedback } = testerIds.length > 0
+            ? await supabase.from('feedback').select('*').in('tester_id', testerIds)
+            : { data: [] };
+
+        // 4. Get AI verification logs
+        const { data: allVerifLogs } = testerIds.length > 0
+            ? await supabase.from('ai_verification_log').select('*').in('tester_id', testerIds)
+            : { data: [] };
+
+        // 5. Get proof hashes (duplicate detection)
+        const { data: allProofHashes } = testerIds.length > 0
+            ? await supabase.from('proof_hashes').select('*').in('tester_id', testerIds)
+            : { data: [] };
+
+        // 6. Get task_testers for workload check
+        const { data: taskAssignments } = testerIds.length > 0
+            ? await supabase.from('task_testers').select('tester_id, task_id').in('tester_id', testerIds)
+            : { data: [] };
+
+        // 7. Build per-tester maps
+        const testerTaskHistory = {};
+        const proofVerificationHistory = {};
+        const duplicateSubmissionHistory = {};
+        const adminRatingsFeedback = {};
+        const testerAvailability = {};
+
+        const feedbacks = allFeedback || [];
+        const verifLogs = allVerifLogs || [];
+        const proofHashes = allProofHashes || [];
+        const assignments = taskAssignments || [];
+
+        for (const tester of testers) {
+            const tid = tester.id;
+            const tFeedback = feedbacks.filter(f => f.tester_id === tid);
+            const tLogs = verifLogs.filter(l => l.tester_id === tid);
+            const tHashes = proofHashes.filter(h => h.tester_id === tid);
+            const tAssignments = assignments.filter(a => a.tester_id === tid);
+
+            // Task history
+            const total = tFeedback.length;
+            const approved = tFeedback.filter(f => f.status === 'approved').length;
+            const rejected = tFeedback.filter(f => f.status === 'rejected').length;
+            const completed = tFeedback.filter(f => ['approved', 'dev-approved'].includes(f.status)).length;
+
+            testerTaskHistory[tid] = {
+                total_tasks: total,
+                approved_tasks: approved,
+                rejected_tasks: rejected,
+                completed_tasks: completed,
+                on_time_tasks: Math.round(approved * 0.85), // approximated
+                task_types: Array.isArray(tester.skills) ? tester.skills : [],
+            };
+
+            // Proof history
+            const avgConf = tLogs.length > 0
+                ? tLogs.reduce((s, l) => s + (l.vision_confidence || 0.7), 0) / tLogs.length
+                : 0.7;
+            const suspCount = tLogs.filter(l => l.final_status === 'manual_review').length;
+
+            proofVerificationHistory[tid] = {
+                avg_confidence: avgConf,
+                suspicious_count: suspCount,
+                total_verifications: tLogs.length,
+            };
+
+            // Duplicate history
+            const dupCount = tHashes.length > 1 ? Math.max(0, tHashes.length - total) : 0;
+            const imageDups = tLogs.filter(l => l.image_duplicate).length;
+            const textDups = tLogs.filter(l => l.text_duplicate).length;
+
+            duplicateSubmissionHistory[tid] = {
+                count: dupCount + imageDups + textDups,
+                image_duplicates: imageDups,
+                text_duplicates: textDups,
+            };
+
+            // Admin rating
+            adminRatingsFeedback[tid] = {
+                score: tester.rating || 3,
+                review_count: tester.completed_tests || 0,
+            };
+
+            // Availability (testers with < 5 active tasks are available)
+            const activeTaskCount = tAssignments.length;
+            testerAvailability[tid] = {
+                is_available: activeTaskCount < 5,
+                current_tasks: activeTaskCount,
+            };
+        }
+
+        // 8. Build tester profiles for the engine (include skills/platforms)
+        const testerProfiles = testers.map(t => ({
+            id: t.id,
+            name: t.name,
+            email: t.email,
+            skills: Array.isArray(t.skills) ? t.skills : (typeof t.skills === 'string' ? t.skills.split(',').map(s => s.trim()) : []),
+            experience: t.experience || 'intermediate',
+            platforms: ['Web', 'Mobile'], // default; can be extended from profile
+            rating: t.rating || 3,
+            completed_tests: t.completed_tests || 0,
+        }));
+
+        return {
+            current_task: {
+                id: task.id,
+                app_name: task.app_name,
+                description: task.description,
+                testing_level: task.testing_level,
+                test_types: task.test_types || [],
+                budget: task.budget,
+                credits: task.credits,
+                deadline: task.deadline,
+                required_testers: task.required_testers,
+            },
+            task_requirements: {
+                required_skills: task.test_types || [],
+                platform: 'Web',
+                difficulty_level: task.testing_level || 'intermediate',
+                deadline_urgency: (() => {
+                    if (!task.deadline) return 'normal';
+                    const daysLeft = Math.ceil((new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                    return daysLeft <= 3 ? 'urgent' : daysLeft <= 7 ? 'high' : 'normal';
+                })(),
+            },
+            max_testers_required: task.required_testers || 3,
+            tester_profiles: testerProfiles,
+            tester_task_history: testerTaskHistory,
+            proof_verification_history: proofVerificationHistory,
+            duplicate_submission_history: duplicateSubmissionHistory,
+            admin_ratings_feedback: adminRatingsFeedback,
+            tester_availability: testerAvailability,
+        };
+    },
+
+    /**
+     * Runs the full AI reputation analysis for a task.
+     * Tries the Supabase Edge Function first; falls back to the
+     * client-side math engine if the edge function is unavailable.
+     */
+    runAnalysis: async (payload) => {
+        // ── Try Edge Function ─────────────────────────────────────
+        try {
+            const { data, error } = await supabase.functions.invoke('tester-reputation', {
+                body: payload,
+            });
+            if (!error && data && data.reputation_scoring) return data;
+        } catch (_) {
+            // Edge function not deployed — fall through to local engine
+        }
+
+        // ── Client-Side Math Engine (full fallback) ───────────────
+        const {
+            current_task = {},
+            task_requirements = {},
+            max_testers_required = 3,
+            tester_profiles = [],
+            tester_task_history = {},
+            proof_verification_history = {},
+            duplicate_submission_history = {},
+            admin_ratings_feedback = {},
+            tester_availability = {},
+        } = payload;
+
+        const taskTypes = (task_requirements.required_skills || [])
+            .concat(current_task.test_types || []);
+
+        // ── Task Analysis ─────────────────────────────────────────
+        const deadlineUrgency = task_requirements.deadline_urgency || (() => {
+            if (!current_task.deadline) return 'normal';
+            const d = Math.ceil((new Date(current_task.deadline) - new Date()) / 86400000);
+            return d <= 3 ? 'urgent' : d <= 7 ? 'high' : 'normal';
+        })();
+
+        const taskAnalysis = {
+            task_id: current_task.id || '',
+            task_type: (current_task.test_types || []).join(', ') || 'Software Testing',
+            required_skills: task_requirements.required_skills || current_task.test_types || [],
+            required_platform: task_requirements.platform || 'Web',
+            difficulty_level: current_task.testing_level || task_requirements.difficulty_level || 'intermediate',
+            deadline_urgency: deadlineUrgency,
+            risk_level: ['expert', 'advanced'].includes(current_task.testing_level) ? 'high' : 'medium',
+            expected_tester_experience: current_task.testing_level || 'intermediate',
+            number_of_testers_required: max_testers_required,
+        };
+
+        // ── Reputation Scoring ────────────────────────────────────
+        const computeRep = (tester) => {
+            const tid = tester.id;
+            const hist = tester_task_history[tid] || {};
+            const proof = proof_verification_history[tid] || {};
+            const dups = duplicate_submission_history[tid] || {};
+            const adminR = admin_ratings_feedback[tid] || {};
+
+            const total = hist.total_tasks || 0;
+            const approved = hist.approved_tasks || 0;
+            const rejected = hist.rejected_tasks || 0;
+            const completed = hist.completed_tasks || 0;
+            const onTime = hist.on_time_tasks || 0;
+
+            if (total < 2) {
+                return {
+                    reputation_score: Math.min(40, 30 + total * 5),
+                    reputation_level: 'New Tester',
+                    approval_rate: total > 0 ? Math.round((approved / total) * 100) : 0,
+                    average_proof_confidence: Math.round((proof.avg_confidence || 0) * 100),
+                    completion_rate: total > 0 ? Math.round((completed / total) * 100) : 0,
+                    on_time_completion_rate: total > 0 ? Math.round((onTime / total) * 100) : 0,
+                    admin_rating_score: (adminR.score || 3) * 20,
+                    similar_task_performance: 0,
+                    penalty_score: 0,
+                    risk_level: 'low',
+                    strengths: ['New tester — fresh potential'],
+                    weaknesses: ['Insufficient history for full evaluation'],
+                    reason: 'New tester with limited task history.',
+                };
+            }
+
+            const approvalRate = Math.round((approved / total) * 100);
+            const avgConfPct = Math.round((proof.avg_confidence || 0.7) * 100);
+            const completionRate = Math.round((completed / total) * 100);
+            const onTimeRate = Math.round((onTime / total) * 100);
+            const adminScore = (adminR.score || 3) * 20;
+            const rejRate = Math.round((rejected / total) * 100);
+
+            const tSkills = Array.isArray(tester.skills) ? tester.skills : [];
+            const overlap = tSkills.filter(s => taskTypes.some(t =>
+                t.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(t.toLowerCase())
+            )).length;
+            const similarPerf = Math.min(100, overlap * 25 + approvalRate * 0.5);
+
+            const dupCount = dups.count || 0;
+            const suspCount = proof.suspicious_count || 0;
+            const latePenalty = Math.max(0, (total - onTime - 3)) * 2;
+            const totalPenalty = Math.min(50,
+                dupCount * 15 + suspCount * 10 +
+                (rejRate > 30 ? (rejRate - 30) * 0.5 : 0) +
+                latePenalty +
+                Math.max(0, (1 - completionRate / 100) * 15)
+            );
+
+            const raw = approvalRate * 0.25 + avgConfPct * 0.20 +
+                completionRate * 0.15 + onTimeRate * 0.15 +
+                adminScore * 0.15 + similarPerf * 0.10 - totalPenalty;
+            const score = Math.max(0, Math.min(100, Math.round(raw)));
+
+            let level = 'Low Reputation';
+            if (score >= 90) level = 'Elite Tester';
+            else if (score >= 75) level = 'Trusted Tester';
+            else if (score >= 60) level = 'Normal Tester';
+            else if (score >= 40) level = 'Risk Tester';
+
+            const strengths = [];
+            const weaknesses = [];
+            if (approvalRate >= 80) strengths.push('High approval rate');
+            if (avgConfPct >= 80) strengths.push('Strong proof quality');
+            if (onTimeRate >= 85) strengths.push('Excellent on-time delivery');
+            if (adminScore >= 80) strengths.push('Highly rated by admins');
+            if (overlap > 0) strengths.push('Experience in similar task types');
+            if (dupCount > 0) weaknesses.push(`${dupCount} duplicate submission(s)`);
+            if (suspCount > 0) weaknesses.push(`${suspCount} suspicious submission(s) flagged`);
+            if (rejRate > 30) weaknesses.push('High rejection rate');
+            if (onTimeRate < 70) weaknesses.push('Frequent late submissions');
+            if (completionRate < 80) weaknesses.push('Incomplete task history');
+
+            return {
+                reputation_score: score,
+                reputation_level: level,
+                approval_rate: approvalRate,
+                average_proof_confidence: avgConfPct,
+                completion_rate: completionRate,
+                on_time_completion_rate: onTimeRate,
+                admin_rating_score: Math.round(adminScore),
+                similar_task_performance: Math.round(similarPerf),
+                penalty_score: Math.round(totalPenalty),
+                risk_level: dupCount > 1 || suspCount > 1 ? 'high' : dupCount > 0 || rejRate > 40 ? 'medium' : 'low',
+                strengths: strengths.length > 0 ? strengths : ['Consistent performer'],
+                weaknesses: weaknesses.length > 0 ? weaknesses : ['No significant issues detected'],
+                reason: `Score from ${total} tasks — ${approvalRate}% approval, ${completionRate}% completion.`,
+            };
+        };
+
+        const reputationScoring = tester_profiles.map(tester => ({
+            tester_id: tester.id,
+            tester_name: tester.name || 'Unknown',
+            ...computeRep(tester),
+        }));
+
+        // ── Recommendation Scoring ────────────────────────────────
+        const requiredSkills = taskAnalysis.required_skills;
+        const difficulty = taskAnalysis.difficulty_level;
+
+        const taskRecommendations = tester_profiles.map(tester => {
+            const tid = tester.id;
+            const rep = reputationScoring.find(r => r.tester_id === tid) || {};
+            const avail = tester_availability[tid] || {};
+            const tSkills = Array.isArray(tester.skills) ? tester.skills : [];
+
+            const matched = requiredSkills.filter(s => tSkills.some(ts =>
+                ts.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(ts.toLowerCase())
+            ));
+            const missing = requiredSkills.filter(s => !tSkills.some(ts =>
+                ts.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(ts.toLowerCase())
+            ));
+            const skillScore = requiredSkills.length > 0
+                ? Math.round((matched.length / requiredSkills.length) * 100) : 60;
+
+            const isAvail = avail.is_available !== false;
+            const workload = avail.current_tasks || 0;
+            const availScore = isAvail ? 100 : 20;
+            const workloadScore = workload >= 5 ? 30 : workload >= 3 ? 60 : 100;
+            const deadlineScore = deadlineUrgency === 'urgent' ? (isAvail ? 90 : 30) : 80;
+
+            const repNum = rep.reputation_score || 0;
+            const diffPenalty = ['expert', 'advanced'].includes(difficulty) && repNum < 60 ? 25
+                : difficulty === 'intermediate' && repNum < 40 ? 15 : 0;
+            const dupP = (duplicate_submission_history[tid]?.count || 0) > 0 ? 20 : 0;
+            const riskP = rep.risk_level === 'high' ? 20 : rep.risk_level === 'medium' ? 10 : 0;
+            const totalRiskP = Math.min(40, diffPenalty + dupP + riskP);
+
+            const raw = skillScore * 0.30 + repNum * 0.20 +
+                (rep.similar_task_performance || 0) * 0.20 +
+                100 * 0.10 + availScore * 0.10 +
+                deadlineScore * 0.05 + workloadScore * 0.05 - totalRiskP;
+            const recScore = Math.max(0, Math.min(100, Math.round(raw)));
+
+            let status = 'not_recommended';
+            if (recScore >= 75) status = 'highly_recommended';
+            else if (recScore >= 55) status = 'recommended';
+            else if (recScore >= 35) status = 'backup';
+
+            const risks = [];
+            if (!isAvail) risks.push('Tester currently unavailable');
+            if (workload >= 4) risks.push('High current workload');
+            if ((duplicate_submission_history[tid]?.count || 0) > 0) risks.push('Duplicate submission history');
+            if (rep.risk_level === 'high') risks.push('High risk profile');
+            if (missing.length > 0) risks.push(`Missing skills: ${missing.slice(0, 2).join(', ')}`);
+
+            return {
+                tester_id: tid,
+                tester_name: tester.name || 'Unknown',
+                recommendation_score: recScore,
+                recommendation_status: status,
+                skill_match_score: skillScore,
+                platform_match_score: 100,
+                similar_task_performance_score: rep.similar_task_performance || 0,
+                availability_score: availScore,
+                deadline_suitability_score: deadlineScore,
+                workload_balance_score: workloadScore,
+                risk_penalty: totalRiskP,
+                matched_skills: matched,
+                missing_skills: missing,
+                reason: `${recScore >= 75 ? 'Strong' : recScore >= 55 ? 'Good' : recScore >= 35 ? 'Moderate' : 'Poor'} match. Skill overlap: ${matched.length}/${requiredSkills.length}.`,
+                risks,
+            };
+        });
+
+        taskRecommendations.sort((a, b) => b.recommendation_score - a.recommendation_score);
+        taskRecommendations.forEach((r, i) => { r.rank = i + 1; });
+
+        const eligible = taskRecommendations
+            .filter(r => ['highly_recommended', 'recommended'].includes(r.recommendation_status))
+            .slice(0, max_testers_required);
+
+        const finalRecommended = eligible.map((r, i) => ({
+            rank: i + 1,
+            tester_id: r.tester_id,
+            tester_name: r.tester_name,
+            final_score: r.recommendation_score,
+            reason: r.reason,
+        }));
+
+        const quality = finalRecommended.length >= max_testers_required
+            ? 'Excellent — enough qualified testers found'
+            : finalRecommended.length > 0
+            ? 'Good — some qualified testers available'
+            : 'Poor — insufficient qualified testers';
+
+        const notes = [];
+        const newTesters = reputationScoring.filter(r => r.reputation_level === 'New Tester').length;
+        const highRisk = reputationScoring.filter(r => r.risk_level === 'high').length;
+        if (newTesters > 0) notes.push(`${newTesters} new tester(s) — suitable for low/medium tasks only`);
+        if (highRisk > 0) notes.push(`${highRisk} tester(s) flagged as high risk`);
+        if (finalRecommended.length < max_testers_required)
+            notes.push('Fewer qualified testers than required — consider expanding the pool');
+
+        return {
+            success: true,
+            source: 'client_math_engine',
+            task_analysis: taskAnalysis,
+            reputation_scoring: reputationScoring,
+            task_recommendations: taskRecommendations,
+            final_recommended_testers: finalRecommended,
+            summary: {
+                total_testers_analyzed: tester_profiles.length,
+                total_testers_recommended: finalRecommended.length,
+                best_match_tester_id: taskRecommendations[0]?.tester_id || '',
+                recommendation_quality: quality,
+                notes,
+            },
+        };
+    },
+
+    /**
+     * Get reputation scoreboard for all testers (admin view).
+     * Returns testers ranked by computed reputation score.
+     */
+    getScoreboard: async () => {
+        // Fetch all active testers (exclude pending/suspended)
+        const { data: testers } = await supabase
+            .from('profiles')
+            .select('id, name, email, skills, experience, rating, completed_tests, total_earnings, wallet_balance')
+            .eq('role', 'tester')
+            .not('status', 'in', '(pending,suspended)');
+
+        if (!testers || testers.length === 0) return { scoreboard: [] };
+
+        const testerIds = testers.map(t => t.id);
+
+        const [
+            { data: allFeedback },
+            { data: allVerifLogs },
+            { data: taskAssignments },
+        ] = await Promise.all([
+            testerIds.length > 0
+                ? supabase.from('feedback').select('tester_id, status, credit_score, created_at').in('tester_id', testerIds)
+                : Promise.resolve({ data: [] }),
+            testerIds.length > 0
+                ? supabase.from('ai_verification_log').select('tester_id, vision_confidence, final_status, image_duplicate, text_duplicate').in('tester_id', testerIds)
+                : Promise.resolve({ data: [] }),
+            testerIds.length > 0
+                ? supabase.from('task_testers').select('tester_id').in('tester_id', testerIds)
+                : Promise.resolve({ data: [] }),
+        ]);
+
+        const scoreboard = testers.map(tester => {
+            const tid = tester.id;
+            const tFeedback = (allFeedback || []).filter(f => f.tester_id === tid);
+            const tLogs = (allVerifLogs || []).filter(l => l.tester_id === tid);
+            const activeTaskCount = (taskAssignments || []).filter(a => a.tester_id === tid).length;
+
+            const total = tFeedback.length;
+            const approved = tFeedback.filter(f => f.status === 'approved').length;
+            const rejected = tFeedback.filter(f => f.status === 'rejected').length;
+            const approvalRate = total > 0 ? Math.round((approved / total) * 100) : 0;
+            const rejectionRate = total > 0 ? Math.round((rejected / total) * 100) : 0;
+
+            const avgConf = tLogs.length > 0
+                ? tLogs.reduce((s, l) => s + (l.vision_confidence || 0.7), 0) / tLogs.length
+                : 0;
+            const dupCount = tLogs.filter(l => l.image_duplicate || l.text_duplicate).length;
+            const suspCount = tLogs.filter(l => l.final_status === 'manual_review').length;
+
+            // Compute score
+            const adminScore = (tester.rating || 3) * 20;
+            const rawScore =
+                approvalRate * 0.25 +
+                avgConf * 100 * 0.20 +
+                (total > 0 ? (approved / total) * 100 : 0) * 0.15 +
+                85 * 0.15 + // on-time approximation
+                adminScore * 0.15 +
+                50 * 0.10 - // similar task performance placeholder
+                dupCount * 15 -
+                suspCount * 10 -
+                (rejectionRate > 30 ? (rejectionRate - 30) * 0.5 : 0);
+
+            const score = total < 2
+                ? Math.min(40, 30 + total * 5)
+                : Math.max(0, Math.min(100, Math.round(rawScore)));
+
+            let level = 'Low Reputation';
+            if (total < 2) level = 'New Tester';
+            else if (score >= 90) level = 'Elite Tester';
+            else if (score >= 75) level = 'Trusted Tester';
+            else if (score >= 60) level = 'Normal Tester';
+            else if (score >= 40) level = 'Risk Tester';
+
+            return {
+                id: tester.id,
+                name: tester.name,
+                email: tester.email,
+                skills: Array.isArray(tester.skills) ? tester.skills : [],
+                experience: tester.experience,
+                reputation_score: score,
+                reputation_level: level,
+                approval_rate: approvalRate,
+                rejection_rate: rejectionRate,
+                total_tasks: total,
+                approved_tasks: approved,
+                duplicate_count: dupCount,
+                suspicious_count: suspCount,
+                avg_proof_confidence: Math.round(avgConf * 100),
+                admin_rating: tester.rating || 0,
+                completed_tests: tester.completed_tests || 0,
+                total_earnings: tester.total_earnings || 0,
+                active_tasks: activeTaskCount,
+            };
+        });
+
+        scoreboard.sort((a, b) => b.reputation_score - a.reputation_score);
+        return { scoreboard };
+    },
+
+    /**
+     * Get reputation score for a single tester (used by marketplace).
+     */
+    getTesterScore: async (testerId) => {
+        const { data: tester } = await supabase
+            .from('profiles')
+            .select('id, rating, completed_tests, skills')
+            .eq('id', testerId)
+            .single();
+
+        if (!tester) return { score: 0, level: 'New Tester' };
+
+        const { data: feedback } = await supabase
+            .from('feedback')
+            .select('status')
+            .eq('tester_id', testerId);
+
+        const total = (feedback || []).length;
+        const approved = (feedback || []).filter(f => f.status === 'approved').length;
+        const approvalRate = total > 0 ? (approved / total) * 100 : 0;
+        const adminScore = (tester.rating || 3) * 20;
+
+        const rawScore = approvalRate * 0.40 + adminScore * 0.30 + Math.min(total * 5, 30) * 0.30;
+        const score = total < 2 ? Math.min(40, 30 + total * 5) : Math.max(0, Math.min(100, Math.round(rawScore)));
+
+        let level = 'Low Reputation';
+        if (total < 2) level = 'New Tester';
+        else if (score >= 90) level = 'Elite Tester';
+        else if (score >= 75) level = 'Trusted Tester';
+        else if (score >= 60) level = 'Normal Tester';
+        else if (score >= 40) level = 'Risk Tester';
+
+        return { score, level, skills: tester.skills || [] };
+    },
+};
+
 export default {
     auth: authAPI,
     tasks: tasksAPI,
@@ -1765,4 +2329,5 @@ export default {
     support: supportAPI,
     profiles: profilesAPI,
     aiVerification: aiVerificationAPI,
+    reputation: reputationAPI,
 };

@@ -10,18 +10,21 @@ function Reports() {
     const { user } = useAuth();
     const toast = useToast();
     const [showExportDropdown, setShowExportDropdown] = useState(false);
+    const [showDateDropdown, setShowDateDropdown] = useState(false);
+    const [dateRange, setDateRange] = useState('Last 30 Days');
 
     useEffect(() => {
         const handleOutsideClick = () => {
             setShowExportDropdown(false);
+            setShowDateDropdown(false);
         };
-        if (showExportDropdown) {
+        if (showExportDropdown || showDateDropdown) {
             window.addEventListener('click', handleOutsideClick);
         }
         return () => {
             window.removeEventListener('click', handleOutsideClick);
         };
-    }, [showExportDropdown]);
+    }, [showExportDropdown, showDateDropdown]);
 
     const triggerDownload = (format) => {
         setShowExportDropdown(false);
@@ -78,34 +81,70 @@ function Reports() {
         }
     };
 
-    const bugTrendsData = {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        datasets: [
-            {
-                label: 'Critical Bugs',
-                data: [12, 19, 3, 5],
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    // ── Chart data keyed by date range ─────────────────────────────────
+    const chartDataByRange = {
+        'Last 7 Days': {
+            bugTrends: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    { label: 'Critical Bugs',  data: [2, 5, 1, 4, 3, 0, 2], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)' },
+                    { label: 'Minor Issues',   data: [8, 12, 7, 15, 10, 4, 6], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)' },
+                ],
             },
-            {
-                label: 'Minor Issues',
-                data: [45, 32, 56, 48],
-                borderColor: '#6366f1',
-                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            }
-        ]
+            testing: {
+                labels: ['Functional', 'Security', 'Usability', 'Performance'],
+                datasets: [{ label: 'Total Reports', data: [14, 9, 18, 11], backgroundColor: '#14b8a6' }],
+            },
+            recent: ['Login Flow Bug', 'Payment Timeout', 'UI Misalignment'],
+        },
+        'Last 30 Days': {
+            bugTrends: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [
+                    { label: 'Critical Bugs',  data: [12, 19, 3, 5],  borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)' },
+                    { label: 'Minor Issues',   data: [45, 32, 56, 48], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)' },
+                ],
+            },
+            testing: {
+                labels: ['Functional', 'Security', 'Usability', 'Performance'],
+                datasets: [{ label: 'Total Reports', data: [65, 59, 80, 81], backgroundColor: '#14b8a6' }],
+            },
+            recent: ['E-Commerce Mobile App', 'Dashboard Crash', 'API Rate Limit'],
+        },
+        'Last 90 Days': {
+            bugTrends: {
+                labels: ['Month 1', 'Month 2', 'Month 3'],
+                datasets: [
+                    { label: 'Critical Bugs',  data: [34, 28, 19], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)' },
+                    { label: 'Minor Issues',   data: [120, 98, 143], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)' },
+                ],
+            },
+            testing: {
+                labels: ['Functional', 'Security', 'Usability', 'Performance'],
+                datasets: [{ label: 'Total Reports', data: [180, 142, 210, 195], backgroundColor: '#14b8a6' }],
+            },
+            recent: ['Checkout Flow', 'Auth Bypass', 'Search Bug'],
+        },
+        'This Year': {
+            bugTrends: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    { label: 'Critical Bugs',  data: [40, 35, 28, 22, 18, 15], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)' },
+                    { label: 'Minor Issues',   data: [160, 140, 190, 175, 210, 195], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)' },
+                ],
+            },
+            testing: {
+                labels: ['Functional', 'Security', 'Usability', 'Performance'],
+                datasets: [{ label: 'Total Reports', data: [520, 410, 680, 590], backgroundColor: '#14b8a6' }],
+            },
+            recent: ['Onboarding Flow', 'Payment Gateway', 'Profile Update'],
+        },
     };
 
-    const testerPerformanceData = {
-        labels: ['Functional', 'Security', 'Usability', 'Performance'],
-        datasets: [
-            {
-                label: 'Total Reports',
-                data: [65, 59, 80, 81],
-                backgroundColor: '#14b8a6',
-            }
-        ]
-    };
+    const activeData      = chartDataByRange[dateRange];
+    const bugTrendsData   = activeData.bugTrends;
+    const testerPerformanceData = activeData.testing;
+    const recentReports   = activeData.recent;
 
     return (
         <div className="reports-page">
@@ -115,10 +154,25 @@ function Reports() {
                     <p className="page-subtitle">Detailed insights into your software testing cycles.</p>
                 </div>
                 <div className="page-actions" style={{ position: 'relative' }}>
-                    <button className="secondary-btn">
-                        <FiCalendar /> Last 30 Days
-                    </button>
-                    <button className="primary-btn" onClick={(e) => { e.stopPropagation(); setShowExportDropdown(!showExportDropdown); }}>
+                    <div style={{ position: 'relative' }}>
+                        <button className="secondary-btn" onClick={(e) => { e.stopPropagation(); setShowDateDropdown(!showDateDropdown); setShowExportDropdown(false); }}>
+                            <FiCalendar /> {dateRange}
+                        </button>
+                        {showDateDropdown && (
+                            <div className="export-dropdown">
+                                {['Last 7 Days', 'Last 30 Days', 'Last 90 Days', 'This Year'].map(range => (
+                                    <button
+                                        key={range}
+                                        onClick={() => { setDateRange(range); setShowDateDropdown(false); }}
+                                        style={{ fontWeight: dateRange === range ? '600' : '400' }}
+                                    >
+                                        {range}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <button className="primary-btn" onClick={(e) => { e.stopPropagation(); setShowExportDropdown(!showExportDropdown); setShowDateDropdown(false); }}>
                         <FiDownload /> Export
                     </button>
                     {showExportDropdown && (
@@ -161,11 +215,11 @@ function Reports() {
                         <h3 className="card-title">Recent Critical Reports</h3>
                     </div>
                     <div className="reports-list">
-                        {[1, 2, 3].map(i => (
+                        {recentReports.map((name, i) => (
                             <div key={i} className="report-item">
                                 <div className="report-info">
-                                    <p className="report-task">E-Commerce Mobile App</p>
-                                    <p className="report-meta">Report by Sarah Tester • 2 hours ago</p>
+                                    <p className="report-task">{name}</p>
+                                    <p className="report-meta">Report by QA Tester • {dateRange}</p>
                                 </div>
                                 <Badge variant="danger">Critical</Badge>
                             </div>

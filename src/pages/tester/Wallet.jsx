@@ -41,7 +41,6 @@ function Wallet() {
         recentTransactions = [] 
     } = walletData || {};
 
-    // Prioritize user profile data if walletData doesn't have it (or if it's 0)
     const displayBalance = (walletData?.walletBalance !== undefined && walletData?.walletBalance !== 0) 
         ? walletData.walletBalance 
         : (user?.wallet_balance || 0);
@@ -54,8 +53,7 @@ function Wallet() {
         ? walletData.totalEarnings
         : (user?.total_earnings || 0);
 
-    // Pagination calculations
-    const transactionsPerPage = 5;
+    const transactionsPerPage = 10;
     const totalPages = Math.ceil((recentTransactions || []).length / transactionsPerPage);
     const indexOfLastTx = currentPage * transactionsPerPage;
     const indexOfFirstTx = indexOfLastTx - transactionsPerPage;
@@ -66,7 +64,6 @@ function Wallet() {
             <div className="page-header">
                 <div>
                     <h1 className="page-title">My Wallet</h1>
-                    <p className="page-subtitle">Track your earnings and manage withdrawals.</p>
                 </div>
                 <Button variant="primary">
                     Withdraw Credits
@@ -75,76 +72,78 @@ function Wallet() {
 
             <div className="wallet-stats-grid">
                 <div className="card wallet-stat-card primary">
-                    <div className="stat-icon">
-                        <FiTrendingUp size={24} />
-                    </div>
-                    <div className="stat-content">
+                    <div className="stat-top-row">
                         <span className="stat-label">Available Balance</span>
-                        <h2 className="stat-value">{displayBalance} Credits</h2>
-                        <span className="stat-subtext">≈ ₹{displayBalance * 10}</span>
+                        <div className="stat-icon"><FiTrendingUp size={18} /></div>
                     </div>
+                    <h2 className="stat-value">{displayBalance} Credits</h2>
+                    <span className="stat-subtext">≈ ₹{displayBalance * 10}</span>
                 </div>
 
                 <div className="card wallet-stat-card">
-                    <div className="stat-icon secondary">
-                        <FiTrendingUp size={24} />
-                    </div>
-                    <div className="stat-content">
+                    <div className="stat-top-row">
                         <span className="stat-label">Total Earnings</span>
-                        <h2 className="stat-value">{displayEarnings} Credits</h2>
-                        <span className="stat-subtext">+12% from last month</span>
+                        <div className="stat-icon secondary"><FiTrendingUp size={18} /></div>
                     </div>
+                    <h2 className="stat-value">{displayEarnings} Credits</h2>
+                    <span className="stat-subtext">+12% from last month</span>
                 </div>
 
                 <div className="card wallet-stat-card">
-                    <div className="stat-icon warning">
-                        <FiArrowUpRight size={24} />
-                    </div>
-                    <div className="stat-content">
+                    <div className="stat-top-row">
                         <span className="stat-label">Pending Credits</span>
-                        <h2 className="stat-value">{displayPending} Credits</h2>
-                        <span className="stat-subtext">Under verification</span>
+                        <div className="stat-icon warning"><FiArrowUpRight size={18} /></div>
                     </div>
+                    <h2 className="stat-value">{displayPending} Credits</h2>
+                    <span className="stat-subtext">Under verification</span>
                 </div>
             </div>
 
             <div className="card transaction-card">
-                <div className="card-header">
-                    <h3 className="card-title">Transaction History</h3>
-                </div>
-                <div className="transaction-list">
-                    {currentTransactions.map(log => (
-                        <div key={log._id || log.id} className="transaction-item">
-                            <div className="transaction-info">
-                                <div className={`type-icon ${log.type}`}>
-                                    {log.type === 'credit' ? <FiArrowDownLeft /> : <FiArrowUpRight />}
-                                </div>
-                                <div>
-                                    <p className="transaction-desc">{log.description || log.taskName || 'Withdrawal'}</p>
-                                    <p className="transaction-date">{formatDate(log.timestamp || log.createdAt)}</p>
-                                </div>
-                            </div>
-                            <div className={`transaction-amount ${log.type}`}>
-                                {log.type === 'credit' ? '+' : '-'}{log.amount} Credits
-                            </div>
-                        </div>
-                    ))}
+                <div className="tx-table-wrapper">
+                    <table className="tx-table">
+                        <thead>
+                            <tr>
+                                <th>TYPE</th>
+                                <th>DESCRIPTION</th>
+                                <th>DATE</th>
+                                <th>AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentTransactions.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="tx-empty">No transactions found.</td>
+                                </tr>
+                            ) : (
+                                currentTransactions.map(log => (
+                                    <tr key={log._id || log.id}>
+                                        <td>
+                                            <div className={`type-icon ${log.type}`}>
+                                                {log.type === 'credit' ? <FiArrowDownLeft size={14} /> : <FiArrowUpRight size={14} />}
+                                            </div>
+                                        </td>
+                                        <td className="tx-desc">{log.description || log.taskName || 'Withdrawal'}</td>
+                                        <td className="tx-date">{formatDate(log.timestamp || log.createdAt)}</td>
+                                        <td className={`transaction-amount ${log.type}`}>
+                                            {log.type === 'credit' ? '+' : '-'}{log.amount} Credits
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
                 </div>
 
-                {/* Pagination Bar */}
-                {totalPages > 1 && (
+                {recentTransactions.length > 0 && (
                     <div className="pagination-bar">
-                        <button 
-                            className="pagination-btn" 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setCurrentPage(prev => Math.max(prev - 1, 1));
-                            }}
+                        <button
+                            className="pagination-btn"
+                            onClick={(e) => { e.stopPropagation(); setCurrentPage(prev => Math.max(prev - 1, 1)); }}
                             disabled={currentPage === 1}
                         >
                             &larr; Previous
                         </button>
-                        
                         <div className="pagination-numbers" onClick={(e) => e.stopPropagation()}>
                             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                                 <button
@@ -156,14 +155,10 @@ function Wallet() {
                                 </button>
                             ))}
                         </div>
-
-                        <button 
-                            className="pagination-btn" 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
-                            }}
-                            disabled={currentPage === totalPages}
+                        <button
+                            className="pagination-btn"
+                            onClick={(e) => { e.stopPropagation(); setCurrentPage(prev => Math.min(prev + 1, totalPages)); }}
+                            disabled={currentPage === totalPages || totalPages === 0}
                         >
                             Next &rarr;
                         </button>

@@ -199,7 +199,6 @@ function AdminTasks() {
                         />
                     </div>
                     <div className="filter-group">
-                        <FiFilter />
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}

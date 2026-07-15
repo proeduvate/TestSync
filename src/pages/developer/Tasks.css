@@ -60,14 +60,15 @@
     overflow: hidden;
     margin-top: 0;
     box-shadow: var(--shadow-sm);
+    padding: 0;
 }
 
 .filters-bar {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     border-bottom: 1px solid var(--border-primary);
     background: rgba(255, 255, 255, 0.01);
 }
@@ -147,8 +148,8 @@
 }
 
 .tasks-table th {
-    padding: 1rem 1.5rem;
-    background: var(--bg-primary);
+    padding: 0.65rem 1.25rem;
+    background: var(--bg-tertiary);
     color: var(--text-muted);
     font-weight: var(--font-weight-bold);
     font-size: 10px;
@@ -166,7 +167,7 @@
 }
 
 .tasks-table td {
-    padding: 1.125rem 1.5rem;
+    padding: 0.65rem 1.25rem;
     border-bottom: 1px solid var(--border-primary);
     vertical-align: middle;
     font-size: var(--font-size-sm);

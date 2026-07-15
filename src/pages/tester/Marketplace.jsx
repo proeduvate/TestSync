@@ -1,22 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { tasksAPI } from '../../services/api';
+import { tasksAPI, reputationAPI } from '../../services/api';
 import { formatCredits, formatDate, getDeadlineStatus } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
-import { FiSearch, FiFilter, FiCalendar, FiClock, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
+import { FiSearch, FiFilter, FiCalendar, FiClock, FiChevronDown, FiGrid, FiList, FiAward, FiStar } from 'react-icons/fi';
 import './Marketplace.css';
 
 function Marketplace() {
+    const { user } = useAuth();
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLevels, setSelectedLevels] = useState([]);
     const [selectedTestTypes, setSelectedTestTypes] = useState([]);
-    const [sortBy, setSortBy] = useState('newest');
+    const [sortBy, setSortBy] = useState('reputation-match');
     const [showFilters, setShowFilters] = useState(false);
     const [viewMode, setViewMode] = useState(() => localStorage.getItem('marketplace_view_mode') || 'grid');
     const [currentPage, setCurrentPage] = useState(1);
+    const [testerRep, setTesterRep] = useState({ score: 0, level: 'New Tester', skills: [] });
     const ITEMS_PER_PAGE = 15;
     const popoverRef = useRef(null);
 
@@ -38,7 +41,14 @@ function Marketplace() {
             }
         }
         fetchTasks();
-    }, []);
+
+        // Fetch tester reputation for smart sorting
+        if (user?.id) {
+            reputationAPI.getTesterScore(user.id)
+                .then(rep => setTesterRep(rep))
+                .catch(() => {});
+        }
+    }, [user?.id]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -80,6 +90,15 @@ function Marketplace() {
         setCurrentPage(1);
     }, [searchQuery, selectedLevels, selectedTestTypes, sortBy]);
 
+    const getTaskMatchScore = (task) => {
+        const testerSkills = (testerRep.skills || []).map(s => s.toLowerCase());
+        const taskTypes = (task.testTypes || []).map(t => t.toLowerCase());
+        const taskLevel = (task.testingLevel || '').toLowerCase();
+        const skillMatch = taskTypes.filter(t => testerSkills.some(s => s.includes(t) || t.includes(s))).length;
+        const levelBonus = testerRep.level === 'Elite Tester' ? 30 : testerRep.level === 'Trusted Tester' ? 20 : testerRep.level === 'Normal Tester' ? 10 : 0;
+        return skillMatch * 25 + levelBonus + (testerRep.score || 0) * 0.3;
+    };
+
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = (task.appName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
             (task.companyName || task.developerCompany || '').toLowerCase().includes(searchQuery.toLowerCase());
@@ -92,6 +111,7 @@ function Marketplace() {
             
         return matchesSearch && matchesLevel && matchesType;
     }).sort((a, b) => {
+        if (sortBy === 'reputation-match') return getTaskMatchScore(b) - getTaskMatchScore(a);
         if (sortBy === 'newest') return new Date(b.postedAt) - new Date(a.postedAt);
         if (sortBy === 'credits-high') return b.credits - a.credits;
         if (sortBy === 'credits-low') return a.credits - b.credits;
@@ -141,6 +161,7 @@ function Marketplace() {
                                     onChange={(e) => setSortBy(e.target.value)}
                                     className="form-input popout-select"
                                 >
+                                    <option value="reputation-match">🏆 Best Match for You</option>
                                     <option value="newest">Newest First</option>
                                     <option value="credits-high">Highest Credits</option>
                                     <option value="credits-low">Lowest Credits</option>
@@ -220,13 +241,18 @@ function Marketplace() {
             {/* Tasks Grid / Table View */}
             {viewMode === 'grid' ? (
                 <div className="tasks-grid">
-                    {paginatedTasks.map(task => {
+                    {paginatedTasks.map((task, idx) => {
                         const deadline = getDeadlineStatus(task.deadline);
+                        const matchScore = getTaskMatchScore(task);
+                        const isTopMatch = sortBy === 'reputation-match' && idx < 3 && matchScore > 20;
                         return (
-                            <div key={task._id || task.id} className="card task-card">
+                            <div key={task._id || task.id} className={`card task-card ${isTopMatch ? 'top-match-card' : ''}`}>
                                 <div className="task-card-header">
                                     <Badge variant="primary">{task.level || task.testingLevel}</Badge>
                                     <span className="spots-left">{task.openSlots || '?'} spots left</span>
+                                    {isTopMatch && (
+                                        <span className="top-match-badge"><FiStar size={11} /> Best Match</span>
+                                    )}
                                 </div>
 
                                 <div className="task-card-body">

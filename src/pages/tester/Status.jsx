@@ -117,7 +117,7 @@ function Status() {
     });
 
     // Pagination calculations
-    const tasksPerPage = 7;
+    const tasksPerPage = 10;
     const totalPages = Math.ceil(sortedSubmissions.length / tasksPerPage);
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -326,7 +326,7 @@ function Status() {
             </div>
 
             {/* Pagination Bar */}
-            {!loading && totalPages > 1 && (
+            {!loading && sortedSubmissions.length > 0 && (
                 <div className="pagination-bar">
                     <button 
                         className="pagination-btn" 
@@ -357,7 +357,7 @@ function Status() {
                             e.stopPropagation();
                             setCurrentPage(prev => Math.min(prev + 1, totalPages));
                         }}
-                        disabled={currentPage === totalPages}
+                        disabled={currentPage === totalPages || totalPages === 0}
                     >
                         Next &rarr;
                     </button>

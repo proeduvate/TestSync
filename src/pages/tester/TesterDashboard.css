@@ -300,7 +300,6 @@
     color: inherit;
     cursor: pointer;
     transition: background-color var(--transition-fast);
-    flex: 1;
     min-height: 0;
     overflow: hidden;
 }

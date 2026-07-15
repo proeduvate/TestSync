@@ -10,12 +10,13 @@
 
 /* Filters Bar */
 .filters-bar {
-    padding: 1.5rem;
+    padding: 0.75rem 1.25rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-primary);
     gap: 1.5rem;
+    border-bottom: 1px solid var(--border-primary);
+    background: rgba(255, 255, 255, 0.01);
 }
 
 .admin-tasks-page .search-box {
@@ -90,17 +91,31 @@
 }
 
 .admin-tasks-table th {
-    padding: 1.25rem 1.5rem;
-    background: var(--bg-secondary);
-    text-align: left;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+    padding: 0.65rem 1.25rem;
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font-weight: var(--font-weight-bold);
+    font-size: 10px;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border-primary);
+    text-align: left;
+}
+
+.admin-tasks-table tr {
+    transition: background-color var(--transition-fast) ease;
+}
+
+.admin-tasks-table tr:hover:not(:has(.empty-table)) {
+    background-color: rgba(255, 255, 255, 0.015);
 }
 
 .admin-tasks-table td {
-    padding: 1.25rem 1.5rem;
+    padding: 0.65rem 1.25rem;
     border-bottom: 1px solid var(--border-primary);
+    vertical-align: middle;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
 }
 
 .task-detail-cell {

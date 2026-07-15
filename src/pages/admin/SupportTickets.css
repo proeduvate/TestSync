@@ -1,9 +1,9 @@
 .support-tickets-page {
-    padding: var(--space-6);
+    padding: 0;
 }
 
 .support-card {
-    margin-top: var(--space-6);
+    margin-top: 0;
     background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-xl);
