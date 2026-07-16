@@ -182,8 +182,8 @@ export const tasksAPI = {
                 completedTests: profile.completed_tests || 0,
                 completedTasks: profile.completed_tests || 0,
                 activeTests: activeTests || 0,
-                rating: profile.rating || 0,
-                reviewCount: profile.review_count || 0,
+                rating: profile.average_rating || 0,
+                reviewCount: profile.total_evaluations || 0,
                 totalEarnings: profile.total_earnings || 0,
             };
         } else {
@@ -276,7 +276,7 @@ export const tasksAPI = {
 
         const { data: testerData } = await supabase
             .from('task_testers')
-            .select('tester_id, profiles(name, email, rating)')
+            .select('tester_id, profiles(name, email, average_rating)')
             .eq('task_id', id);
 
         const dev = data.profiles || {};
@@ -651,7 +651,7 @@ export const feedbackAPI = {
             .eq('id', user.id)
             .single();
 
-        let query = supabase.from('feedback').select('*');
+        let query = supabase.from('feedback').select('*, profiles(average_rating)');
 
         const userRole = (profile?.role || '').toLowerCase();
 
@@ -689,7 +689,7 @@ export const feedbackAPI = {
             taskName: fb.task_name || 'Unlabeled Task',
             tester: fb.tester_id,
             testerName: userRole === 'developer' ? `Tester-${fb.tester_id.substring(0, 8)}` : (fb.tester_name || 'Anonymous Tester'),
-            testerRating: fb.tester_rating || 5.0,
+            testerRating: fb.profiles?.average_rating || 0,
             proofType: fb.proof_type,
             proofUrl: fb.proof_url,
             observations: fb.observations,

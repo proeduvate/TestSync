@@ -1,0 +1,38 @@
+.recommended-testers-widget {
+    margin-bottom: 24px;
+}
+
+.recommended-testers-widget .empty-state {
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.recommended-testers-widget .tester-list {
+    padding: 0 16px;
+}
+
+.recommended-testers-widget .tester-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.recommended-testers-widget .tester-item:last-child {
+    border-bottom: none;
+}
+
+.recommended-testers-widget .tester-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.recommended-testers-widget .tester-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}

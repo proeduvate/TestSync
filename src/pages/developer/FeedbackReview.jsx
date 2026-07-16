@@ -167,7 +167,7 @@ function FeedbackReview() {
                                                 <div className="tester-name">{feedback.testerName || 'Anonymous Tester'}</div>
                                                 <div className="tester-rating">
                                                     <FiStar size={12} />
-                                                    <span>{feedback.testerRating || 5.0}</span>
+                                                    <span>{typeof feedback.testerRating === 'number' ? feedback.testerRating.toFixed(1) : '0.0'}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -255,7 +255,7 @@ function FeedbackReview() {
                                 <div>
                                     <h3>{selectedFeedback.testerName}</h3>
                                     <p className="tester-rating">
-                                        <FiStar size={14} /> {selectedFeedback.testerRating} rating
+                                        <FiStar size={14} /> {typeof selectedFeedback.testerRating === 'number' ? selectedFeedback.testerRating.toFixed(1) : '0.0'} AI Rating
                                     </p>
                                 </div>
                             </div>

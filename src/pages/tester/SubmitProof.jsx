@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { tasksAPI, feedbackAPI, notificationsAPI } from '../../services/api';
+import { supabase } from '../../lib/supabase';
 import Button from '../../components/common/Button';
 import { FiUpload, FiCheckCircle, FiInfo, FiVideo, FiImage } from 'react-icons/fi';
 import './SubmitProof.css';
@@ -9,6 +10,7 @@ import './SubmitProof.css';
 function SubmitProof() {
     const { taskId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         observations: '',
@@ -55,6 +57,17 @@ function SubmitProof() {
                     console.error('Failed to notify developer:', nError);
                 }
             }
+
+            // Trigger AI Evaluation (fire-and-forget so tester doesn't wait)
+            supabase.functions.invoke('evaluate-tester-work', {
+                body: {
+                    testerId: user?.id,
+                    taskId: taskId,
+                    proofText: formData.observations,
+                    feedbackText: formData.issuesFound
+                }
+            }).catch(err => console.error('AI Evaluation failed:', err));
+
             setIsLoading(false);
             navigate('/tester/status');
         } catch (err) {

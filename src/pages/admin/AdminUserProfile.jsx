@@ -234,6 +234,14 @@ function AdminUserProfile() {
                                 <span className="detail-label">Role</span>
                                 <span className="detail-value">{getRoleBadge(user.role)}</span>
                             </div>
+                            {user.role === 'tester' && (
+                                <div className="detail-row">
+                                    <span className="detail-label">AI Rating</span>
+                                    <span className="detail-value" style={{ color: 'var(--color-warning)', fontWeight: 600 }}>
+                                        ★ {(user.average_rating || 0).toFixed(1)}
+                                    </span>
+                                </div>
+                            )}
                             <div className="detail-row">
                                 <span className="detail-label">Status</span>
                                 <span className="detail-value">{getStatusBadge(user.status)}</span>

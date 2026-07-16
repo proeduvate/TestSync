@@ -189,10 +189,16 @@ function Profile() {
                                 <span className="stat-value">{new Date(user?.created_at).getFullYear()}</span>
                             </div>
                             {user?.role === 'tester' && (
-                                <div className="stat-pill">
-                                    <span className="stat-label">Tasks Done</span>
-                                    <span className="stat-value">{user?.completed_tests || 0}</span>
-                                </div>
+                                <>
+                                    <div className="stat-pill">
+                                        <span className="stat-label">Tasks Done</span>
+                                        <span className="stat-value">{user?.completed_tests || 0}</span>
+                                    </div>
+                                    <div className="stat-pill">
+                                        <span className="stat-label">AI Rating</span>
+                                        <span className="stat-value" style={{ color: 'var(--color-warning)' }}>★ {(user?.average_rating || 0).toFixed(1)}</span>
+                                    </div>
+                                </>
                             )}
                         </div>
                     </div>

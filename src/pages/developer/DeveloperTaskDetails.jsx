@@ -172,6 +172,9 @@ function DeveloperTaskDetails() {
                                                 <div>
                                                     <p className="tester-name-text">{tester.name}</p>
                                                     <p className="tester-email-text">{tester.email}</p>
+                                                    <Badge variant="warning" size="sm" style={{ marginTop: '4px' }}>
+                                                        ★ {(tester.average_rating || 0).toFixed(1)} AI Rating
+                                                    </Badge>
                                                 </div>
                                             </div>
                                             {feedback && (
