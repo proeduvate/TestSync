@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { tasksAPI, feedbackAPI } from '../../services/api';
 import Badge from '../../components/common/Badge';
 import { formatCurrency, formatDate } from '../../utils/helpers';
+import Button from '../../components/common/Button';
+import { useToast } from '../../components/common/Toast';
 import { FiArrowLeft, FiExternalLink, FiCalendar, FiGlobe, FiInfo, FiLayers, FiDollarSign, FiUser } from 'react-icons/fi';
 import './DeveloperTaskDetails.css';
 
@@ -10,8 +12,10 @@ function DeveloperTaskDetails() {
     const { taskId } = useParams();
     const navigate = useNavigate();
     const [task, setTask] = useState(null);
+    const toast = useToast();
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [generatingSummary, setGeneratingSummary] = useState(false);
     const [selectedTesterId, setSelectedTesterId] = useState(null);
     const [imageError, setImageError] = useState(false);
 
@@ -41,6 +45,19 @@ function DeveloperTaskDetails() {
         }
         fetchTaskAndFeedback();
     }, [taskId]);
+
+    const handleGenerateSummary = async () => {
+        setGeneratingSummary(true);
+        try {
+            const data = await tasksAPI.generateSummary(taskId);
+            setTask(prev => ({ ...prev, aiSummary: data.summary }));
+            toast.success('Summary Generated', 'AI has successfully summarized the feedback.');
+        } catch (err) {
+            toast.error('Generation Failed', err.message);
+        } finally {
+            setGeneratingSummary(false);
+        }
+    };
 
     if (loading) return <div className="loading">Loading task details...</div>;
     if (!task) return <div className="error-state">Task not found</div>;
@@ -145,6 +162,31 @@ function DeveloperTaskDetails() {
 
             </div>
 
+            {/* ── AI Summary Row ── */}
+            {feedbacks.length > 0 && (
+                <div className="card" style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h3 className="card-title" style={{ margin: 0 }}>🤖 AI Feedback Summary</h3>
+                        <Button 
+                            variant="primary" 
+                            size="sm" 
+                            onClick={handleGenerateSummary} 
+                            loading={generatingSummary}
+                        >
+                            {task.aiSummary ? 'Regenerate Summary' : 'Generate AI Summary'}
+                        </Button>
+                    </div>
+                    <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb', marginTop: '16px' }}>
+                        {task.aiSummary ? (
+                            <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', margin: 0, color: '#111827' }}>{task.aiSummary}</p>
+                        ) : (
+                            <p style={{ color: '#6b7280', margin: 0, textAlign: 'center' }}>
+                                No summary generated yet. Click the button above to generate a concise summary of all tester feedback.
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ── Row 3: Assigned Testers (left) + Submission Details (right) ── */}
             <div className="task-submission-row">

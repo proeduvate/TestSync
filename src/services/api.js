@@ -315,6 +315,7 @@ export const tasksAPI = {
                 estimatedTime: data.estimated_time,
                 createdAt: data.created_at,
                 updatedAt: data.updated_at,
+                aiSummary: data.ai_summary,
             },
         };
     },
@@ -454,6 +455,19 @@ export const tasksAPI = {
         }
         
         return { success: true };
+    },
+
+    generateSummary: async (taskId) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const { data, error } = await supabase.functions.invoke('summarize-task-feedback', {
+            body: { taskId }
+        });
+
+        if (error) throw new Error(error.message);
+        if (data.error) throw new Error(data.error);
+        return data;
     },
 
     marketplace: async (params = {}) => {
