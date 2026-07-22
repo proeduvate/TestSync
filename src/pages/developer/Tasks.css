@@ -1,0 +1,468 @@
+/* ============================================================
+   DEVELOPER TASKS MANAGEMENT PAGE
+   Linear/Vercel/GitHub Inspired Premium Aesthetics
+   ============================================================ */
+
+.tasks-page {
+    animation: fadeIn var(--transition-normal) ease-out;
+    padding-bottom: var(--space-8);
+}
+
+/* ── Stats Summary Bar ──────────────────────────────────────── */
+.tasks-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tasks-stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--transition-fast);
+}
+
+.tasks-stat-card:hover {
+    border-color: var(--border-secondary);
+}
+
+.tasks-stat-card .stat-label {
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.tasks-stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.tasks-stat-card .stat-subtext {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ── Filters & Action Bar ───────────────────────────────────── */
+.tasks-list-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    margin-top: 0;
+    box-shadow: var(--shadow-sm);
+    padding: 0;
+}
+
+.filters-bar {
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border-primary);
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.tasks-page .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 380px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.9rem;
+}
+
+.tasks-page .search-box input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.tasks-page .search-box input:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.filter-group select {
+    padding: 0.6rem 2.25rem 0.6rem 1rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    outline: none;
+    transition: all var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+}
+
+.filter-group select:focus {
+    border-color: var(--primary-500);
+}
+
+/* ── Modern Table Styles ────────────────────────────────────── */
+.table-responsive {
+    overflow-x: auto;
+    min-height: 200px;
+}
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tasks-table th {
+    padding: 0.65rem 1.25rem;
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font-weight: var(--font-weight-bold);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.tasks-table tr {
+    transition: background-color var(--transition-fast) ease;
+}
+
+.tasks-table tr:hover:not(:has(.empty-state)) {
+    background-color: rgba(255, 255, 255, 0.015);
+}
+
+.tasks-table td {
+    padding: 0.65rem 1.25rem;
+    border-bottom: 1px solid var(--border-primary);
+    vertical-align: middle;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.tasks-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Task Name Cell */
+.task-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.task-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+}
+
+.task-id {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    font-family: monospace;
+}
+
+/* Test Type Tags */
+.test-types-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.type-tag {
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    padding: 0.2rem 0.5rem;
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    border-radius: var(--radius-sm);
+    color: var(--primary-400);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.type-tag.plus-more {
+    background: var(--bg-tertiary);
+    border-color: var(--border-primary);
+    color: var(--text-muted);
+}
+
+/* Budget column */
+.budget-cell {
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+/* Progress Cell */
+.progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 140px;
+}
+
+.progress-mini {
+    flex: 1;
+    height: 5px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
+    border-radius: var(--radius-full);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-cell span {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    min-width: 32px;
+    text-align: right;
+}
+
+/* Action buttons */
+.action-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.icon-btn {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn:hover, .icon-btn.active {
+    background: var(--bg-tertiary);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+}
+
+/* More Actions Dropdown */
+.more-actions-container {
+    position: relative;
+}
+
+.tasks-page .actions-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 100;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    padding: 0.25rem;
+    animation: dropdownFade 0.15s ease-out;
+}
+
+@keyframes dropdownFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tasks-page .actions-dropdown button,
+.tasks-page .actions-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    background: transparent;
+    border: none;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+}
+
+.tasks-page .actions-dropdown button:hover,
+.tasks-page .actions-dropdown a:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.tasks-page .actions-dropdown button.danger {
+    color: var(--error-400);
+}
+
+.tasks-page .actions-dropdown button.danger:hover {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+/* Empty State */
+.tasks-page .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 1.5rem;
+    color: var(--text-muted);
+}
+
+.tasks-page .empty-state h3 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0.75rem 0 0.25rem;
+}
+
+.tasks-page .empty-state p {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    max-width: 300px;
+    margin: 0;
+}
+
+/* ============ Pagination ============ */
+.pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-primary);
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.pagination-btn {
+    padding: 0.45rem 0.85rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--border-secondary);
+    color: var(--text-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pagination-number-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-number-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.pagination-number-btn.active {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+    color: #ffffff;
+    font-weight: var(--font-weight-bold);
+}
+
+/* Extend deadline modal content style */
+.extend-deadline-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.extend-deadline-content p {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+/* Responsive breakpoint styling override */
+@media (max-width: 1024px) {
+    .tasks-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .tasks-stats-row {
+        grid-template-columns: 1fr;
+    }
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .tasks-page .search-box {
+        max-width: none;
+    }
+}

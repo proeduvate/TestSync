@@ -1,0 +1,5 @@
+{
+  "email": " proeduvate@gmail.com",
+  "subject": "System Integration Test",
+  "message": "<h2>ProEduvate System Test</h2><p>This is a test notification confirming that the Gmail SMTP edge function is fully functional and routing emails correctly.</p>"
+}

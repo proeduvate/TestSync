@@ -1,0 +1,454 @@
+/* ========================================
+   Developer Dashboard – Non-scrollable,
+   fully utilised viewport layout
+   ======================================== */
+
+/* ── Root container fills the entire content area ── */
+.developer-dashboard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    animation: fadeIn var(--transition-normal) ease-out;
+    overflow: hidden;
+}
+
+/* Prevent the parent scroll container from scrolling */
+.dashboard-content:has(.developer-dashboard) {
+    overflow-y: hidden;
+}
+
+/* ── Page Header ── */
+.developer-dashboard .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.developer-dashboard .page-header .page-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.developer-dashboard .page-header .page-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.developer-dashboard .page-actions {
+    flex-shrink: 0;
+    margin-top: 0;
+}
+
+.developer-dashboard .page-actions .btn {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+}
+
+
+/* ── Stats Grid – grows to fill space freed by the shorter content cards ── */
+.developer-dashboard .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+    /* Allow the stats row to grow into freed space */
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    /* Keep cards from collapsing below content size */
+    min-height: 0;
+}
+
+/* Stats card: icon top-left, large value left, label right */
+.developer-dashboard .stats-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--space-5) var(--space-5);
+    min-height: 0;
+}
+
+.developer-dashboard .stats-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex: 1;
+    min-width: 0;
+    padding-right: var(--space-5);
+}
+
+.developer-dashboard .stats-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50%;
+    border-left: 1px solid var(--border-primary);
+    padding-left: var(--space-5);
+    text-align: right;
+    gap: var(--space-2);
+}
+
+.developer-dashboard .stats-card .stats-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.developer-dashboard .stats-card .stats-value {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.developer-dashboard .stats-card .stats-label {
+    font-size: 0.92rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.developer-dashboard .stats-card .stats-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    align-self: flex-start;
+}
+
+
+/* ── Content Grid – fixed at 55 % of the dashboard height ── */
+.developer-dashboard .content-grid {
+    /* Fixed height: shorter cards, stats absorb the freed space */
+    flex: 0 0 62%;
+    display: grid;
+    /* 7fr tasks | 5fr feedback */
+    grid-template-columns: 7fr 5fr;
+    gap: var(--space-3);
+    min-height: 0;
+    margin-top: 0;
+}
+
+/* Override span-based columns with simple auto sizing in this grid */
+.developer-dashboard .content-grid .col-8,
+.developer-dashboard .content-grid .col-4 {
+    grid-column: auto;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cards inside content grid fill their column */
+.developer-dashboard .content-grid .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    min-height: 0;
+    overflow: hidden;
+    /* Suppress the global lift animation — height is fixed */
+    transform: none !important;
+}
+
+.developer-dashboard .content-grid .card:hover {
+    transform: none !important;
+}
+
+.developer-dashboard .content-grid .card-header {
+    flex-shrink: 0;
+    margin-bottom: var(--space-3);
+}
+
+/* ── Card Link ── */
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--primary-400);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+}
+
+.card-link:hover {
+    color: var(--primary-300);
+}
+
+/* ── Task List ── */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.task-item {
+    display: grid;
+    grid-template-columns: 2fr 100px 150px 110px;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-3) var(--space-3);
+    margin: 0 calc(-1 * var(--space-3));
+    border-bottom: 1px solid var(--border-primary);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.task-item:hover {
+    background-color: var(--bg-hover);
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-info {
+    min-width: 0;
+}
+
+.task-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-meta {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.task-progress .progress {
+    flex: 1;
+    height: 5px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.task-progress .progress-bar {
+    height: 100%;
+    background: var(--primary-500);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+}
+
+.progress-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.task-deadline {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ── Feedback Vertical List ── */
+.feedback-vertical-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    gap: 0;
+}
+
+.feedback-item-mini {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3);
+    margin: 0 calc(-1 * var(--space-3));
+    border-bottom: 1px solid var(--border-primary);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.feedback-item-mini:hover {
+    background-color: var(--bg-hover);
+}
+
+.feedback-item-mini:last-child {
+    border-bottom: none;
+}
+
+.feedback-item-mini .feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.feedback-item-mini .feedback-tester {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.feedback-item-mini .tester-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.feedback-item-mini .feedback-task {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--primary-400);
+    flex-shrink: 0;
+}
+
+.feedback-item-mini .feedback-observations {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Feedback (generic card styles kept for other pages) ── */
+.feedback-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.feedback-tester {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.tester-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.feedback-task {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--primary-400);
+    margin-bottom: var(--space-2);
+}
+
+.feedback-observations {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+}
+
+.no-data {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-6) 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+    .developer-dashboard .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .developer-dashboard .content-grid .col-8,
+    .developer-dashboard .content-grid .col-4 {
+        grid-column: span 12;
+    }
+
+    /* Re-enable scroll on small screens */
+    .dashboard-content:has(.developer-dashboard) {
+        overflow-y: auto;
+    }
+
+    .developer-dashboard {
+        height: auto;
+        overflow: visible;
+    }
+}
+
+@media (max-width: 640px) {
+    .developer-dashboard .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .task-item {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+        margin: 0;
+        padding: var(--space-3) 0;
+    }
+
+    .task-status,
+    .task-progress,
+    .task-deadline {
+        justify-self: start;
+        justify-content: flex-start;
+    }
+}

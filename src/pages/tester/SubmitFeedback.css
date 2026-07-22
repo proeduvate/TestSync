@@ -1,0 +1,532 @@
+/* ============================================================
+   SUBMIT FEEDBACK PAGE — Non-scrollable, compact redesign
+   ============================================================ */
+
+.submit-feedback-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* Force parent to suppress scroll */
+.dashboard-content:has(.submit-feedback-page) {
+    overflow: hidden !important;
+}
+
+/* ── Header Bar ─────────────────────────────────────────────── */
+.sfp-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 10px 0 10px 0;
+    border-bottom: 1px solid var(--border-primary);
+    margin-bottom: 10px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.back-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.sfp-header-title {
+    flex: 1;
+}
+
+.sfp-header-title h2 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.sfp-header-title p {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ── Main Grid ──────────────────────────────────────────────── */
+.sfp-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 288px;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* ── Left Column: Form Card ─────────────────────────────────── */
+.sfp-form-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    padding: 16px 20px 14px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Revision Alert */
+.revision-alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 8px 12px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    font-size: var(--font-size-xs);
+    color: var(--warning-500);
+    flex-shrink: 0;
+}
+
+/* ── Form Sections ──────────────────────────────────────────── */
+.sfp-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.sfp-section-label {
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+}
+
+/* ── Test Result Selector ───────────────────────────────────── */
+.sfp-result-row {
+    flex-shrink: 0;
+}
+
+.test-result-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.result-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 10px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.result-option input { display: none; }
+
+.result-option:hover {
+    border-color: var(--border-secondary);
+    color: var(--text-primary);
+}
+
+.result-option.selected.success {
+    border-color: var(--success-500);
+    background: rgba(16, 185, 129, 0.10);
+    color: var(--success-500);
+}
+
+.result-option.selected.warning {
+    border-color: var(--warning-500);
+    background: rgba(245, 158, 11, 0.10);
+    color: var(--warning-500);
+}
+
+.result-option.selected.danger {
+    border-color: var(--error-500);
+    background: rgba(239, 68, 68, 0.10);
+    color: var(--error-500);
+}
+
+/* ── Observations + Steps (side by side when both visible) ─── */
+.sfp-textareas-row {
+    flex: 1;
+    display: grid;
+    gap: 10px;
+    min-height: 0;
+}
+
+.sfp-textareas-row.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+
+.sfp-textareas-row.one-col {
+    grid-template-columns: 1fr;
+}
+
+.sfp-field {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.sfp-field .form-textarea {
+    flex: 1;
+    resize: none;
+    min-height: 0;
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+}
+
+.char-count {
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+/* ── Proof Row ──────────────────────────────────────────────── */
+.sfp-proof-row {
+    flex-shrink: 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.sfp-proof-types {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.proof-type-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.proof-type-option input { display: none; }
+
+.proof-type-option.selected {
+    border-color: var(--primary-500);
+    background: rgba(37, 99, 235, 0.10);
+    color: var(--text-primary);
+}
+
+.sfp-proof-url-wrap {
+    flex: 1;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.input-with-icon .form-input {
+    padding-left: 36px;
+    width: 100%;
+    font-size: var(--font-size-sm);
+}
+
+.proof-link-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* ── Form Actions ───────────────────────────────────────────── */
+.sfp-actions {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-primary);
+    margin-top: 4px;
+}
+
+/* Error text */
+.form-error {
+    font-size: 11px;
+    color: var(--error-500);
+    margin-top: 3px;
+}
+
+/* ── Right Column: Sidebar ──────────────────────────────────── */
+.sfp-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Shared sidebar card base */
+.sfp-sidebar-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    padding: 14px 16px;
+}
+
+.sfp-sidebar-card-title {
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+}
+
+/* Task Details Card */
+.sfp-task-card {
+    flex-shrink: 0;
+}
+
+.sfp-task-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sfp-task-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.sfp-task-row:last-child {
+    border-bottom: none;
+}
+
+.sfp-task-row-label {
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.sfp-task-row-value {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-align: right;
+    max-width: 60%;
+    word-break: break-all;
+}
+
+.sfp-task-row-value.reward-value {
+    color: var(--success-500);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+}
+
+.sfp-app-link {
+    font-size: var(--font-size-xs);
+    color: var(--primary-400);
+    text-decoration: none;
+    word-break: break-all;
+    font-weight: var(--font-weight-medium);
+    text-align: right;
+}
+
+.sfp-app-link:hover {
+    color: var(--primary-300);
+    text-decoration: underline;
+}
+
+/* Tips Card */
+.sfp-tips-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sfp-tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sfp-tips-list li {
+    position: relative;
+    padding-left: 18px;
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.sfp-tips-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success-500);
+    font-weight: bold;
+}
+
+/* AI Verification Card */
+.sfp-ai-card {
+    flex-shrink: 0;
+}
+
+.sfp-ai-card p {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ── Lock / Already Submitted State ─────────────────────────── */
+.submission-lock-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    text-align: center;
+    padding: var(--space-6);
+}
+
+.submission-lock-state h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.submission-lock-state p {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    max-width: 380px;
+}
+
+.submission-details {
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-row .label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.detail-row .value {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.loading-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .sfp-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+
+    .sfp-sidebar {
+        flex-direction: row;
+        overflow: visible;
+        flex-wrap: wrap;
+    }
+
+    .sfp-sidebar-card {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .sfp-textareas-row.two-cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .test-result-options {
+        grid-template-columns: 1fr;
+    }
+
+    .sfp-proof-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sfp-proof-types {
+        flex-direction: row;
+    }
+}
