@@ -20,9 +20,9 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false);
 
     const roles = [
-        { id: 'developer', label: 'Developer', icon: '👨‍💻' },
-        { id: 'tester', label: 'Tester', icon: '🧪' },
-        { id: 'admin', label: 'Admin', icon: '🛡️' },
+        { id: 'developer', label: 'Developer' },
+        { id: 'tester', label: 'Tester' },
+        { id: 'admin', label: 'Admin' },
     ];
 
     const handleChange = (e) => {
@@ -114,7 +114,6 @@ function Login() {
                                     onChange={handleChange}
                                 />
                                 <div className="role-tab-content">
-                                    <span className="role-tab-icon">{role.icon}</span>
                                     <span>{role.label}</span>
                                 </div>
                             </label>
