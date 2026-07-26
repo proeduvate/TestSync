@@ -83,28 +83,24 @@ function UserRequestDetails() {
     };
 
     const handleReject = async () => {
+        setIsProcessing(true);
         try {
-            await usersAPI.update(user.id, { status: 'inactive' });
-            
-            // Create notification for the user
-            await notificationsAPI.create({
-                userId: user.id,
-                title: 'Application Update',
-                message: 'Thank you for your interest in ProEduvate. Unfortunately, your application could not be approved at this time.',
-                type: 'warning'
-            });
-
-            // Send rejection email notification
+            // 1. Send rejection email notification first while we have user details
             try {
                 await notificationService.sendAccountRejectedEmail(user.email, user.name, 'Unfortunately, your application could not be approved at this time.');
             } catch (emailErr) {
                 console.error('[UserRequestDetails] Failed to send rejection email:', emailErr);
             }
 
-            toast.error('Application Rejected', `The request from ${user.name} has been declined.`);
+            // 2. Delete the user completely (both auth and profile via RPC/delete)
+            await usersAPI.delete(user.id);
+
+            toast.error('Application Rejected', `The request from ${user.name} has been declined and the account removed.`);
+            setIsProcessing(false);
             navigate('/admin/requests');
         } catch (err) {
             toast.error('Error', err.message);
+            setIsProcessing(false);
         }
     };
 

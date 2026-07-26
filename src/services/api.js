@@ -1216,6 +1216,15 @@ export const usersAPI = {
     },
 
     delete: async (id) => {
+        // Try deleting via RPC to remove both Auth and Profile records, fallback if not defined
+        try {
+            const { error: rpcError } = await supabase.rpc('delete_user_completely', { user_id: id });
+            if (!rpcError) return { success: true };
+            console.warn('RPC delete_user_completely failed, falling back to profiles table delete:', rpcError.message);
+        } catch (rpcErr) {
+            console.warn('RPC delete_user_completely not available, falling back to profiles table delete:', rpcErr);
+        }
+
         const { data, error } = await supabase
             .from('profiles')
             .delete()
