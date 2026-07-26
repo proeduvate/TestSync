@@ -382,7 +382,7 @@ function Signup() {
                     variant="outline"
                     size="lg"
                     fullWidth
-                    onClick={() => signupWithGoogle(formData.role)}
+                    onClick={() => loginWithGoogle(formData.role)}
                     className="google-btn"
                     icon={<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" height="18" />}
                 >
