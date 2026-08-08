@@ -17,11 +17,12 @@ function AdminDashboard() {
 
     useEffect(() => {
         async function fetchData() {
+            setLoading(true);
             try {
                 const [statsRes, usersRes, txRes] = await Promise.all([
-                    tasksAPI.getStats(),
-                    usersAPI.list(),
-                    transactionsAPI.list(),
+                    tasksAPI.getStats({ timeRange }),
+                    usersAPI.list({ timeRange }),
+                    transactionsAPI.list({ timeRange }),
                 ]);
                 setDashStats(statsRes);
                 setUsers(usersRes.users || []);
@@ -33,7 +34,7 @@ function AdminDashboard() {
             }
         }
         fetchData();
-    }, []);
+    }, [timeRange]);
 
     if (loading || !dashStats) return <div className="loading">Loading...</div>;
 
@@ -68,17 +69,48 @@ function AdminDashboard() {
         },
     ];
 
-    const revenueData = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-            {
-                label: 'Revenue',
-                data: [4500, 5200, 4800, 6100, 5800, 4200, 5500],
-                borderColor: '#6366f1',
-                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            },
-        ],
+    const aggregateRevenue = (logs, range) => {
+        const aggregated = {};
+        const isHourly = range === '24h';
+        
+        logs.forEach(log => {
+            if (log.status !== 'completed') return;
+            const d = new Date(log.timestamp);
+            let key;
+            if (isHourly) {
+                key = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else {
+                key = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            }
+            aggregated[key] = (aggregated[key] || 0) + (log.amount * 0.1); // Assuming 10% platform fee
+        });
+
+        const sortedKeys = Object.keys(aggregated).sort((a, b) => {
+            return new Date(a) - new Date(b);
+        });
+
+        let labels = sortedKeys;
+        let data = sortedKeys.map(k => aggregated[k]);
+
+        if (labels.length === 0) {
+            labels = ['No Data'];
+            data = [0];
+        }
+
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Revenue',
+                    data,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                },
+            ],
+        };
     };
+
+    const revenueData = aggregateRevenue(creditLogs, timeRange);
 
     return (
         <div className="admin-dashboard">

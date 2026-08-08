@@ -1,6 +1,7 @@
 // API Service Layer — Supabase client for backend communication
 import supabase from '../lib/supabase';
 import { notificationService } from './notificationService';
+import { getTimeRangeDate } from '../utils/helpers';
 
 // ============ Auth API ============
 // Auth is handled directly via supabase.auth in AuthContext
@@ -129,7 +130,7 @@ export const tasksAPI = {
         return { tasks };
     },
 
-    getStats: async () => {
+    getStats: async (params = {}) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Not authenticated');
 
@@ -188,15 +189,35 @@ export const tasksAPI = {
             };
         } else {
             // Admin stats
-            const { count: totalUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-            const { count: totalDevelopers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'developer');
-            const { count: totalTesters } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'tester');
-            const { count: activeTasks } = await supabase.from('tasks').select('*', { count: 'exact', head: true }).in('status', ['open', 'in-progress']);
-            const { count: completedTasks } = await supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('status', 'completed');
-            const { count: pendingVerifications } = await supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('status', 'pending-review');
+            const dateFilter = params.timeRange ? getTimeRangeDate(params.timeRange) : null;
+
+            let profilesQuery = supabase.from('profiles').select('*', { count: 'exact', head: true });
+            let devsQuery = supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'developer');
+            let testersQuery = supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'tester');
+            let activeTasksQuery = supabase.from('tasks').select('*', { count: 'exact', head: true }).in('status', ['open', 'in-progress']);
+            let completedTasksQuery = supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('status', 'completed');
+            let pendingVerificationsQuery = supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('status', 'pending-review');
+            let budgetQuery = supabase.from('tasks').select('budget');
+
+            if (dateFilter) {
+                profilesQuery = profilesQuery.gte('created_at', dateFilter);
+                devsQuery = devsQuery.gte('created_at', dateFilter);
+                testersQuery = testersQuery.gte('created_at', dateFilter);
+                activeTasksQuery = activeTasksQuery.gte('created_at', dateFilter);
+                completedTasksQuery = completedTasksQuery.gte('created_at', dateFilter);
+                pendingVerificationsQuery = pendingVerificationsQuery.gte('created_at', dateFilter);
+                budgetQuery = budgetQuery.gte('created_at', dateFilter);
+            }
+
+            const { count: totalUsers } = await profilesQuery;
+            const { count: totalDevelopers } = await devsQuery;
+            const { count: totalTesters } = await testersQuery;
+            const { count: activeTasks } = await activeTasksQuery;
+            const { count: completedTasks } = await completedTasksQuery;
+            const { count: pendingVerifications } = await pendingVerificationsQuery;
 
             // Total budget across all tasks
-            const { data: budgetData } = await supabase.from('tasks').select('budget');
+            const { data: budgetData } = await budgetQuery;
             const totalBudget = (budgetData || []).reduce((sum, t) => sum + (t.budget || 0), 0);
 
             return {
@@ -1155,6 +1176,9 @@ export const usersAPI = {
         if (params.search) {
             query = query.or(`name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
         }
+        if (params.timeRange) {
+            query = query.gte('created_at', getTimeRangeDate(params.timeRange));
+        }
 
         const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw new Error(error.message);
@@ -1310,6 +1334,9 @@ export const transactionsAPI = {
 
         if (params.type && params.type !== 'all') query = query.eq('type', params.type);
         if (params.status && params.status !== 'all') query = query.eq('status', params.status);
+        if (params.timeRange) {
+            query = query.gte('created_at', getTimeRangeDate(params.timeRange));
+        }
 
         const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw new Error(error.message);

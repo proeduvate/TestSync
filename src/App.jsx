@@ -45,6 +45,7 @@ import UserRequestDetails from './pages/admin/UserRequestDetails';
 import SupportTickets from './pages/admin/SupportTickets';
 import AdminUserProfile from './pages/admin/AdminUserProfile';
 import AdminTaskDetails from './pages/admin/AdminTaskDetails';
+import AdminCredits from './pages/admin/AdminCredits';
 import Profile from './pages/profile/Profile';
 import { useTheme } from './hooks/useTheme';
 
@@ -103,7 +104,7 @@ function App() {
                             <Route path="tasks/:taskId" element={<AdminTaskDetails />} />
                             <Route path="verification" element={<Verification />} />
                             <Route path="support" element={<SupportTickets />} />
-                            <Route path="credits" element={<AdminDashboard />} />
+                            <Route path="credits" element={<AdminCredits />} />
                             <Route path="profile" element={<Profile />} />
                         </Route>
 
