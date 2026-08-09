@@ -96,6 +96,19 @@ export function generateId(prefix = 'id') {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+// Get time range date
+export function getTimeRangeDate(range) {
+    const d = new Date();
+    switch (range) {
+        case '24h': d.setHours(d.getHours() - 24); break;
+        case '7d': d.setDate(d.getDate() - 7); break;
+        case '30d': d.setDate(d.getDate() - 30); break;
+        case '90d': d.setDate(d.getDate() - 90); break;
+        default: d.setDate(d.getDate() - 7);
+    }
+    return d.toISOString();
+}
+
 // Debounce function
 export function debounce(func, wait) {
     let timeout;
@@ -173,6 +186,7 @@ export default {
     getDaysRemaining,
     getDeadlineStatus,
     generateId,
+    getTimeRangeDate,
     debounce,
     throttle,
     getPasswordStrength,

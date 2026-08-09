@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { feedbackAPI } from '../../services/api';
+import supabase from '../../lib/supabase';
 import { formatDate } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import Badge, { AIBadge } from '../../components/common/Badge';
 import { useToast } from '../../components/common/Toast';
-import { FiCheck, FiMessageCircle, FiImage, FiVideo, FiStar, FiFilter } from 'react-icons/fi';
+import { FiCheck, FiMessageCircle, FiImage, FiVideo, FiStar, FiFilter, FiCpu } from 'react-icons/fi';
 import './FeedbackReview.css';
 
 function FeedbackReview() {
@@ -19,6 +20,8 @@ function FeedbackReview() {
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState('all');
     const [clarificationNote, setClarificationNote] = useState('');
+    const [aiSummary, setAiSummary] = useState('');
+    const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
 
     useEffect(() => {
         async function fetchFeedback() {
@@ -92,7 +95,26 @@ function FeedbackReview() {
 
     const openReviewModal = (feedback) => {
         setSelectedFeedback(feedback);
+        setAiSummary('');
         setShowModal(true);
+    };
+
+    const handleGenerateSummary = async () => {
+        if (!selectedFeedback) return;
+        setIsGeneratingSummary(true);
+        try {
+            const taskId = selectedFeedback.taskId || selectedFeedback.task_id;
+            const { data, error } = await supabase.functions.invoke('summarize-task-feedback', {
+                body: { taskId },
+            });
+            if (error) throw error;
+            setAiSummary(data?.summary || 'No summary returned.');
+            toast.success('AI Summary Ready', 'Summary generated successfully.');
+        } catch (err) {
+            toast.error('AI Summary Failed', err.message || 'Could not generate summary.');
+        } finally {
+            setIsGeneratingSummary(false);
+        }
     };
 
     return (
@@ -325,6 +347,31 @@ function FeedbackReview() {
                                         {selectedFeedback.creditScore > 0 ? `${selectedFeedback.creditScore} credits` : '0 (not released)'}
                                     </strong>
                                 </div>
+                            </div>
+                            <div style={{ marginTop: '12px' }}>
+                                <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    icon={<FiCpu />}
+                                    loading={isGeneratingSummary}
+                                    onClick={handleGenerateSummary}
+                                >
+                                    {isGeneratingSummary ? 'Generating...' : '🤖 Generate AI Summary'}
+                                </Button>
+                                {aiSummary && (
+                                    <div style={{
+                                        marginTop: '10px',
+                                        padding: '12px',
+                                        background: 'var(--color-bg-secondary, #1e1e2e)',
+                                        borderRadius: '8px',
+                                        borderLeft: '3px solid var(--color-primary, #7c3aed)',
+                                        fontSize: '0.9rem',
+                                        lineHeight: '1.6',
+                                        whiteSpace: 'pre-wrap'
+                                    }}>
+                                        {aiSummary}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

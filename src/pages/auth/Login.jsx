@@ -20,9 +20,9 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false);
 
     const roles = [
-        { id: 'developer', label: 'Developer', icon: '👨‍💻' },
-        { id: 'tester', label: 'Tester', icon: '🧪' },
-        { id: 'admin', label: 'Admin', icon: '🛡️' },
+        { id: 'developer', label: 'Developer' },
+        { id: 'tester', label: 'Tester' },
+        { id: 'admin', label: 'Admin' },
     ];
 
     const handleChange = (e) => {
@@ -75,7 +75,12 @@ function Login() {
                 msg.toLowerCase().includes('password') ||
                 msg.toLowerCase().includes('user not found')
             ) {
-                toast.error('Login Failed', 'Invalid email or password. Please try again.');
+                toast.error('Login Failed', 'Account not exist.');
+            } else if (
+                msg.toLowerCase().includes('rate limit') || 
+                msg.toLowerCase().includes('too many requests')
+            ) {
+                toast.error('Account Locked', 'Too many failed attempts. Please try again later.');
             } else {
                 toast.error('Login Failed', msg);
             }
@@ -114,7 +119,6 @@ function Login() {
                                     onChange={handleChange}
                                 />
                                 <div className="role-tab-content">
-                                    <span className="role-tab-icon">{role.icon}</span>
                                     <span>{role.label}</span>
                                 </div>
                             </label>
@@ -165,12 +169,8 @@ function Login() {
                     {errors.password && <p className="form-error">{errors.password}</p>}
                 </div>
 
-                {/* Remember & Forgot */}
-                <div className="auth-options">
-                    <label className="form-checkbox">
-                        <input type="checkbox" />
-                        <span>Remember me</span>
-                    </label>
+                {/* Forgot Password */}
+                <div className="auth-options" style={{ justifyContent: 'flex-end' }}>
                     <Link to="/forgot-password">Forgot password?</Link>
                 </div>
 

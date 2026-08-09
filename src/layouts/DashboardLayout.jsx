@@ -22,6 +22,10 @@ function DashboardLayout() {
         return <Navigate to="/pending-approval" replace />;
     }
 
+    if (user.status === 'inactive' || user.status === 'suspended') {
+        return <Navigate to="/login" replace />;
+    }
+
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };

@@ -64,9 +64,16 @@ export function AuthProvider({ children }) {
                     console.debug('[Auth] User found in session, fetching profile...');
                     const profile = await fetchProfile(session.user);
                     if (profile && isMounted) {
-                        setUser(profile);
-                        setIsAuthenticated(true);
-                        console.debug('[Auth] Profile loaded successfully');
+                        if (profile.status === 'suspended' || profile.status === 'inactive') {
+                            console.warn('[Auth] Session user is suspended or inactive. Logging out.');
+                            await supabase.auth.signOut();
+                            setUser(null);
+                            setIsAuthenticated(false);
+                        } else {
+                            setUser(profile);
+                            setIsAuthenticated(true);
+                            console.debug('[Auth] Profile loaded successfully');
+                        }
                     } else {
                         console.warn('[Auth] No profile found for session user');
                     }
@@ -93,8 +100,15 @@ export function AuthProvider({ children }) {
                     const profile = await fetchProfile(session.user);
                     if (isMounted) {
                         if (profile) {
-                            setUser(profile);
-                            setIsAuthenticated(true);
+                            if (profile.status === 'suspended' || profile.status === 'inactive') {
+                                console.warn('[Auth] Session user is suspended or inactive on state change. Logging out.');
+                                await supabase.auth.signOut();
+                                setUser(null);
+                                setIsAuthenticated(false);
+                            } else {
+                                setUser(profile);
+                                setIsAuthenticated(true);
+                            }
                         } else {
                             // If profile fetch failed but session exists, 
                             // we might still want to end loading
@@ -162,6 +176,11 @@ export function AuthProvider({ children }) {
             if (profile.status === 'suspended') {
                 await supabase.auth.signOut();
                 throw new Error('Your account has been suspended. Please contact support.');
+            }
+
+            if (profile.status === 'inactive') {
+                await supabase.auth.signOut();
+                throw new Error('Your application was not approved or your account is inactive. Please contact support.');
             }
 
             // Detect and handle first-time login

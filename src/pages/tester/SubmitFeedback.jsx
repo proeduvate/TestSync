@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tasksAPI, feedbackAPI } from '../../services/api';
+import supabase from '../../lib/supabase';
 import Button from '../../components/common/Button';
 import { useToast } from '../../components/common/Toast';
 import { FiArrowLeft, FiSend, FiCheckCircle, FiAlertCircle, FiMinusCircle, FiLink } from 'react-icons/fi';
@@ -107,6 +108,20 @@ function SubmitFeedback() {
                 proofType: formData.proofType,
                 proofUrl: formData.proofUrl,
             });
+
+            // 🤖 Trigger AI evaluation in the background (non-blocking)
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                supabase.functions.invoke('evaluate-tester-work', {
+                    body: {
+                        testerId: user.id,
+                        taskId,
+                        proofText: formData.proofUrl,
+                        feedbackText: formData.observations,
+                    },
+                }).catch(err => console.warn('AI evaluation error (non-critical):', err));
+            }
+
             toast.success('Feedback Submitted!', 'Your submission is now pending AI verification.');
             navigate('/tester/dashboard');
         } catch (err) {
